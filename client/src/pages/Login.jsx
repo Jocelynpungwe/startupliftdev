@@ -1,63 +1,3 @@
-// import React from 'react'
-// import { useState } from 'react'
-// import { useDispatch, useSelector } from 'react-redux'
-// import { login } from '../features/auth/authSlice.js'
-// import { Navigate } from 'react-router-dom'
-
-// export default function Login() {
-//   const dispatch = useDispatch()
-//   const { user, loading, error } = useSelector((s) => s.auth)
-//   const [form, setForm] = useState({
-//     email: 'admin@crm.local',
-//     password: 'Admin123!',
-//   })
-
-//   if (user) return <Navigate to="/" replace />
-
-//   const submit = (e) => {
-//     e.preventDefault()
-//     dispatch(login(form))
-//   }
-
-//   return (
-//     <div className="auth-screen">
-//       <form className="auth-card" onSubmit={submit}>
-//         <div className="brand large">
-//           Sales<span>CRM</span>
-//         </div>
-//         <h1>Welcome back</h1>
-//         <p>Sign in to your sales workspace.</p>
-
-//         {error && <div className="alert error">{error}</div>}
-
-//         <label>Email</label>
-//         <input
-//           type="email"
-//           value={form.email}
-//           onChange={(e) => setForm({ ...form, email: e.target.value })}
-//           required
-//         />
-
-//         <label>Password</label>
-//         <input
-//           type="password"
-//           value={form.password}
-//           onChange={(e) => setForm({ ...form, password: e.target.value })}
-//           required
-//         />
-
-//         <button className="primary-btn" disabled={loading}>
-//           {loading ? 'Signing in...' : 'Sign in'}
-//         </button>
-
-//         <small className="demo-note">
-//           Demo admin: admin@crm.local / Admin123!
-//         </small>
-//       </form>
-//     </div>
-//   )
-// }
-
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { login } from '../features/auth/authSlice.js'
@@ -78,8 +18,8 @@ export default function Login() {
   const { user, loading, error } = useSelector((s) => s.auth)
 
   const [form, setForm] = useState({
-    email: 'admin@crm.local',
-    password: 'Admin123!',
+    email: '',
+    password: '',
   })
 
   if (user) {
@@ -296,26 +236,6 @@ export default function Login() {
 
               <span>Your connection is secure and protected.</span>
             </div>
-
-            {/* DEMO */}
-            <div className="demo-login">
-              <div className="demo-header">
-                <span>DEMO ACCOUNT</span>
-              </div>
-
-              <div className="demo-details">
-                <div>
-                  <small>Email</small>
-                  <strong>admin@crm.local</strong>
-                </div>
-
-                <div>
-                  <small>Password</small>
-                  <strong>Admin123!</strong>
-                </div>
-              </div>
-            </div>
-
             {/* FOOTER */}
             <div className="login-footer">
               <span>Need help?</span>
