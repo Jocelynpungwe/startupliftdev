@@ -1,0 +1,147 @@
+/* =========================================
+   PAGE LOADER
+========================================= */
+
+.page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    radial-gradient(circle at center, rgba(30, 90, 255, 0.12), transparent 45%),
+    #05070b;
+
+  color: white;
+}
+
+.page-loader-content {
+  width: min(90%, 420px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.page-loader-logo {
+  width: 64px;
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  margin-bottom: 20px;
+
+  animation: loaderFloat 2s ease-in-out infinite;
+}
+
+.page-loader-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+
+  font-size: 25px;
+  letter-spacing: 0.08em;
+}
+
+.page-loader-brand span {
+  font-weight: 400;
+}
+
+.page-loader-brand strong {
+  font-weight: 800;
+}
+
+.page-loader-line {
+  width: 180px;
+  height: 2px;
+
+  margin-top: 24px;
+
+  background: rgba(255, 255, 255, 0.1);
+
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.page-loader-line span {
+  display: block;
+
+  width: 45%;
+  height: 100%;
+
+  background: currentColor;
+
+  animation: loaderProgress 1s ease-in-out infinite;
+}
+
+.page-loader p {
+  margin-top: 18px;
+
+  font-size: 13px;
+  letter-spacing: 0.04em;
+
+  opacity: 0.55;
+}
+
+/* =========================================
+   ANIMATIONS
+========================================= */
+
+@keyframes loaderProgress {
+  0% {
+    transform: translateX(-120%);
+  }
+
+  50% {
+    transform: translateX(180%);
+  }
+
+  100% {
+    transform: translateX(180%);
+  }
+}
+
+@keyframes loaderFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+  .page-loader-logo {
+    width: 56px;
+    height: 56px;
+  }
+
+  .page-loader-brand {
+    font-size: 21px;
+  }
+
+  .page-loader-line {
+    width: 150px;
+  }
+
+  .page-loader p {
+    font-size: 12px;
+  }
+}

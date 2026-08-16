@@ -1,0 +1,424 @@
+/* =========================================
+   OUR STORY — RESPONSIVE
+========================================= */
+
+.about-story-section {
+  width: 100%;
+  overflow: hidden;
+  padding: 140px 0;
+  box-sizing: border-box;
+}
+
+.about-story-section * {
+  box-sizing: border-box;
+}
+
+.story-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  gap: clamp(40px, 7vw, 100px);
+  align-items: end;
+  margin-bottom: clamp(60px, 8vw, 90px);
+}
+
+.story-header > div,
+.story-header > p {
+  min-width: 0;
+}
+
+.story-header h2 {
+  width: 100%;
+  max-width: 750px;
+  margin: 0;
+  font-size: clamp(42px, 5vw, 76px);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  overflow-wrap: break-word;
+}
+
+.story-header h2 span {
+  display: block;
+}
+
+.story-intro {
+  width: 100%;
+  max-width: 480px;
+  margin: 0;
+  font-size: clamp(16px, 1.5vw, 18px);
+  line-height: 1.7;
+  opacity: 0.7;
+}
+
+/* =========================================
+   STORY CONTENT
+========================================= */
+
+.story-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(50px, 8vw, 110px);
+  align-items: start;
+}
+
+.story-main {
+  width: 100%;
+  max-width: 650px;
+}
+
+.story-large-text {
+  margin: 0 0 35px;
+  font-size: clamp(24px, 2.5vw, 36px);
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+
+.story-main p:not(.story-large-text) {
+  margin: 0 0 25px;
+  font-size: 17px;
+  line-height: 1.8;
+  opacity: 0.7;
+}
+
+/* =========================================
+   STORY STEPS
+========================================= */
+
+.story-side {
+  width: 100%;
+  border-top: 1px solid rgba(127, 127, 127, 0.25);
+}
+
+.story-step {
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr);
+  gap: 25px;
+  width: 100%;
+  padding: 35px 0;
+  border-bottom: 1px solid rgba(127, 127, 127, 0.25);
+}
+
+.story-step > span {
+  font-size: 14px;
+  font-weight: 700;
+  opacity: 0.45;
+}
+
+.story-step h3 {
+  margin: 0 0 10px;
+  font-size: clamp(18px, 2vw, 21px);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+.story-step p {
+  width: 100%;
+  max-width: 420px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  opacity: 0.6;
+}
+
+/* =========================================
+   STORY BOTTOM
+========================================= */
+
+.story-bottom {
+  width: 100%;
+  margin-top: clamp(70px, 9vw, 110px);
+  padding-top: 50px;
+  border-top: 1px solid rgba(127, 127, 127, 0.25);
+}
+
+.story-bottom > span {
+  display: block;
+  margin-bottom: 25px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  opacity: 0.5;
+}
+
+.story-bottom h3 {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0;
+  font-size: clamp(30px, 4vw, 58px);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  overflow-wrap: break-word;
+}
+
+/* .story-bottom h3 span {
+  color: '#3b82f6';
+  opacity: 0.45;
+} */
+
+/* =========================================
+   TABLET
+   901px → 1200px
+========================================= */
+
+@media (max-width: 1200px) {
+  .about-story-section {
+    padding: 120px 0;
+  }
+
+  .story-header {
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+  }
+
+  .story-content {
+    gap: 60px;
+  }
+
+  .story-header h2 {
+    font-size: clamp(42px, 5.5vw, 64px);
+  }
+}
+
+/* =========================================
+   TABLET / SMALL LAPTOP
+   601px → 900px
+========================================= */
+
+@media (max-width: 900px) {
+  .about-story-section {
+    padding: 100px 0;
+  }
+
+  /*
+    Header becomes vertical
+  */
+
+  .story-header {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin-bottom: 65px;
+  }
+
+  .story-header h2 {
+    max-width: 700px;
+    font-size: clamp(42px, 8vw, 60px);
+  }
+
+  .story-intro {
+    max-width: 650px;
+    font-size: 17px;
+  }
+
+  /*
+    Content becomes vertical
+  */
+
+  .story-content {
+    grid-template-columns: 1fr;
+    gap: 70px;
+  }
+
+  .story-main {
+    max-width: 750px;
+  }
+
+  .story-large-text {
+    max-width: 750px;
+    font-size: clamp(25px, 4vw, 32px);
+  }
+
+  /*
+    Story steps
+  */
+
+  .story-side {
+    max-width: 750px;
+  }
+
+  .story-step {
+    padding: 30px 0;
+  }
+
+  /*
+    Bottom statement
+  */
+
+  .story-bottom {
+    margin-top: 80px;
+    padding-top: 40px;
+  }
+
+  .story-bottom h3 {
+    max-width: 750px;
+    font-size: clamp(32px, 6vw, 48px);
+  }
+}
+
+/* =========================================
+   MOBILE
+   481px → 600px
+========================================= */
+
+@media (max-width: 600px) {
+  .about-story-section {
+    padding: 80px 0;
+  }
+
+  /*
+    Header
+  */
+
+  .story-header {
+    gap: 25px;
+    margin-bottom: 50px;
+  }
+
+  .story-header h2 {
+    font-size: clamp(38px, 11vw, 50px);
+    line-height: 1;
+  }
+
+  .story-intro {
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  /*
+    Main story
+  */
+
+  .story-content {
+    gap: 55px;
+  }
+
+  .story-large-text {
+    margin-bottom: 28px;
+    font-size: 24px;
+    line-height: 1.4;
+  }
+
+  .story-main p:not(.story-large-text) {
+    font-size: 15px;
+    line-height: 1.75;
+    margin-bottom: 22px;
+  }
+
+  /*
+    Steps
+  */
+
+  .story-step {
+    grid-template-columns: 35px minmax(0, 1fr);
+    gap: 15px;
+    padding: 27px 0;
+  }
+
+  .story-step > span {
+    font-size: 12px;
+  }
+
+  .story-step h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .story-step p {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  /*
+    Bottom
+  */
+
+  .story-bottom {
+    margin-top: 65px;
+    padding-top: 35px;
+  }
+
+  .story-bottom > span {
+    margin-bottom: 20px;
+    font-size: 11px;
+  }
+
+  .story-bottom h3 {
+    font-size: clamp(29px, 8vw, 38px);
+    line-height: 1.15;
+  }
+}
+
+/* =========================================
+   SMALL PHONES
+   320px → 480px
+========================================= */
+
+@media (max-width: 480px) {
+  .about-story-section {
+    padding: 65px 0;
+  }
+
+  .story-header {
+    margin-bottom: 45px;
+  }
+
+  .story-header h2 {
+    font-size: 38px;
+  }
+
+  .story-intro {
+    font-size: 15px;
+  }
+
+  .story-content {
+    gap: 45px;
+  }
+
+  .story-large-text {
+    font-size: 22px;
+  }
+
+  .story-main p:not(.story-large-text) {
+    font-size: 14px;
+  }
+
+  .story-step {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 12px;
+    padding: 24px 0;
+  }
+
+  .story-step h3 {
+    font-size: 17px;
+  }
+
+  .story-step p {
+    font-size: 13px;
+  }
+
+  .story-bottom {
+    margin-top: 55px;
+    padding-top: 30px;
+  }
+
+  .story-bottom h3 {
+    font-size: 29px;
+  }
+}
+
+/* =========================================
+   VERY SMALL PHONES
+   320px and below
+========================================= */
+
+@media (max-width: 350px) {
+  .story-header h2 {
+    font-size: 34px;
+  }
+
+  .story-large-text {
+    font-size: 20px;
+  }
+
+  .story-bottom h3 {
+    font-size: 26px;
+  }
+}

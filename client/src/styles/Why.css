@@ -1,0 +1,256 @@
+/* =========================================================
+   WHY US / STARTUPLIFT DIFFERENCE
+========================================================= */
+
+.why-us-section {
+  max-width: var(--container);
+
+  margin: 0 auto;
+
+  padding: 120px 40px;
+
+  border-top: 1px solid var(--border);
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.why-us-section .stats-header {
+  max-width: 850px;
+
+  margin-bottom: 70px;
+}
+
+.why-us-section .stats-header h2 {
+  margin: 0;
+
+  font-size: clamp(42px, 6vw, 70px);
+
+  line-height: 1;
+
+  letter-spacing: -0.06em;
+}
+
+.why-us-section .stats-header h2 span {
+  font-family: 'Playfair Display', serif;
+
+  font-style: italic;
+
+  color: var(--accent);
+
+  font-weight: 500;
+}
+
+.why-us-intro {
+  max-width: 600px;
+
+  margin-top: 25px;
+
+  color: #737f92;
+
+  font-size: 14px;
+
+  line-height: 1.8;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.why-us-section .stats-grid {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 0;
+
+  border-top: 1px solid var(--border);
+
+  border-bottom: 1px solid var(--border);
+}
+
+/* =========================================================
+   STAT CARD
+========================================================= */
+
+.why-us-section .big-stat {
+  position: relative;
+
+  min-height: 300px;
+
+  padding: 30px 25px;
+
+  border-right: 1px solid var(--border);
+
+  transition:
+    background 0.3s ease,
+    transform 0.3s ease;
+}
+
+.why-us-section .big-stat:last-child {
+  border-right: none;
+}
+
+.why-us-section .big-stat:hover {
+  background: rgba(34, 211, 238, 0.035);
+
+  transform: translateY(-4px);
+}
+
+/* =========================================================
+   ICON
+========================================================= */
+
+.why-us-icon {
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+
+  place-items: center;
+
+  margin-bottom: 45px;
+
+  border-radius: 50%;
+
+  color: var(--accent);
+
+  background: rgba(34, 211, 238, 0.05);
+
+  border: 1px solid rgba(34, 211, 238, 0.18);
+}
+
+/* =========================================================
+   NUMBER
+========================================================= */
+
+.why-us-section .big-stat strong {
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-size: clamp(42px, 4vw, 58px);
+
+  line-height: 1;
+
+  letter-spacing: -0.06em;
+}
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.why-us-section .big-stat .why-us-title {
+  display: block;
+
+  margin-top: 10px;
+
+  color: #dce3ee;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.why-us-section .big-stat p {
+  max-width: 220px;
+
+  margin-top: 15px;
+
+  color: #697589;
+
+  font-size: 11px;
+
+  line-height: 1.7;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+  .why-us-section {
+    padding: 100px 30px;
+  }
+
+  .why-us-section .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .why-us-section .big-stat {
+    min-height: 280px;
+  }
+
+  .why-us-section .big-stat:nth-child(2) {
+    border-right: none;
+  }
+
+  .why-us-section .big-stat:nth-child(1),
+  .why-us-section .big-stat:nth-child(2) {
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+  .why-us-section {
+    padding: 80px 20px;
+  }
+
+  .why-us-section .stats-header {
+    margin-bottom: 45px;
+  }
+
+  .why-us-section .stats-header h2 {
+    font-size: 44px;
+
+    line-height: 1.02;
+  }
+
+  .why-us-intro {
+    font-size: 13px;
+  }
+
+  .why-us-section .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .why-us-section .big-stat {
+    min-height: auto;
+
+    padding: 30px 20px;
+
+    border-right: none;
+
+    border-bottom: 1px solid var(--border);
+  }
+
+  .why-us-section .big-stat:last-child {
+    border-bottom: none;
+  }
+
+  .why-us-section .big-stat:nth-child(1),
+  .why-us-section .big-stat:nth-child(2) {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .why-us-icon {
+    margin-bottom: 30px;
+  }
+
+  .why-us-section .big-stat strong {
+    font-size: 48px;
+  }
+
+  .why-us-section .big-stat p {
+    max-width: 100%;
+  }
+}

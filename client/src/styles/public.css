@@ -1,0 +1,80 @@
+:root {
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+
+  --black: #05070b;
+
+  --white: #ffffff;
+
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-500: #64748b;
+  --gray-700: #334155;
+  --gray-900: #0f172a;
+}
+
+html.dark {
+  --page-bg: #05070b;
+  --section-bg: #070b12;
+
+  --card-bg: #0b111c;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+
+  --border: rgba(255, 255, 255, 0.08);
+}
+
+html {
+  --page-bg: #ffffff;
+  --section-bg: #f8fafc;
+
+  --card-bg: #ffffff;
+
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+
+  --border: rgba(15, 23, 42, 0.08);
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    linear-gradient(rgba(37, 99, 235, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.08) 1px, transparent 1px);
+
+  background-size: 55px 55px;
+
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+
+  pointer-events: none;
+}
+
+.website-card {
+  transform: perspective(1200px) rotateY(-12deg) rotateX(6deg);
+
+  transition: transform 0.5s ease;
+}
+
+.website-card:hover {
+  transform: perspective(1200px) rotateY(-5deg) rotateX(2deg) translateY(-8px);
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.floating-stat {
+  animation: float 5s ease-in-out infinite;
+}
