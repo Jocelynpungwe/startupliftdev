@@ -15,12 +15,12 @@ export default function Projects() {
           </h2>
         </div>
 
-        <Link to="/contact" className="text-link">
-          Start a project →
+        <Link to="/work" className="text-link">
+          view projects →
         </Link>
       </div>
 
-      <div className="projects-grid">
+      {/* <div className="projects-grid">
         <ProjectCard
           number="01"
           title="Business Website"
@@ -41,7 +41,7 @@ export default function Projects() {
           category="Digital Strategy"
           className="project-dark"
         />
-      </div>
+      </div> */}
     </section>
   )
 }

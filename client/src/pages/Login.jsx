@@ -40,14 +40,6 @@ export default function Login() {
 
       {/* TOP LOGO */}
       <header className="login-topbar">
-        <Link to="/" className="login-logo">
-          <img
-            src="/logo2.png"
-            alt="StartupLift Dev Logo"
-            style={{ width: '300px', height: '100%' }}
-          />
-        </Link>
-
         <Link to="/" className="back-home">
           <ArrowLeft size={16} />
           Back to website
@@ -68,7 +60,7 @@ export default function Login() {
             <span>Grow your business.</span>
           </h1>
 
-          <p className="showcase-description">
+          <p style={{ textAlign: 'left' }} className="new_text">
             Welcome to the StartupLift Dev CRM. Manage leads, track performance,
             monitor revenue and keep your entire sales team organized in one
             powerful workspace.

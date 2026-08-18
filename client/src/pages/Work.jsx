@@ -181,7 +181,7 @@ export default function Work() {
             </h2>
 
             <Link to="/contact" className="primary-button">
-              Start Your Project →
+              Start Your Project <span style={{ marginLeft: '16px' }}> →</span>
             </Link>
           </div>
         </div>

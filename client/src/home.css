@@ -1063,7 +1063,19 @@ button {
 }
 
 .process-arrow {
-  color: var(--accent);
+  font-family: 'Playfair Display', serif;
+
+  font-style: italic;
+
+  font-weight: 500;
+
+  background: linear-gradient(90deg, #22d3ee, #14b8a6);
+
+  -webkit-background-clip: text;
+
+  background-clip: text;
+
+  color: transparent;
 }
 
 /* =========================================================
@@ -2025,7 +2037,7 @@ SIDE BAR
 
   width: min(360px, 88vw);
 
-  height: 100vh;
+  height: 90vh;
 
   display: flex;
 

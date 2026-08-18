@@ -6,9 +6,9 @@ import AboutSection from '../components/public/AboutSection.jsx'
 import HowItWorks from '../components/public/HowItWorks.jsx'
 import WhoWeHelp from '../components/public/WhoWeHelp.jsx'
 import WhyUs from '../components/public/WhyUs.jsx'
-import Projects from '../components/public/Projects.jsx'
 import Testimonial from '../components/public/Testimonial.jsx'
 import CTA from '../components/public/CTA.jsx'
+import Work from './Work.jsx'
 
 export default function Home() {
   return (
@@ -28,8 +28,8 @@ export default function Home() {
       {/* <WhyUs /> */}
 
       {/* ================= PROJECTS ================= */}
-      <Projects />
 
+      <Work />
       {/* ================= TESTIMONIAL ================= */}
       <Testimonial />
 

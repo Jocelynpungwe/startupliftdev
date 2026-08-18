@@ -242,7 +242,7 @@ function Packages() {
                 style={{ marginTop: '16px' }}
               >
                 {pkg.button}
-                <span>→</span>
+                <span style={{ marginLeft: '16px' }}>→</span>
               </button>
             </article>
           ))}
@@ -295,9 +295,9 @@ function Packages() {
 
                 <button
                   className="secondary-button"
-                  style={{ marginTop: '16px' }}
+                  style={{ marginTop: '16px', width: '100%' }}
                 >
-                  Learn More →
+                  Learn More <span style={{ marginLeft: '16px' }}>→</span>
                 </button>
               </article>
             ))}

@@ -38,7 +38,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 18px;
 
-  background: rgba(255, 255, 255, 0.04);
+  background: linear-gradient(90deg, #22d3ee, #14b8a6);
 
   margin-bottom: 20px;
 
@@ -68,7 +68,7 @@
 
   margin-top: 24px;
 
-  background: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(90deg, #22d3ee, #14b8a6);
 
   overflow: hidden;
   border-radius: 10px;

@@ -53,7 +53,7 @@ function ProcessItem({ number, text, textTwo }) {
         <p>{text}</p>
       </div>
 
-      <span className="process-arrow">↗</span>
+      {/* <span className="process-arrow">↗</span> */}
     </div>
   )
 }

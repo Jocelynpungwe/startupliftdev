@@ -1,83 +1,3 @@
-// import React from 'react'
-// import { NavLink, Outlet } from 'react-router-dom'
-// import {
-//   LayoutDashboard,
-//   Users,
-//   UserPlus,
-//   UserCircle,
-//   LogOut,
-// } from 'lucide-react'
-// import { useDispatch, useSelector } from 'react-redux'
-// import { logout } from '../features/auth/authSlice.js'
-
-// export default function Layout() {
-//   const dispatch = useDispatch()
-//   const user = useSelector((s) => s.auth.user)
-
-//   const canManageUsers =
-//     user?.role === 'admin' || user?.permissions?.includes('user:create')
-//   const canManagePayroll = user?.role === 'admin' || user?.role === 'manager'
-
-//   return (
-//     <div className="app-shell">
-//       <aside className="sidebar">
-//         <div className="brand">
-//           Sales<span>CRM</span>
-//         </div>
-
-//         <nav>
-//           <NavLink to="/" end>
-//             <LayoutDashboard size={18} /> Dashboard
-//           </NavLink>
-//           <NavLink to="/leads">
-//             <Users size={18} /> All Leads
-//           </NavLink>
-//           <NavLink to="/leads/new">
-//             <UserPlus size={18} /> Add Lead
-//           </NavLink>
-//           {canManageUsers && <NavLink to="/users">User Management</NavLink>}
-//           {canManagePayroll && <NavLink to="/payroll">Payroll</NavLink>}
-//           <NavLink to="/profile">
-//             <UserCircle size={18} /> Profile
-//           </NavLink>
-//         </nav>
-
-//         <button className="logout-btn" onClick={() => dispatch(logout())}>
-//           <LogOut size={18} /> Sign out
-//         </button>
-//       </aside>
-
-//       <main className="main">
-//         <header className="topbar">
-//           <div>
-//             <h1>Sales CRM</h1>
-//             <p>Manage your sales pipeline</p>
-//           </div>
-//           <div className="user-mini">
-//             <div className="avatar">
-//               {user?.profilePicture ? (
-//                 <img src={user.profilePicture} alt="" />
-//               ) : (
-//                 `${user?.firstName?.[0] || ''}${user?.lastName?.[0] || ''}`
-//               )}
-//             </div>
-//             <div>
-//               <strong>
-//                 {user?.firstName} {user?.lastName}
-//               </strong>
-//               <small>{user?.role}</small>
-//             </div>
-//           </div>
-//         </header>
-
-//         <section className="content">
-//           <Outlet />
-//         </section>
-//       </main>
-//     </div>
-//   )
-// }
-
 import React, { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
@@ -183,12 +103,12 @@ export default function Layout() {
               onClick={closeMobileMenu}
             />
 
-            <NavItem
+            {/* <NavItem
               to="/leads"
               icon={<BarChart3 size={18} />}
               label="Sales Pipeline"
               onClick={closeMobileMenu}
-            />
+            /> */}
           </div>
 
           {/* SALES */}
@@ -248,17 +168,6 @@ export default function Layout() {
               label="My Profile"
               onClick={closeMobileMenu}
             />
-
-            <button
-              className="crm-nav-item"
-              onClick={() => {
-                // Add settings page later
-              }}
-            >
-              <Settings size={18} />
-
-              <span>Settings</span>
-            </button>
           </div>
         </nav>
 
@@ -268,38 +177,6 @@ export default function Layout() {
           {/* USER CARD */}
 
           <div className="sidebar-user">
-            <div className="sidebar-avatar">
-              {user?.profilePicture ? (
-                <img src={user.profilePicture} alt="" />
-              ) : (
-                initials
-              )}
-            </div>
-
-            <div className="sidebar-user-info">
-              <strong>
-                {user?.firstName} {user?.lastName}
-              </strong>
-
-              <span>{formatRole(user?.role)}</span>
-            </div>
-
-            <ChevronDown size={16} />
-          </div>
-
-          {/* THEME */}
-
-          <div className="sidebar-actions">
-            {/* <button
-              className="theme-button"
-              onClick={() => setDarkMode(!darkMode)}
-              title="Change theme"
-            >
-              {darkMode ? <Sun size={17} /> : <Moon size={17} />}
-
-              <span>{darkMode ? 'Light mode' : 'Dark mode'}</span>
-            </button> */}
-
             <button
               className="logout-button"
               onClick={handleLogout}
@@ -326,12 +203,6 @@ export default function Layout() {
             >
               <Menu size={21} />
             </button>
-
-            <div className="topbar-title">
-              <span>Workspace</span>
-
-              <h1>Sales Dashboard</h1>
-            </div>
           </div>
 
           <div className="topbar-right">
