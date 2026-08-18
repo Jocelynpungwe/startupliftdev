@@ -789,11 +789,13 @@ button {
 .stats-header h2 {
   margin: 0;
 
-  font-size: clamp(36px, 5vw, 62px);
+  font-size: clamp(48px, 6vw, 78px);
 
-  line-height: 1.05;
+  line-height: 0.98;
 
-  letter-spacing: -0.05em;
+  letter-spacing: -0.055em;
+
+  font-weight: 600;
 }
 
 .intro-content h2 span,
@@ -803,9 +805,15 @@ button {
 
   font-style: italic;
 
-  color: var(--accent);
-
   font-weight: 500;
+
+  background: linear-gradient(90deg, #22d3ee, #14b8a6);
+
+  -webkit-background-clip: text;
+
+  background-clip: text;
+
+  color: transparent;
 }
 
 .intro-text {
@@ -975,11 +983,13 @@ button {
 .process-intro h2 {
   margin: 0;
 
-  font-size: clamp(60px, 8vw, 100px);
+  font-size: clamp(48px, 6vw, 78px);
 
-  line-height: 0.88;
+  line-height: 0.98;
 
-  letter-spacing: -0.07em;
+  letter-spacing: -0.055em;
+
+  font-weight: 600;
 }
 
 .process-intro h2 span {
@@ -987,7 +997,15 @@ button {
 
   font-style: italic;
 
-  color: var(--accent);
+  font-weight: 500;
+
+  background: linear-gradient(90deg, #22d3ee, #14b8a6);
+
+  -webkit-background-clip: text;
+
+  background-clip: text;
+
+  color: transparent;
 }
 
 .process-list {
@@ -1017,15 +1035,19 @@ button {
 }
 
 .process-number {
-  color: #465267;
+  font-family: 'Playfair Display', serif;
 
-  font-size: 10px;
-}
+  font-style: italic;
 
-.process-content h3 {
-  margin: 0 0 8px;
+  font-weight: 500;
 
-  font-size: 21px;
+  background: linear-gradient(90deg, #22d3ee, #14b8a6);
+
+  -webkit-background-clip: text;
+
+  background-clip: text;
+
+  color: transparent;
 }
 
 .process-content p {
@@ -1033,7 +1055,7 @@ button {
 
   max-width: 450px;
 
-  color: #707c8f;
+  color: var(--muted);
 
   font-size: 12px;
 

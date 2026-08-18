@@ -1,3 +1,39 @@
+:root {
+  --bg: #020617;
+  --surface: #080c14;
+  --surface-light: #0d1320;
+  --surface-hover: #111a2a;
+
+  --border: rgba(148, 163, 184, 0.12);
+  --border-light: rgba(148, 163, 184, 0.18);
+
+  --white: #f8fafc;
+  --text: #e5e7eb;
+  --muted: #8b95a7;
+  --muted-dark: #687386;
+
+  /* =======================================================
+     CYAN / TEAL BRAND COLORS
+  ======================================================= */
+
+  --blue: #06b6d4;
+  --blue-dark: #0891b2;
+  --blue-light: #22d3ee;
+  --blue-soft: #0e7490;
+
+  --purple: #22d3ee;
+  --purple-dark: #06b6d4;
+  --purple-light: #67e8f9;
+  --purple-soft: #0e7490;
+
+  --accent: #22d3ee;
+  --accent-hover: #06b6d4;
+  --teal: #14b8a6;
+
+  --radius: 20px;
+  --container: 1240px;
+}
+
 /* =========================================
    STARTUPLIFT DEV
    BUSINESS WEBSITE PAGES
@@ -70,12 +106,12 @@
 
 .centered-hero {
   margin: auto;
-  text-align: center;
+  text-align: left;
 }
 
 .hero-badge {
   display: inline-flex;
-  align-items: center;
+  align-items: left;
   gap: 9px;
   padding: 9px 16px;
   margin-bottom: 24px;
@@ -104,26 +140,43 @@
 
 .business-hero h1 {
   margin: 0;
-  font-size: clamp(44px, 6vw, 78px);
+
+  font-size: clamp(48px, 6vw, 78px);
+
   line-height: 0.98;
+
   letter-spacing: -0.055em;
-  font-weight: 700;
+
+  font-weight: 600;
 }
 
 .business-hero h1 span,
 .business-section h2 span,
 .cta-box h2 span {
-  background: linear-gradient(100deg, #22d3ee, #14b8a6, #ffffff);
+  font-family: 'Playfair Display', serif;
+
+  font-style: italic;
+
+  font-weight: 500;
+
+  background: linear-gradient(90deg, #22d3ee, #14b8a6);
+
   -webkit-background-clip: text;
+
   background-clip: text;
+
   color: transparent;
 }
 
 .hero-description {
-  max-width: 650px;
-  margin: 28px 0 0;
-  color: #9da6bc;
-  font-size: 17px;
+  max-width: 550px;
+
+  margin: 32px 0;
+
+  color: var(--muted);
+
+  font-size: 16px;
+
   line-height: 1.8;
 }
 

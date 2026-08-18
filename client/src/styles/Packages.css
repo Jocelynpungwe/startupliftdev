@@ -1,3 +1,39 @@
+:root {
+  --bg: #020617;
+  --surface: #080c14;
+  --surface-light: #0d1320;
+  --surface-hover: #111a2a;
+
+  --border: rgba(148, 163, 184, 0.12);
+  --border-light: rgba(148, 163, 184, 0.18);
+
+  --white: #f8fafc;
+  --text: #e5e7eb;
+  --muted: #8b95a7;
+  --muted-dark: #687386;
+
+  /* =======================================================
+     CYAN / TEAL BRAND COLORS
+  ======================================================= */
+
+  --blue: #06b6d4;
+  --blue-dark: #0891b2;
+  --blue-light: #22d3ee;
+  --blue-soft: #0e7490;
+
+  --purple: #22d3ee;
+  --purple-dark: #06b6d4;
+  --purple-light: #67e8f9;
+  --purple-soft: #0e7490;
+
+  --accent: #22d3ee;
+  --accent-hover: #06b6d4;
+  --teal: #14b8a6;
+
+  --radius: 20px;
+  --container: 1240px;
+}
+
 .packages-section {
   position: relative;
   padding: 120px 24px;
@@ -46,7 +82,7 @@
 .packages-header {
   max-width: 760px;
   margin: 0 auto 70px;
-  text-align: center;
+  text-align: left;
 }
 
 .packages-eyebrow {
@@ -61,22 +97,43 @@
 .packages-header h2,
 .recurring-header h2 {
   margin: 0;
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
-  line-height: 1;
-  letter-spacing: -0.04em;
+
+  font-size: clamp(48px, 6vw, 78px);
+
+  line-height: 0.98;
+
+  letter-spacing: -0.055em;
+
+  font-weight: 600;
 }
 
 .packages-header h2 span,
 .recurring-header h2 span {
-  color: #3b82f6;
+  font-family: 'Playfair Display', serif;
+
+  font-style: italic;
+
+  font-weight: 500;
+
+  background: linear-gradient(90deg, #22d3ee, #14b8a6);
+
+  -webkit-background-clip: text;
+
+  background-clip: text;
+
+  color: transparent;
 }
 
 .packages-header p,
 .recurring-header p {
-  max-width: 650px;
-  margin: 28px auto 0;
-  color: #94a3b8;
-  font-size: 1.05rem;
+  max-width: 550px;
+
+  margin: 32px 0;
+
+  color: var(--muted);
+
+  font-size: 16px;
+
   line-height: 1.8;
 }
 

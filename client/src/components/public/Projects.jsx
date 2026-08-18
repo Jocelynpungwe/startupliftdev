@@ -6,7 +6,7 @@ export default function Projects() {
     <section className="projects-section">
       <div className="section-heading">
         <div>
-          <p className="section-label">SELECTED WORK</p>
+          <span className="packages-eyebrow">SELECTED WORK</span>
 
           <h2>
             Digital products

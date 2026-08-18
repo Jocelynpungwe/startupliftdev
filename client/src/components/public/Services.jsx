@@ -9,7 +9,7 @@ const packages = [
     name: 'Starter',
     title: 'Get Your Business Online',
     description: 'For entrepreneurs and small businesses starting from zero.',
-    price: '$800 – $1,200',
+    price: '$250 – $550',
     features: [
       'Professional responsive website',
       'Custom design',
@@ -32,7 +32,7 @@ const packages = [
     title: 'Build a Stronger Online Presence',
     description:
       'For established businesses that need a stronger website and better online visibility.',
-    price: '$1,500 – $2,500',
+    price: '$500 – $750',
     featured: true,
     features: [
       'Everything in Starter',
@@ -81,7 +81,7 @@ const packages = [
     title: 'Start Selling Online',
     description:
       'For businesses that want to sell products and services online.',
-    price: '$2,000 – $4,000',
+    price: '$650 – $850',
     features: [
       'Custom e-commerce website',
       'Product management',
@@ -105,7 +105,7 @@ const packages = [
     title: 'Build Something Unique',
     description:
       'For businesses that need a custom digital system beyond a traditional website.',
-    price: 'Starting at $3,000+',
+    price: 'Starting at $800+',
     features: [
       'Custom web applications',
       'Customer portals',
@@ -126,8 +126,9 @@ const recurringServices = [
   {
     icon: '🛡️',
     name: 'Care',
+    number: '01',
     description: 'Website maintenance & support',
-    price: '$50 – $200',
+    price: '$15 – $25',
     period: '/month',
     features: [
       'Website updates',
@@ -141,6 +142,7 @@ const recurringServices = [
   {
     icon: '🔎',
     name: 'SEO',
+    number: '02',
     description: 'Ongoing search optimization',
     price: 'Custom',
     period: ' pricing',
@@ -156,6 +158,7 @@ const recurringServices = [
   {
     icon: '📊',
     name: 'Growth',
+    number: '03',
     description: 'SEO + traffic + optimization',
     price: 'Custom',
     period: ' pricing',
@@ -234,7 +237,10 @@ function Packages() {
                 ))}
               </ul>
 
-              <button className="package-button">
+              <button
+                className="secondary-button"
+                style={{ marginTop: '16px' }}
+              >
                 {pkg.button}
                 <span>→</span>
               </button>
@@ -263,7 +269,11 @@ function Packages() {
           <div className="recurring-grid">
             {recurringServices.map((service) => (
               <article className="recurring-card" key={service.name}>
-                <div className="recurring-icon">{service.icon}</div>
+                <div className="package-top">
+                  <div className="package-number">{service.number}</div>
+
+                  <div className="package-icon">{service.icon}</div>
+                </div>
 
                 <h3>{service.name}</h3>
 
@@ -283,7 +293,12 @@ function Packages() {
                   ))}
                 </ul>
 
-                <button className="recurring-button">Learn More →</button>
+                <button
+                  className="secondary-button"
+                  style={{ marginTop: '16px' }}
+                >
+                  Learn More →
+                </button>
               </article>
             ))}
           </div>

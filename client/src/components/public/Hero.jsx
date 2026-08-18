@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { ArrowRight } from 'lucide-react'
 
 export default function Hero() {
   return (
@@ -27,7 +28,7 @@ export default function Hero() {
         <div className="hero-buttons">
           <Link to="/contact" className="primary-button">
             Start a Project
-            <span>↗</span>
+            <ArrowRight size={18} />
           </Link>
 
           <Link to="/services" className="secondary-button">
