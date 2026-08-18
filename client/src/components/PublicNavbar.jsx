@@ -146,20 +146,20 @@ export default function PublicNavbar({ lightMode, setLightMode }) {
             <span>05</span>
             Contact
           </Link>
+          <div className="mobile-sidebar-bottom">
+            <p>Build something that moves your business forward.</p>
+
+            <Link
+              to="/login"
+              className="mobile-sidebar-login"
+              onClick={closeSidebar}
+            >
+              Login
+            </Link>
+          </div>
         </nav>
 
         {/* SIDEBAR BOTTOM */}
-        <div className="mobile-sidebar-bottom">
-          <p>Build something that moves your business forward.</p>
-
-          <Link
-            to="/login"
-            className="mobile-sidebar-login"
-            onClick={closeSidebar}
-          >
-            Login
-          </Link>
-        </div>
       </aside>
     </>
   )
