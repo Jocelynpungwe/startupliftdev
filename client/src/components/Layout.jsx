@@ -169,14 +169,7 @@ export default function Layout() {
               onClick={closeMobileMenu}
             />
           </div>
-        </nav>
-
-        {/* SIDEBAR BOTTOM */}
-
-        <div className="sidebar-bottom">
-          {/* USER CARD */}
-
-          <div className="sidebar-user">
+          <div className="nav-section">
             <button
               className="logout-button"
               onClick={handleLogout}
@@ -187,7 +180,7 @@ export default function Layout() {
               <span>Sign out</span>
             </button>
           </div>
-        </div>
+        </nav>
       </aside>
 
       {/* MAIN CONTENT */}
