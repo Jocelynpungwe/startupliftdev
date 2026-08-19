@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+Disallow: /login
+Disallow: /dashboard
+Disallow: /leads
+Disallow: /payroll
+Disallow: /users
+Disallow: /profile
+
+Sitemap: https://startupliftdev.com/sitemap.xml
