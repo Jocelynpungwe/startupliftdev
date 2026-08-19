@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { initAnalytics, trackPageView } from './lib/analytics.js'
-import { initClarity } from './lib/clarity.js'
 
 import { loadMe, initialized } from './features/auth/authSlice.js'
 
@@ -29,6 +28,7 @@ import PayrollManagement from './pages/PayrollManagement.jsx'
 
 // Your StartupLift loader
 import PageLoader from './components/PageLoader.jsx'
+import { initClarity } from './lib/clarity.js'
 
 export default function App() {
   const dispatch = useDispatch()

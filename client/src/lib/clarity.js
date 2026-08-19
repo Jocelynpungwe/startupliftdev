@@ -1,4 +1,4 @@
-import { clarity } from '@microsoft/clarity'
+import Clarity from '@microsoft/clarity'
 
 const CLARITY_PROJECT_ID = import.meta.env.VITE_CLARITY_PROJECT_ID
 
@@ -8,7 +8,7 @@ export const initClarity = () => {
     return
   }
 
-  clarity.init(CLARITY_PROJECT_ID)
+  Clarity.init(CLARITY_PROJECT_ID)
 
   console.log('Microsoft Clarity initialized')
 }
