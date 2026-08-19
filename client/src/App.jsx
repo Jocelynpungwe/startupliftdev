@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { initAnalytics, trackPageView } from './lib/analytics.js'
+import { initClarity } from './lib/clarity.js'
 
 import { loadMe, initialized } from './features/auth/authSlice.js'
 
@@ -67,6 +68,10 @@ export default function App() {
   useEffect(() => {
     trackPageView(location.pathname + location.search)
   }, [location])
+
+  useEffect(() => {
+    initClarity()
+  }, [])
   /*
   =========================================================
   CHECK EXISTING CRM LOGIN
