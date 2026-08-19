@@ -29,3 +29,14 @@ export const trackEvent = (action, category, label) => {
     label,
   })
 }
+
+// Track successful contact-form submissions
+export const trackLead = (service) => {
+  if (!GA_ID) return
+
+  ReactGA.event('generate_lead', {
+    currency: 'CAD',
+    value: 1,
+    service,
+  })
+}

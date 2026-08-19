@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Instagram, Facebook, Mail, Clock, Globe } from 'lucide-react'
 import api from '../lib/api.js'
 import AllHero from '../components/AllHero.jsx'
+import { trackLead } from '../lib/analytics.js'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -31,7 +32,7 @@ export default function Contact() {
 
     try {
       await api.post('/contact', formData)
-
+      trackLead(formData.service)
       setSubmitted(true)
 
       setFormData({
