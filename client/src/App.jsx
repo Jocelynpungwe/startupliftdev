@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { initAnalytics, trackPageView } from './lib/analytics.js'
 
 import { loadMe, initialized } from './features/auth/authSlice.js'
 
@@ -30,6 +31,7 @@ import PageLoader from './components/PageLoader.jsx'
 
 export default function App() {
   const dispatch = useDispatch()
+  const location = useLocation()
 
   const { user, initialized: authInitialized } = useSelector(
     (state) => state.auth,
@@ -58,6 +60,13 @@ export default function App() {
     return () => clearTimeout(timer)
   }, [])
 
+  useEffect(() => {
+    initAnalytics()
+  }, [])
+
+  useEffect(() => {
+    trackPageView(location.pathname + location.search)
+  }, [location])
   /*
   =========================================================
   CHECK EXISTING CRM LOGIN
