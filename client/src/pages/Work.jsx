@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import WhyUs from '../components/public/WhyUs'
+import HeroPortVisual from '../components/public/usable/HeroPortVisual'
+import HeroReuse from '../components/public/usable/HeroReuse'
 
 const projects = [
   {
@@ -61,32 +63,22 @@ export default function Work() {
     <main className="business-page">
       {/* HERO */}
 
-      <section className="business-hero portfolio-hero">
-        <div className="hero-glow glow-one"></div>
-        <div className="hero-glow glow-two"></div>
-
-        <div className="business-container">
-          <div className="business-hero-content">
-            <div className="hero-badge">
-              <span></span>
-              Selected Work
-            </div>
-
-            <p className="eyebrow">OUR PORTFOLIO</p>
-
-            <h1>
-              Digital experiences
-              <span> made to perform.</span>
-            </h1>
-
-            <p className="hero-description">
-              Explore examples of the websites, applications and digital
-              experiences we create for growing businesses.
-            </p>
-          </div>
-        </div>
+      <section className=" hero-section">
+        <HeroReuse
+          eyebrow="OUR PORTFOLIO"
+          h1_Start="Stand Out."
+          h1_span="Built to Grow."
+          h1_end=""
+          par="Explore the websites and digital experiences we've built for businesses looking to stand out, connect with their audience, and grow online. Every project combines modern design, thoughtful functionality, and a clear focus on business goals—from powerful websites to complete digital solutions."
+          first_btn="Start a Project"
+          second_btn="Explore Services"
+          more_one="Built with purpose"
+          more_two="Designed to perform."
+          link_1="/contact"
+          link_2="/services"
+        />
+        <HeroPortVisual />
       </section>
-
       {/* FILTER */}
 
       <section className="business-section portfolio-section">
@@ -107,13 +99,15 @@ export default function Work() {
 
           {/* PROJECTS */}
 
-          <div className="portfolio-grid">
+          <div className="portfolio-grid_one">
             {filteredProjects.map((project, index) => (
-              <Link to={project.link} target="_blank" rel="noopener noreferrer">
-                <article
-                  className={`portfolio-card ${project.className}`}
-                  key={project.title}
-                >
+              <Link
+                to={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                key={project.title}
+              >
+                <article className={`portfolio-card ${project.className}`}>
                   <div
                     className="portfolio-preview"
                     style={{

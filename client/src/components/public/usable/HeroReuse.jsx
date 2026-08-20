@@ -1,0 +1,55 @@
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { ArrowRight } from 'lucide-react'
+
+export default function HeroReuse({
+  eyebrow,
+  h1_Start,
+  h1_span,
+  h1_end,
+  par,
+  first_btn,
+  second_btn,
+  more_one,
+  more_two,
+  link_1,
+  link_2,
+  page,
+}) {
+  return (
+    <div className="hero-content" key={eyebrow}>
+      <div className="eyebrow">
+        <span className="eyebrow-dot"></span>
+        {eyebrow}
+      </div>
+
+      <h1>
+        {h1_Start}
+        <br />
+        <span>{h1_span}</span>
+        <br />
+        {h1_end}
+      </h1>
+
+      <p className="hero-description">{par}</p>
+
+      <div className="hero-buttons">
+        <Link to={link_1} className="primary-button">
+          {first_btn}
+          <ArrowRight size={18} />
+        </Link>
+        <Link to={link_2} className="secondary-button">
+          {second_btn}
+        </Link>
+      </div>
+
+      <div className="hero-trust">
+        <span>{more_one}</span>
+
+        <div className="trust-line"></div>
+
+        <span>{more_two}</span>
+      </div>
+    </div>
+  )
+}

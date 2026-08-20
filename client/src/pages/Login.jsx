@@ -59,7 +59,6 @@ export default function Login() {
             <br />
             <span>Grow your business.</span>
           </h1>
-
           <p style={{ textAlign: 'left' }} className="new_text">
             Welcome to the StartupLift Dev CRM. Manage leads, track performance,
             monitor revenue and keep your entire sales team organized in one

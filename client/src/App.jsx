@@ -26,6 +26,8 @@ import Profile from './pages/Profile.jsx'
 import Users from './pages/Users.jsx'
 import PayrollManagement from './pages/PayrollManagement.jsx'
 
+import ScrollToTop from './components/ScrollToTop.jsx'
+
 // Your StartupLift loader
 import PageLoader from './components/PageLoader.jsx'
 import { initClarity } from './lib/clarity.js'
@@ -126,59 +128,62 @@ export default function App() {
   */
 
   return (
-    <Routes>
-      {/* =================================================
+    <>
+      <ScrollToTop />
+      <Routes>
+        {/* =================================================
           PUBLIC WEBSITE
       ================================================= */}
 
-      <Route element={<PublicLayout />}>
-        <Route path="/" element={<Home />} />
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<Home />} />
 
-        <Route path="/about" element={<About />} />
+          <Route path="/about" element={<About />} />
 
-        <Route path="/services" element={<Services />} />
+          <Route path="/services" element={<Services />} />
 
-        <Route path="/work" element={<Work />} />
+          <Route path="/work" element={<Work />} />
 
-        <Route path="/contact" element={<Contact />} />
-      </Route>
+          <Route path="/contact" element={<Contact />} />
+        </Route>
 
-      {/* =================================================
+        {/* =================================================
           CRM LOGIN
       ================================================= */}
 
-      <Route
-        path="/login"
-        element={user ? <Navigate to="/dashboard" replace /> : <Login />}
-      />
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/dashboard" replace /> : <Login />}
+        />
 
-      {/* =================================================
+        {/* =================================================
           PROTECTED CRM
       ================================================= */}
 
-      <Route element={<ProtectedRoute />}>
-        <Route element={<Layout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+        <Route element={<ProtectedRoute />}>
+          <Route element={<Layout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
 
-          <Route path="/leads" element={<Leads />} />
+            <Route path="/leads" element={<Leads />} />
 
-          <Route path="/leads/new" element={<NewLead />} />
+            <Route path="/leads/new" element={<NewLead />} />
 
-          <Route path="/leads/:id" element={<EditLead />} />
+            <Route path="/leads/:id" element={<EditLead />} />
 
-          <Route path="/profile" element={<Profile />} />
+            <Route path="/profile" element={<Profile />} />
 
-          <Route path="/payroll" element={<PayrollManagement />} />
+            <Route path="/payroll" element={<PayrollManagement />} />
 
-          <Route path="/users" element={<Users />} />
+            <Route path="/users" element={<Users />} />
+          </Route>
         </Route>
-      </Route>
 
-      {/* =================================================
+        {/* =================================================
           FALLBACK
       ================================================= */}
 
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   )
 }

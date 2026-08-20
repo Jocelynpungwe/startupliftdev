@@ -666,7 +666,7 @@
   background: rgba(34, 211, 238, 0.13);
 }
 
-.portfolio-grid {
+.portfolio-grid_one {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 22px;
@@ -1101,7 +1101,7 @@
   }
 
   .services-grid,
-  .portfolio-grid {
+  .portfolio-grid_one {
     grid-template-columns: 1fr;
   }
 

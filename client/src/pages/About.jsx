@@ -3,68 +3,38 @@ import { Link } from 'react-router-dom'
 import Mission from '../components/about/Mission'
 import OurStory from '../components/about/OurStory'
 import WhyUs from '../components/about/WhyUs'
+import HeroReuse from '../components/public/usable/HeroReuse'
+
+import HeroVisual from '../components/public/usable/HeroVisual'
+
 export default function AboutSection() {
   return (
     <main className="business-page">
       {/* HERO */}
       <section className="business-hero about-hero">
-        <div className="hero-glow glow-one"></div>
-        <div className="hero-glow glow-two"></div>
-
         <div className="business-container">
-          <div className="hero-badge">
-            <span></span>
-            About StartupLift Dev
-          </div>
-
           <div className="about-hero-grid">
             <div className="business-hero-content">
-              <p className="eyebrow">BUILD • GROW • OWN</p>
-
-              <h1>
-                We build digital
-                <span> experiences </span>
-                that move businesses forward.
-              </h1>
-
-              <p className="hero-description">
-                StartupLift Dev exists to help entrepreneurs and businesses turn
+              <HeroReuse
+                eyebrow="ABOUT US"
+                h1_Start="Your"
+                h1_span="Growth"
+                h1_end="Starts Here."
+                par="StartupLift Dev exists to help entrepreneurs and businesses turn
                 ideas into real digital businesses. From websites and web
                 applications to SEO and growth strategies, we combine technology
-                and strategy to help you build something that can grow with you.
-              </p>
-
-              <div className="hero-buttons">
-                <Link to="/contact" className="primary-button">
-                  Start a Project →
-                </Link>
-
-                <Link to="/services" className="secondary-button">
-                  Explore Services
-                </Link>
-              </div>
+                and strategy to help you build something that can grow with you."
+                first_btn="Start a Project"
+                second_btn="Explore Services"
+                more_one="Build smarter"
+                more_two="Grow faster."
+                link_1="/contact"
+                link_2="/services"
+                page="about"
+              />
             </div>
 
-            <div className="about-visual">
-              <div className="floating-card card-one">
-                <strong>01</strong>
-                <span>Strategy</span>
-              </div>
-
-              <div className="about-orb">
-                <div className="orb-inner">SL</div>
-              </div>
-
-              <div className="floating-card card-two">
-                <strong>02</strong>
-                <span>Development</span>
-              </div>
-
-              <div className="floating-card card-three">
-                <strong>03</strong>
-                <span>Growth</span>
-              </div>
-            </div>
+            <HeroVisual />
           </div>
         </div>
       </section>

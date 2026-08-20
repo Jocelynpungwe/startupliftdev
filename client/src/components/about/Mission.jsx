@@ -1,24 +1,17 @@
 import React from 'react'
 import './style/mission.css'
+import SectionTitle from '../public/usable/SectionTitle'
 export default function Mission() {
   return (
     <section className="mission-section">
       <div className="business-container">
-        <div className="mission-header">
-          <p className="eyebrow">OUR MISSION</p>
-
-          <h2>
-            build something of Your
-            <span>own.</span>
-          </h2>
-
-          <p className="mission-intro">
-            StartupLift Dev exists to help entrepreneurs and businesses turn
-            ideas into real digital businesses. We provide the technology,
-            strategy and support needed to build a strong foundation and create
-            something that can grow with you.
-          </p>
-        </div>
+        <SectionTitle
+          section="OUR MISSION"
+          h2_start=""
+          h2_glow=""
+          h2_end=""
+          par=""
+        />
 
         <div className="mission-flow">
           {/* BUILD */}

@@ -1,5 +1,7 @@
 import React from 'react'
 import '../../styles/Packages.css'
+import SectionTitle from './usable/SectionTitle'
+import { Link } from 'react-router-dom'
 
 const packages = [
   {
@@ -178,22 +180,15 @@ function Packages() {
     <section className="packages-section" id="packages">
       <div className="packages-container">
         {/* Section Header */}
-        <div className="packages-header">
-          <span className="packages-eyebrow">OUR PACKAGES</span>
-
-          <h2>
-            Build it.
-            <span> Grow it.</span>
-            <br />
-            Own it.
-          </h2>
-
-          <p>
-            Choose the package that fits where your business is today. Whether
+        <SectionTitle
+          section="OUR PACKAGES"
+          h2_start=" Build it."
+          h2_glow="Grow it."
+          h2_end="Own it."
+          par="Choose the package that fits where your business is today. Whether
             you're starting from scratch or ready to grow, StartupLift can help
-            you take the next step.
-          </p>
-        </div>
+            you take the next step."
+        />
 
         {/* Main Packages */}
         <div className="packages-grid">
@@ -237,13 +232,14 @@ function Packages() {
                 ))}
               </ul>
 
-              <button
+              <Link
+                to="/contact"
                 className="secondary-button"
                 style={{ marginTop: '16px' }}
               >
                 {pkg.button}
                 <span style={{ marginLeft: '16px' }}>→</span>
-              </button>
+              </Link>
             </article>
           ))}
         </div>
@@ -293,12 +289,13 @@ function Packages() {
                   ))}
                 </ul>
 
-                <button
+                <Link
+                  to="/contact"
                   className="secondary-button"
                   style={{ marginTop: '16px', width: '100%' }}
                 >
                   Learn More <span style={{ marginLeft: '16px' }}>→</span>
-                </button>
+                </Link>
               </article>
             ))}
           </div>
@@ -317,10 +314,10 @@ function Packages() {
             </p>
           </div>
 
-          <button className="cta-button">
+          <Link to="/contact" className="cta-button">
             Get a Free Consultation
             <span>→</span>
-          </button>
+          </Link>
         </div>
       </div>
     </section>

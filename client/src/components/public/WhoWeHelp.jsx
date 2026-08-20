@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { Rocket, TrendingUp, Crown } from 'lucide-react'
+import SectionTitle from './usable/SectionTitle'
 
 const stages = [
   {
@@ -41,17 +42,13 @@ export default function WhoWeHelp() {
   return (
     <section className="build-grow-own">
       <div className="build-grow-own-container">
-        <div className="build-grow-own-heading">
-          <p className="section-label">THE STARTUPLIFT JOURNEY</p>
-
-          <h2>
-            Build.
-            <span> Grow.</span>
-            Own.
-          </h2>
-
-          <p>Build the foundation. Grow your business. Own what you create.</p>
-        </div>
+        <SectionTitle
+          section="THE STARTUPLIFT JOURNEY"
+          h2_start="Build."
+          h2_glow="Grow."
+          h2_end="Own."
+          par="Build the foundation. Grow your business. Own what you create."
+        />
 
         <div className="build-grow-own-grid">
           {stages.map((stage) => {

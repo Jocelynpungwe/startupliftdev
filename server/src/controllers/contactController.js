@@ -14,6 +14,7 @@ export const sendContactEmail = async (req, res) => {
       })
     }
 
+  
     const { data, error } = await resend.emails.send({
       from: 'StartupLift Website <onboarding@resend.dev>',
       to: `${process.env.CONTACT_EMAIL}`,

@@ -1,0 +1,1046 @@
+/* =========================================================
+   STARTUPLIFT HERO VISUAL
+   Scoped specifically to this component
+========================================================= */
+
+.sl-hero-visual {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  height: 620px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  perspective: 1200px;
+
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   GLOW
+========================================================= */
+
+.sl-hero-glow {
+  position: absolute;
+
+  width: 500px;
+  height: 500px;
+
+  max-width: 80vw;
+  max-height: 80vw;
+
+  border-radius: 50%;
+
+  background: radial-gradient(
+    circle,
+    rgba(37, 99, 235, 0.28) 0%,
+    rgba(37, 99, 235, 0.12) 35%,
+    transparent 70%
+  );
+
+  filter: blur(20px);
+
+  animation: slGlowPulse 5s ease-in-out infinite;
+
+  pointer-events: none;
+}
+
+@keyframes slGlowPulse {
+  0%,
+  100% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   ORBITS
+========================================================= */
+
+.sl-hero-orbit {
+  position: absolute;
+
+  border: 1px solid rgba(96, 165, 250, 0.14);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  max-width: 90%;
+}
+
+.sl-orbit-one {
+  width: 560px;
+  height: 560px;
+
+  transform: rotateX(65deg) rotateZ(20deg);
+}
+
+.sl-orbit-two {
+  width: 450px;
+  height: 450px;
+
+  transform: rotateX(65deg) rotateZ(-35deg);
+}
+
+.sl-orbit-three {
+  width: 650px;
+  height: 250px;
+
+  transform: rotateX(65deg);
+}
+
+/* =========================================================
+   MAIN DASHBOARD
+========================================================= */
+
+.sl-growth-dashboard {
+  position: relative;
+
+  z-index: 5;
+
+  width: min(520px, 90%);
+  min-height: 430px;
+
+  padding: 22px;
+
+  border: 1px solid rgba(148, 163, 184, 0.2);
+
+  border-radius: 28px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(15, 23, 42, 0.94),
+    rgba(2, 6, 23, 0.96)
+  );
+
+  box-shadow:
+    0 40px 100px rgba(0, 0, 0, 0.45),
+    0 0 80px rgba(37, 99, 235, 0.12);
+
+  backdrop-filter: blur(30px);
+
+  box-sizing: border-box;
+
+  transform: rotateY(-8deg) rotateX(4deg);
+
+  transition:
+    transform 0.5s ease,
+    box-shadow 0.5s ease;
+}
+
+.sl-hero-visual:hover .sl-growth-dashboard {
+  transform: rotateY(-2deg) rotateX(1deg) translateY(-8px);
+
+  box-shadow:
+    0 50px 120px rgba(0, 0, 0, 0.5),
+    0 0 100px rgba(37, 99, 235, 0.18);
+}
+
+/* =========================================================
+   DASHBOARD TOP
+========================================================= */
+
+.sl-dashboard-top {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  padding-bottom: 20px;
+
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+
+  gap: 12px;
+}
+
+.sl-dashboard-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  min-width: 0;
+}
+
+.sl-brand-mark {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 10px;
+
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+
+  color: white;
+
+  font-size: 0.65rem;
+  font-weight: 900;
+}
+
+.sl-dashboard-brand strong {
+  display: block;
+
+  font-size: 0.75rem;
+
+  letter-spacing: 0.08em;
+}
+
+.sl-dashboard-brand span {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #64748b;
+
+  font-size: 0.55rem;
+
+  letter-spacing: 0.15em;
+}
+
+.sl-dashboard-status {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  color: #60a5fa;
+
+  font-size: 0.55rem;
+
+  font-weight: 800;
+
+  letter-spacing: 0.15em;
+
+  flex: 0 0 auto;
+}
+
+.sl-status-dot {
+  width: 7px;
+  height: 7px;
+
+  flex: 0 0 auto;
+
+  border-radius: 50%;
+
+  background: #60a5fa;
+
+  box-shadow: 0 0 12px rgba(96, 165, 250, 0.8);
+
+  animation: slStatusPulse 2s infinite;
+}
+
+@keyframes slStatusPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.sl-dashboard-content {
+  display: grid;
+
+  grid-template-columns:
+    minmax(100px, 0.65fr)
+    minmax(0, 1.35fr);
+
+  gap: 20px;
+
+  padding: 30px 0;
+}
+
+.sl-dashboard-intro {
+  min-width: 0;
+}
+
+.sl-dashboard-intro > span {
+  color: #64748b;
+
+  font-size: 0.55rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.14em;
+}
+
+.sl-dashboard-intro h3 {
+  margin: 15px 0 0;
+
+  font-size: 2.7rem;
+
+  line-height: 0.95;
+
+  letter-spacing: -0.06em;
+}
+
+.sl-dashboard-intro h3 em {
+  color: #3b82f6;
+
+  font-style: normal;
+}
+
+/* =========================================================
+   GROWTH CARD
+========================================================= */
+
+.sl-growth-card {
+  min-width: 0;
+
+  padding: 18px;
+
+  border: 1px solid rgba(148, 163, 184, 0.1);
+
+  border-radius: 18px;
+
+  background: rgba(15, 23, 42, 0.65);
+
+  box-sizing: border-box;
+}
+
+.sl-growth-card-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  gap: 10px;
+}
+
+.sl-growth-card-header span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 0.5rem;
+
+  letter-spacing: 0.12em;
+}
+
+.sl-growth-card-header strong {
+  display: block;
+
+  margin-top: 5px;
+
+  font-size: 1.4rem;
+}
+
+.sl-growth-period {
+  color: #64748b;
+
+  font-size: 0.5rem;
+
+  letter-spacing: 0.1em;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   CHART
+========================================================= */
+
+.sl-growth-chart {
+  position: relative;
+
+  width: 100%;
+
+  height: 145px;
+
+  margin-top: 20px;
+
+  overflow: hidden;
+}
+
+.sl-chart-grid {
+  position: absolute;
+
+  left: 0;
+
+  width: 100%;
+
+  height: 1px;
+
+  background: rgba(148, 163, 184, 0.07);
+}
+
+.sl-grid-one {
+  top: 25%;
+}
+
+.sl-grid-two {
+  top: 50%;
+}
+
+.sl-grid-three {
+  top: 75%;
+}
+
+.sl-growth-chart svg {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  overflow: visible;
+}
+
+.sl-chart-path {
+  fill: none;
+
+  stroke: #3b82f6;
+
+  stroke-width: 3;
+
+  stroke-linecap: round;
+
+  stroke-dasharray: 1000;
+
+  stroke-dashoffset: 1000;
+
+  animation: slDrawChart 2.5s ease forwards;
+}
+
+@keyframes slDrawChart {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.sl-chart-area {
+  fill: url(#slAreaGradient);
+}
+
+.sl-chart-point {
+  fill: #60a5fa;
+
+  filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.9));
+
+  animation: slPointPulse 2s ease-in-out infinite;
+}
+
+@keyframes slPointPulse {
+  0%,
+  100% {
+    r: 5;
+  }
+
+  50% {
+    r: 8;
+  }
+}
+
+.sl-chart-bottom {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 5px;
+
+  margin-top: 3px;
+
+  color: #475569;
+
+  font-size: 0.45rem;
+}
+
+/* =========================================================
+   METRICS
+========================================================= */
+
+.sl-dashboard-metrics {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 10px;
+}
+
+.sl-metric {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 0;
+
+  padding: 13px;
+
+  border: 1px solid rgba(148, 163, 184, 0.1);
+
+  border-radius: 14px;
+
+  background: rgba(15, 23, 42, 0.45);
+
+  box-sizing: border-box;
+}
+
+.sl-metric-icon {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  width: 28px;
+  height: 28px;
+
+  border-radius: 8px;
+
+  background: rgba(37, 99, 235, 0.12);
+
+  color: #60a5fa;
+
+  font-size: 0.8rem;
+}
+
+.sl-metric strong {
+  display: block;
+
+  font-size: 0.9rem;
+}
+
+.sl-metric span {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #64748b;
+
+  font-size: 0.5rem;
+}
+
+/* =========================================================
+   FLOATING CARDS
+========================================================= */
+
+.sl-floating-growth-card {
+  position: absolute;
+
+  z-index: 10;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 13px 17px;
+
+  border: 1px solid rgba(96, 165, 250, 0.2);
+
+  border-radius: 15px;
+
+  background: rgba(15, 23, 42, 0.85);
+
+  backdrop-filter: blur(20px);
+
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+
+  animation: slFloatingCard 5s ease-in-out infinite;
+
+  box-sizing: border-box;
+}
+
+.sl-floating-icon {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  width: 32px;
+  height: 32px;
+
+  border-radius: 9px;
+
+  background: rgba(37, 99, 235, 0.12);
+
+  color: #60a5fa;
+
+  font-size: 0.9rem;
+}
+
+.sl-floating-growth-card span {
+  display: block;
+
+  color: #475569;
+
+  font-size: 0.45rem;
+
+  letter-spacing: 0.12em;
+}
+
+.sl-floating-growth-card strong {
+  display: block;
+
+  margin-top: 2px;
+
+  font-size: 0.7rem;
+
+  letter-spacing: 0.08em;
+}
+
+.sl-build-card {
+  top: 80px;
+  left: 20px;
+
+  animation-delay: -1s;
+}
+
+.sl-grow-card {
+  right: 5px;
+  top: 190px;
+
+  animation-delay: -3s;
+}
+
+.sl-own-card {
+  left: 40px;
+  bottom: 65px;
+
+  animation-delay: -5s;
+}
+
+@keyframes slFloatingCard {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+.sl-hero-particle {
+  position: absolute;
+
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background: #60a5fa;
+
+  box-shadow: 0 0 15px rgba(96, 165, 250, 0.8);
+
+  animation: slParticleFloat 4s ease-in-out infinite;
+
+  pointer-events: none;
+}
+
+.sl-particle-one {
+  top: 100px;
+  right: 100px;
+}
+
+.sl-particle-two {
+  bottom: 130px;
+  right: 160px;
+
+  animation-delay: -1s;
+}
+
+.sl-particle-three {
+  top: 300px;
+  left: 30px;
+
+  animation-delay: -2s;
+}
+
+.sl-particle-four {
+  bottom: 80px;
+  right: 60px;
+
+  animation-delay: -3s;
+}
+
+@keyframes slParticleFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+
+    opacity: 0.4;
+  }
+
+  50% {
+    transform: translateY(-18px);
+
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+  .sl-hero-visual {
+    width: 100%;
+
+    max-width: 100%;
+
+    height: 560px;
+
+    overflow: hidden;
+  }
+
+  .sl-growth-dashboard {
+    width: min(520px, 82%);
+  }
+
+  .sl-floating-growth-card {
+    transform: scale(0.9);
+  }
+
+  .sl-build-card {
+    left: 3%;
+  }
+
+  .sl-grow-card {
+    right: 3%;
+  }
+
+  .sl-own-card {
+    left: 6%;
+  }
+}
+
+/* =========================================================
+   SMALL TABLETS / LARGE PHONES
+========================================================= */
+
+@media (max-width: 700px) {
+  .sl-hero-visual {
+    height: 500px;
+
+    perspective: none;
+  }
+
+  .sl-growth-dashboard {
+    width: min(520px, 92%);
+
+    padding: 18px;
+
+    border-radius: 22px;
+
+    transform: none;
+  }
+
+  .sl-hero-visual:hover .sl-growth-dashboard {
+    transform: translateY(-4px);
+  }
+
+  .sl-dashboard-content {
+    grid-template-columns: 1fr;
+
+    gap: 18px;
+
+    padding: 20px 0;
+  }
+
+  .sl-dashboard-intro {
+    display: none;
+  }
+
+  .sl-growth-card {
+    width: 100%;
+  }
+
+  .sl-growth-chart {
+    height: 135px;
+  }
+
+  .sl-dashboard-metrics {
+    gap: 7px;
+  }
+
+  .sl-metric {
+    padding: 9px;
+
+    gap: 7px;
+  }
+
+  .sl-metric-icon {
+    width: 25px;
+    height: 25px;
+  }
+
+  .sl-metric strong {
+    font-size: 0.78rem;
+  }
+
+  .sl-floating-growth-card {
+    transform: scale(0.78);
+  }
+
+  .sl-build-card {
+    left: -5px;
+    top: 70px;
+  }
+
+  .sl-grow-card {
+    right: -5px;
+    top: 175px;
+  }
+
+  .sl-own-card {
+    left: 5px;
+    bottom: 45px;
+  }
+
+  .sl-orbit-one {
+    width: 450px;
+    height: 450px;
+  }
+
+  .sl-orbit-two {
+    width: 360px;
+    height: 360px;
+  }
+
+  .sl-orbit-three {
+    width: 500px;
+    height: 200px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .sl-hero-visual {
+    height: 420px;
+
+    width: 100%;
+
+    max-width: 100%;
+
+    overflow: hidden;
+  }
+
+  .sl-growth-dashboard {
+    width: 94%;
+
+    min-height: 0;
+
+    padding: 14px;
+
+    border-radius: 18px;
+  }
+
+  .sl-dashboard-top {
+    padding-bottom: 14px;
+  }
+
+  .sl-brand-mark {
+    width: 30px;
+    height: 30px;
+
+    border-radius: 8px;
+  }
+
+  .sl-dashboard-brand strong {
+    font-size: 0.62rem;
+  }
+
+  .sl-dashboard-brand span {
+    font-size: 0.45rem;
+  }
+
+  .sl-dashboard-status {
+    font-size: 0.45rem;
+  }
+
+  .sl-growth-card {
+    padding: 13px;
+
+    border-radius: 14px;
+  }
+
+  .sl-growth-card-header strong {
+    font-size: 1.15rem;
+  }
+
+  .sl-growth-chart {
+    height: 110px;
+
+    margin-top: 14px;
+  }
+
+  .sl-dashboard-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 5px;
+  }
+
+  .sl-metric {
+    flex-direction: column;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 7px;
+
+    gap: 4px;
+  }
+
+  .sl-metric-icon {
+    width: 23px;
+    height: 23px;
+
+    font-size: 0.7rem;
+  }
+
+  .sl-metric strong {
+    font-size: 0.7rem;
+  }
+
+  .sl-metric span {
+    font-size: 0.42rem;
+  }
+
+  .sl-floating-growth-card {
+    padding: 9px 11px;
+
+    gap: 6px;
+
+    transform: scale(0.62);
+  }
+
+  .sl-floating-icon {
+    width: 27px;
+    height: 27px;
+  }
+
+  .sl-floating-growth-card strong {
+    font-size: 0.6rem;
+  }
+
+  .sl-build-card {
+    left: -18px;
+    top: 65px;
+  }
+
+  .sl-grow-card {
+    right: -18px;
+    top: 155px;
+  }
+
+  .sl-own-card {
+    left: -8px;
+    bottom: 25px;
+  }
+
+  .sl-hero-glow {
+    width: 350px;
+    height: 350px;
+  }
+
+  .sl-orbit-one {
+    width: 350px;
+    height: 350px;
+  }
+
+  .sl-orbit-two {
+    width: 280px;
+    height: 280px;
+  }
+
+  .sl-orbit-three {
+    width: 380px;
+    height: 160px;
+  }
+
+  .sl-particle-one {
+    right: 30px;
+  }
+
+  .sl-particle-two {
+    right: 40px;
+  }
+
+  .sl-particle-three {
+    left: 15px;
+  }
+
+  .sl-particle-four {
+    right: 20px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media (max-width: 360px) {
+  .sl-hero-visual {
+    height: 390px;
+  }
+
+  .sl-growth-dashboard {
+    width: 96%;
+
+    padding: 11px;
+  }
+
+  .sl-dashboard-brand strong {
+    font-size: 0.55rem;
+  }
+
+  .sl-dashboard-brand span {
+    font-size: 0.4rem;
+  }
+
+  .sl-growth-card-header span,
+  .sl-growth-period {
+    font-size: 0.42rem;
+  }
+
+  .sl-growth-card-header strong {
+    font-size: 1rem;
+  }
+
+  .sl-growth-chart {
+    height: 95px;
+  }
+
+  .sl-floating-growth-card {
+    transform: scale(0.52);
+  }
+}

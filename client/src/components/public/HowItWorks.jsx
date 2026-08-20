@@ -1,14 +1,17 @@
 import React from 'react'
+import SectionTitle from './usable/SectionTitle'
 
 export default function HowItWorks() {
   return (
     <section className="process-section">
-      <div className="process-intro">
-        <p className="section-label">THE PROBLEM</p>
-
-        <h2>
-          Your Business <span>Deserves More</span> Than Just a Website.
-        </h2>
+      <div style={{ paddingRight: '16px' }}>
+        <SectionTitle
+          section="THE PROBLEM"
+          h2_start="Your Business Needs More"
+          h2_glow="Visibility."
+          h2_end=""
+          par=""
+        />
       </div>
 
       <div className="process-list">

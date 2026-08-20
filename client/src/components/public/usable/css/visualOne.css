@@ -1,0 +1,786 @@
+/* =========================================================
+   STARTUPLIFT GROWTH VISUAL
+   ========================================================= */
+
+.hero-visual {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  min-height: 620px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+/* Glow */
+
+.sl-visual-glow {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+
+  background: radial-gradient(
+    circle,
+    rgba(37, 99, 235, 0.25) 0%,
+    rgba(37, 99, 235, 0.08) 45%,
+    transparent 72%
+  );
+
+  filter: blur(10px);
+  pointer-events: none;
+}
+
+/* =========================================================
+   MAIN SYSTEM
+   ========================================================= */
+
+.sl-growth-system {
+  position: relative;
+  z-index: 5;
+
+  width: min(590px, 88%);
+  padding: 24px;
+
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 24px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(15, 23, 42, 0.96),
+    rgba(15, 23, 42, 0.82)
+  );
+
+  box-shadow:
+    0 35px 80px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  backdrop-filter: blur(18px);
+
+  animation: slSystemFloat 7s ease-in-out infinite;
+}
+
+@keyframes slSystemFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.sl-system-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.sl-system-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sl-brand-icon {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 800;
+
+  box-shadow: 0 0 25px rgba(37, 99, 235, 0.35);
+}
+
+.sl-system-brand strong {
+  display: block;
+
+  color: #f8fafc;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+}
+
+.sl-system-brand span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #64748b;
+  font-size: 0.48rem;
+  letter-spacing: 0.15em;
+}
+
+.sl-live-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #94a3b8;
+  font-size: 0.48rem;
+  letter-spacing: 0.14em;
+}
+
+.sl-live-status span {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #22c55e;
+
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+
+  animation: slPulse 2s ease-in-out infinite;
+}
+
+@keyframes slPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* =========================================================
+   GROWTH FLOW
+   ========================================================= */
+
+.sl-growth-flow {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 12px;
+
+  padding: 26px 0;
+}
+
+.sl-flow-line {
+  position: absolute;
+
+  top: 49px;
+  left: 15%;
+  right: 15%;
+
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(59, 130, 246, 0.55),
+    transparent
+  );
+}
+
+.sl-growth-step {
+  position: relative;
+  z-index: 2;
+
+  text-align: center;
+}
+
+.sl-step-icon {
+  width: 42px;
+  height: 42px;
+
+  margin: 0 auto 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: rgba(30, 41, 59, 0.95);
+
+  border: 1px solid rgba(148, 163, 184, 0.14);
+
+  color: #94a3b8;
+
+  font-size: 1rem;
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.sl-step-active .sl-step-icon {
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+
+  color: white;
+
+  border-color: transparent;
+
+  box-shadow: 0 0 25px rgba(37, 99, 235, 0.4);
+}
+
+.sl-step-number {
+  margin-bottom: 3px;
+
+  color: #475569;
+
+  font-size: 0.42rem;
+  letter-spacing: 0.12em;
+}
+
+.sl-growth-step strong {
+  display: block;
+
+  color: #f8fafc;
+
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+}
+
+.sl-growth-step span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #64748b;
+
+  font-size: 0.43rem;
+}
+
+/* =========================================================
+   ANALYTICS
+   ========================================================= */
+
+.sl-analytics-card {
+  padding: 18px;
+
+  border-radius: 16px;
+
+  background: rgba(2, 6, 23, 0.55);
+
+  border: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+.sl-analytics-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.sl-analytics-header span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 0.45rem;
+  letter-spacing: 0.12em;
+}
+
+.sl-analytics-header strong {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #f8fafc;
+
+  font-size: 1.25rem;
+}
+
+.sl-analytics-header small {
+  color: #475569;
+
+  font-size: 0.4rem;
+  letter-spacing: 0.1em;
+}
+
+/* Chart */
+
+.sl-chart {
+  position: relative;
+
+  height: 150px;
+
+  margin-top: 12px;
+
+  overflow: hidden;
+}
+
+.sl-chart-grid {
+  position: absolute;
+
+  top: 25%;
+  left: 0;
+  right: 0;
+
+  height: 1px;
+
+  background: rgba(148, 163, 184, 0.06);
+}
+
+.sl-chart-grid-two {
+  top: 50%;
+}
+
+.sl-chart-grid-three {
+  top: 75%;
+}
+
+.sl-chart svg {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+}
+
+.sl-chart-area {
+  fill: url(#slGrowthArea);
+}
+
+.sl-chart-line {
+  fill: none;
+
+  stroke: url(#slGrowthLine);
+
+  stroke-width: 3;
+
+  vector-effect: non-scaling-stroke;
+
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.45));
+}
+
+.sl-chart-point {
+  fill: #38bdf8;
+
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.8));
+}
+
+.sl-chart-labels {
+  display: flex;
+  justify-content: space-between;
+
+  margin-top: 4px;
+
+  color: #475569;
+
+  font-size: 0.4rem;
+  letter-spacing: 0.08em;
+}
+
+/* =========================================================
+   METRICS
+   ========================================================= */
+
+.sl-growth-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 10px;
+
+  margin-top: 12px;
+}
+
+.sl-growth-metrics > div {
+  padding: 12px;
+
+  border-radius: 12px;
+
+  background: rgba(30, 41, 59, 0.5);
+
+  border: 1px solid rgba(148, 163, 184, 0.07);
+}
+
+.sl-growth-metrics span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 0.4rem;
+  letter-spacing: 0.1em;
+}
+
+.sl-growth-metrics strong {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #f8fafc;
+
+  font-size: 0.85rem;
+}
+
+/* =========================================================
+   FLOATING CARDS
+   ========================================================= */
+
+.sl-floating-card {
+  position: absolute;
+  z-index: 8;
+
+  min-width: 145px;
+
+  padding: 13px 16px;
+
+  border-radius: 13px;
+
+  background: rgba(15, 23, 42, 0.92);
+
+  border: 1px solid rgba(148, 163, 184, 0.13);
+
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+
+  backdrop-filter: blur(12px);
+
+  animation: slCardFloat 5s ease-in-out infinite;
+}
+
+.sl-floating-card span {
+  display: block;
+
+  color: #475569;
+
+  font-size: 0.4rem;
+  letter-spacing: 0.12em;
+}
+
+.sl-floating-card strong {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #f8fafc;
+
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+}
+
+.sl-floating-card small {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #64748b;
+
+  font-size: 0.42rem;
+}
+
+.sl-floating-one {
+  left: 0;
+  top: 18%;
+
+  animation-delay: -1s;
+}
+
+.sl-floating-two {
+  right: -5px;
+  top: 42%;
+
+  animation-delay: -2.5s;
+}
+
+.sl-floating-three {
+  left: 5%;
+  bottom: 13%;
+
+  animation-delay: -4s;
+}
+
+@keyframes slCardFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+/* =========================================================
+   PARTICLES
+   ========================================================= */
+
+.sl-particle {
+  position: absolute;
+
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background: #60a5fa;
+
+  box-shadow: 0 0 14px rgba(96, 165, 250, 0.8);
+
+  animation: slParticleFloat 4s ease-in-out infinite;
+}
+
+.sl-particle-one {
+  top: 12%;
+  right: 20%;
+}
+
+.sl-particle-two {
+  left: 12%;
+  top: 55%;
+
+  animation-delay: -1.5s;
+}
+
+.sl-particle-three {
+  right: 10%;
+  bottom: 15%;
+
+  animation-delay: -3s;
+}
+
+@keyframes slParticleFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+
+  50% {
+    transform: translateY(-15px);
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1050px) {
+  .hero-visual {
+    min-height: 570px;
+  }
+
+  .sl-growth-system {
+    width: min(540px, 86%);
+  }
+
+  .sl-floating-one {
+    left: 0;
+  }
+
+  .sl-floating-two {
+    right: 0;
+  }
+
+  .sl-floating-three {
+    left: 2%;
+  }
+}
+
+/* =========================================================
+   SMALL TABLETS
+   ========================================================= */
+
+@media (max-width: 800px) {
+  .hero-visual {
+    min-height: 540px;
+  }
+
+  .sl-growth-system {
+    width: min(520px, 92%);
+    padding: 20px;
+  }
+
+  .sl-floating-card {
+    min-width: 125px;
+    padding: 11px 13px;
+  }
+
+  .sl-floating-one {
+    left: -5px;
+  }
+
+  .sl-floating-two {
+    right: -5px;
+  }
+
+  .sl-floating-three {
+    left: 3%;
+    bottom: 8%;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+  .hero-visual {
+    width: 100%;
+    min-height: auto;
+
+    padding: 35px 8px 50px;
+
+    overflow: visible;
+  }
+
+  .sl-visual-glow {
+    width: 280px;
+    height: 280px;
+  }
+
+  .sl-growth-system {
+    width: 100%;
+    max-width: 480px;
+
+    padding: 16px;
+
+    border-radius: 18px;
+  }
+
+  .sl-system-header {
+    padding-bottom: 15px;
+  }
+
+  .sl-brand-icon {
+    width: 32px;
+    height: 32px;
+
+    font-size: 0.6rem;
+  }
+
+  .sl-system-brand strong {
+    font-size: 0.6rem;
+  }
+
+  .sl-system-brand span {
+    font-size: 0.4rem;
+  }
+
+  .sl-live-status {
+    font-size: 0.4rem;
+  }
+
+  .sl-growth-flow {
+    gap: 5px;
+
+    padding: 20px 0;
+  }
+
+  .sl-flow-line {
+    top: 41px;
+
+    left: 13%;
+    right: 13%;
+  }
+
+  .sl-step-icon {
+    width: 34px;
+    height: 34px;
+
+    margin-bottom: 7px;
+
+    font-size: 0.8rem;
+  }
+
+  .sl-step-number {
+    font-size: 0.35rem;
+  }
+
+  .sl-growth-step strong {
+    font-size: 0.5rem;
+  }
+
+  .sl-growth-step span {
+    font-size: 0.34rem;
+  }
+
+  .sl-analytics-card {
+    padding: 13px;
+  }
+
+  .sl-analytics-header strong {
+    font-size: 1rem;
+  }
+
+  .sl-chart {
+    height: 115px;
+  }
+
+  .sl-growth-metrics {
+    gap: 6px;
+  }
+
+  .sl-growth-metrics > div {
+    padding: 9px;
+  }
+
+  .sl-growth-metrics span {
+    font-size: 0.32rem;
+  }
+
+  .sl-growth-metrics strong {
+    font-size: 0.65rem;
+  }
+
+  /* Hide floating cards on small screens.
+     The main visual stays clean and centered. */
+
+  .sl-floating-card {
+    display: none;
+  }
+
+  .sl-particle {
+    display: none;
+  }
+}
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 400px) {
+  .hero-visual {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .sl-growth-system {
+    padding: 13px;
+  }
+
+  .sl-growth-flow {
+    gap: 2px;
+  }
+
+  .sl-step-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .sl-growth-step strong {
+    font-size: 0.45rem;
+  }
+
+  .sl-growth-step span {
+    font-size: 0.3rem;
+  }
+
+  .sl-chart {
+    height: 100px;
+  }
+}

@@ -3,6 +3,8 @@ import { Instagram, Facebook, Mail, Clock, Globe } from 'lucide-react'
 import api from '../lib/api.js'
 import AllHero from '../components/AllHero.jsx'
 import { trackLead } from '../lib/analytics.js'
+import HeroContactVisual from '../components/public/usable/HeroContactVisual.jsx'
+import HeroReuse from '../components/public/usable/HeroReuse.jsx'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -59,14 +61,25 @@ export default function Contact() {
       {/* =====================================================
           HERO
       ===================================================== */}
-      <AllHero
-        glow=" Let's Work Together"
-        info="CONTACT STARTUPLIFT DEV"
-        h1Start="Let's build something"
-        h1end="great together"
-        par=" Have a business idea, need a new website or want to improve your
+      <section className="hero-section">
+        <HeroReuse
+          eyebrow="CONTACT STARTUPLIFT DEV"
+          h1_Start="Let's build something"
+          h1_span="made to perform"
+          h1_end=""
+          par="Have a business idea, need a new website or want to improve your
               current online presence? Tell us what you're working on."
-      />
+          first_btn="Start a Project"
+          second_btn="Explore Services"
+          more_one="Built for ambitious businesses"
+          more_two="Web • SEO • Growth"
+          link_1="/contact"
+          link_2="/services"
+          page="home"
+        />
+
+        <HeroContactVisual />
+      </section>
 
       {/* =====================================================
           CONTACT SECTION
@@ -183,14 +196,14 @@ export default function Contact() {
               </div>
 
               {/* STARTUPLIFT ORB */}
-
+              {/* 
               <div className="contact-orb">
                 <div>
                   <span>STARTUP</span>
                   <strong>LIFT</strong>
                   <small>DEV</small>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* =================================================
