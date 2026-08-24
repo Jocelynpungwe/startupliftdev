@@ -25,7 +25,7 @@ import EditLead from './pages/EditLead.jsx'
 import Profile from './pages/Profile.jsx'
 import Users from './pages/Users.jsx'
 import PayrollManagement from './pages/PayrollManagement.jsx'
-
+import LeadGuide from './pages/LeadGuide.jsx'
 import ScrollToTop from './components/ScrollToTop.jsx'
 
 // Your StartupLift loader
@@ -167,7 +167,7 @@ export default function App() {
             <Route path="/leads" element={<Leads />} />
 
             <Route path="/leads/new" element={<NewLead />} />
-
+            <Route path="/lead-guide" element={<LeadGuide />} />
             <Route path="/leads/:id" element={<EditLead />} />
 
             <Route path="/profile" element={<Profile />} />

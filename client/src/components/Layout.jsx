@@ -11,8 +11,7 @@ import {
   Bell,
   Search,
   ChevronDown,
-  Sun,
-  Moon,
+  BookOpen,
   Menu,
   X,
   BarChart3,
@@ -127,6 +126,13 @@ export default function Layout() {
               to="/leads/new"
               icon={<UserPlus size={18} />}
               label="Add New Lead"
+              onClick={closeMobileMenu}
+            />
+
+            <NavItem
+              to="/lead-guide"
+              icon={<BookOpen size={18} />}
+              label="Lead Guide"
               onClick={closeMobileMenu}
             />
           </div>
