@@ -27,6 +27,11 @@ import Users from './pages/Users.jsx'
 import PayrollManagement from './pages/PayrollManagement.jsx'
 import LeadGuide from './pages/LeadGuide.jsx'
 import ScrollToTop from './components/ScrollToTop.jsx'
+import SalesCallGuide from './pages/SalesCallGuide'
+import DiscoveryGuide from './pages/DiscoveryGuide'
+import SolutionGuide from './pages/SolutionGuide'
+import ProposalGuide from './pages/ProposalGuide'
+import FollowUpGuide from './pages/FollowUpGuide'
 
 // Your StartupLift loader
 import PageLoader from './components/PageLoader.jsx'
@@ -168,6 +173,12 @@ export default function App() {
 
             <Route path="/leads/new" element={<NewLead />} />
             <Route path="/lead-guide" element={<LeadGuide />} />
+
+            <Route path="/sales/call-guide" element={<SalesCallGuide />} />
+            <Route path="/sales/discovery-guide" element={<DiscoveryGuide />} />
+            <Route path="/sales/solution-guide" element={<SolutionGuide />} />
+            <Route path="/sales/proposal-guide" element={<ProposalGuide />} />
+            <Route path="/sales/follow-up-guide" element={<FollowUpGuide />} />
             <Route path="/leads/:id" element={<EditLead />} />
 
             <Route path="/profile" element={<Profile />} />

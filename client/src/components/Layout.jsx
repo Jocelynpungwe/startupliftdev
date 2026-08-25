@@ -17,6 +17,10 @@ import {
   BarChart3,
   BriefcaseBusiness,
   ShieldCheck,
+  PhoneCall,
+  Lightbulb,
+  FileText,
+  RefreshCw,
 } from 'lucide-react'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -128,11 +132,47 @@ export default function Layout() {
               label="Add New Lead"
               onClick={closeMobileMenu}
             />
+          </div>
+
+          {/* Guides */}
+
+          <div className="nav-section">
+            <div className="nav-section-title">Guides</div>
 
             <NavItem
               to="/lead-guide"
               icon={<BookOpen size={18} />}
               label="Lead Guide"
+              onClick={closeMobileMenu}
+            />
+            <NavItem
+              to="/sales/call-guide"
+              icon={<PhoneCall size={18} />}
+              label="Call Guide"
+              onClick={closeMobileMenu}
+            />
+            <NavItem
+              to="/sales/discovery-guide"
+              icon={<Search size={18} />}
+              label="Analysis Guide"
+              onClick={closeMobileMenu}
+            />
+            <NavItem
+              to="/sales/solution-guide"
+              icon={<Lightbulb size={18} />}
+              label="Solution Presentation"
+              onClick={closeMobileMenu}
+            />
+            <NavItem
+              to="/sales/proposal-guide"
+              icon={<FileText size={18} />}
+              label="Proposal & Pricing"
+              onClick={closeMobileMenu}
+            />
+            <NavItem
+              to="/sales/follow-up-guide"
+              icon={<RefreshCw size={18} />}
+              label="Follow-Up & Closing"
               onClick={closeMobileMenu}
             />
           </div>
