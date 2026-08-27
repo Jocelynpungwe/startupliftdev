@@ -1,0 +1,963 @@
+/* =========================================================
+   STARTUPLIFT DEV
+   SERVICES / PRICING SECTION
+========================================================= */
+
+.sl-pricing-section {
+  position: relative;
+  width: 100%;
+  padding: 120px 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 15% 15%,
+      rgba(0, 174, 255, 0.09),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 85% 35%,
+      rgba(116, 66, 255, 0.08),
+      transparent 30%
+    ),
+    #05070d;
+  color: #ffffff;
+}
+
+/* subtle grid */
+
+.sl-pricing-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+
+  background-size: 55px 55px;
+
+  mask-image: linear-gradient(to bottom, black, transparent 90%);
+}
+
+.sl-pricing-container {
+  position: relative;
+  z-index: 2;
+
+  width: min(1200px, 100%);
+  margin: 0 auto;
+}
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+.sl-pricing-intro {
+  max-width: 850px;
+  margin: 0 auto 70px;
+  text-align: center;
+}
+
+.sl-pricing-intro p {
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* =========================================================
+   MAIN PACKAGE GRID
+========================================================= */
+
+.sl-package-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+/* =========================================================
+   PACKAGE CARD
+========================================================= */
+
+.sl-package-card {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  padding: 34px;
+
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 24px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.055),
+    rgba(255, 255, 255, 0.018)
+  );
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+
+  transition:
+    transform 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.sl-package-card:hover {
+  transform: translateY(-8px);
+
+  border-color: rgba(0, 190, 255, 0.35);
+
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.4),
+    0 0 35px rgba(0, 174, 255, 0.07);
+}
+
+/* =========================================================
+   FEATURED CARD
+========================================================= */
+
+.sl-package-card-featured {
+  border-color: rgba(0, 191, 255, 0.45);
+
+  background:
+    radial-gradient(circle at 50% 0%, rgba(0, 174, 255, 0.12), transparent 45%),
+    linear-gradient(145deg, rgba(0, 174, 255, 0.07), rgba(255, 255, 255, 0.02));
+
+  box-shadow:
+    0 25px 80px rgba(0, 0, 0, 0.4),
+    0 0 45px rgba(0, 174, 255, 0.08);
+}
+
+.sl-package-card-featured:hover {
+  border-color: rgba(0, 210, 255, 0.65);
+}
+
+/* =========================================================
+   POPULAR BADGE
+========================================================= */
+
+.sl-package-popular {
+  position: absolute;
+  top: 0;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 15px;
+
+  border: 1px solid rgba(0, 200, 255, 0.4);
+  border-radius: 999px;
+
+  background: #07111b;
+
+  color: #65dcff;
+
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+
+  white-space: nowrap;
+}
+
+.sl-package-popular span {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #38d9ff;
+
+  box-shadow: 0 0 10px rgba(56, 217, 255, 0.9);
+}
+
+/* =========================================================
+   PACKAGE TOP
+========================================================= */
+
+.sl-package-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 30px;
+}
+
+.sl-package-number {
+  font-size: 12px;
+  font-weight: 800;
+
+  letter-spacing: 2px;
+
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.sl-package-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.045);
+
+  font-size: 23px;
+
+  transition: transform 0.3s ease;
+}
+
+.sl-package-card:hover .sl-package-icon {
+  transform: rotate(-5deg) scale(1.08);
+}
+
+/* =========================================================
+   PACKAGE HEADING
+========================================================= */
+
+.sl-package-heading {
+  min-height: 175px;
+}
+
+.sl-package-name {
+  display: inline-block;
+
+  margin-bottom: 10px;
+
+  color: #48d9ff;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.sl-package-heading h3 {
+  margin: 0 0 14px;
+
+  font-size: clamp(23px, 2vw, 29px);
+  line-height: 1.15;
+
+  color: #ffffff;
+}
+
+.sl-package-heading p {
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.58);
+
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+.sl-package-price {
+  margin: 15px 0 24px;
+}
+
+.sl-package-price span {
+  font-size: 25px;
+  font-weight: 800;
+
+  letter-spacing: -0.5px;
+
+  background: linear-gradient(90deg, #ffffff, #7be5ff);
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* =========================================================
+   DIVIDER
+========================================================= */
+
+.sl-package-line {
+  width: 100%;
+  height: 1px;
+
+  margin-bottom: 25px;
+
+  background: linear-gradient(
+    90deg,
+    rgba(0, 190, 255, 0.35),
+    rgba(255, 255, 255, 0.04),
+    transparent
+  );
+}
+
+/* =========================================================
+   FEATURES
+========================================================= */
+
+.sl-package-features {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.sl-package-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+
+  color: rgba(255, 255, 255, 0.72);
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.sl-check {
+  flex-shrink: 0;
+
+  width: 20px;
+  height: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: rgba(0, 190, 255, 0.1);
+
+  color: #48d9ff;
+
+  font-size: 11px;
+  font-weight: 900;
+}
+
+/* =========================================================
+   PACKAGE BUTTON
+========================================================= */
+
+.sl-package-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+
+  margin-top: auto;
+  padding: 14px 17px;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.045);
+
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.3s ease;
+}
+
+.sl-package-button span {
+  font-size: 18px;
+
+  transition: transform 0.3s ease;
+}
+
+.sl-package-button:hover {
+  border-color: rgba(0, 200, 255, 0.45);
+
+  background: rgba(0, 190, 255, 0.1);
+
+  color: #ffffff;
+}
+
+.sl-package-button:hover span {
+  transform: translateX(4px);
+}
+
+/* =========================================================
+   RECURRING SECTION
+========================================================= */
+
+.sl-recurring-section {
+  margin-top: 150px;
+}
+
+.sl-recurring-header {
+  max-width: 720px;
+
+  margin-bottom: 50px;
+}
+
+.sl-recurring-label {
+  display: inline-flex;
+
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 18px;
+
+  color: #48d9ff;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+.sl-recurring-label::before {
+  content: '';
+
+  width: 22px;
+  height: 1px;
+
+  background: #48d9ff;
+
+  box-shadow: 0 0 10px rgba(72, 217, 255, 0.8);
+}
+
+.sl-recurring-header h2 {
+  margin: 0 0 20px;
+
+  font-size: clamp(36px, 5vw, 62px);
+  line-height: 1;
+
+  letter-spacing: -2px;
+}
+
+.sl-recurring-header h2 span {
+  background: linear-gradient(90deg, #35d8ff, #7b61ff);
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sl-recurring-header p {
+  max-width: 620px;
+
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.55);
+
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+/* =========================================================
+   RECURRING GRID
+========================================================= */
+
+.sl-recurring-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 20px;
+}
+
+/* =========================================================
+   RECURRING CARD
+========================================================= */
+
+.sl-recurring-card {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+
+  padding: 30px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.025);
+
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s ease;
+}
+
+.sl-recurring-card:hover {
+  transform: translateY(-6px);
+
+  border-color: rgba(123, 97, 255, 0.4);
+
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sl-recurring-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 30px;
+}
+
+.sl-recurring-top > span {
+  color: rgba(255, 255, 255, 0.25);
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+.sl-recurring-icon {
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  font-size: 21px;
+}
+
+.sl-recurring-heading h3 {
+  margin: 0 0 8px;
+
+  font-size: 25px;
+}
+
+.sl-recurring-heading p {
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.5);
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   RECURRING PRICE
+========================================================= */
+
+.sl-recurring-price {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+
+  margin: 28px 0 20px;
+}
+
+.sl-recurring-price strong {
+  font-size: 25px;
+
+  background: linear-gradient(90deg, #ffffff, #8de8ff);
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sl-recurring-price span {
+  color: rgba(255, 255, 255, 0.4);
+
+  font-size: 12px;
+}
+
+/* =========================================================
+   RECURRING DIVIDER
+========================================================= */
+
+.sl-recurring-divider {
+  width: 100%;
+  height: 1px;
+
+  margin-bottom: 22px;
+
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* =========================================================
+   RECURRING FEATURES
+========================================================= */
+
+.sl-recurring-card ul {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.sl-recurring-card li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  color: rgba(255, 255, 255, 0.62);
+
+  font-size: 13px;
+}
+
+.sl-recurring-card li span {
+  color: #54dfff;
+
+  font-weight: 900;
+}
+
+/* =========================================================
+   RECURRING BUTTON
+========================================================= */
+
+.sl-recurring-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 30px;
+  padding: 13px 15px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: rgba(255, 255, 255, 0.85);
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition: all 0.3s ease;
+}
+
+.sl-recurring-button:hover {
+  border-color: rgba(0, 200, 255, 0.35);
+
+  background: rgba(0, 190, 255, 0.07);
+
+  color: #ffffff;
+}
+
+.sl-recurring-button span {
+  font-size: 17px;
+
+  transition: transform 0.3s ease;
+}
+
+.sl-recurring-button:hover span {
+  transform: translateX(4px);
+}
+
+/* =========================================================
+   BOTTOM CTA
+========================================================= */
+
+.sl-pricing-cta {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+
+  margin-top: 110px;
+  padding: 45px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(0, 190, 255, 0.18);
+  border-radius: 24px;
+
+  background:
+    radial-gradient(circle at 0% 50%, rgba(0, 190, 255, 0.13), transparent 40%),
+    radial-gradient(
+      circle at 100% 50%,
+      rgba(110, 70, 255, 0.1),
+      transparent 40%
+    ),
+    rgba(255, 255, 255, 0.025);
+}
+
+.sl-pricing-cta::after {
+  content: '';
+
+  position: absolute;
+
+  width: 250px;
+  height: 250px;
+
+  right: -100px;
+  top: -130px;
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(0, 190, 255, 0.1);
+
+  pointer-events: none;
+}
+
+.sl-cta-content {
+  position: relative;
+  z-index: 2;
+
+  max-width: 650px;
+}
+
+.sl-cta-content > span {
+  color: #48d9ff;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+.sl-cta-content h3 {
+  margin: 10px 0 10px;
+
+  font-size: clamp(27px, 4vw, 40px);
+  line-height: 1.1;
+}
+
+.sl-cta-content h3 strong {
+  background: linear-gradient(90deg, #39d9ff, #846bff);
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sl-cta-content p {
+  max-width: 600px;
+
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.55);
+
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   CTA BUTTON
+========================================================= */
+
+.sl-cta-button {
+  position: relative;
+  z-index: 2;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 25px;
+
+  padding: 15px 21px;
+
+  border: 1px solid rgba(0, 210, 255, 0.45);
+  border-radius: 12px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(0, 190, 255, 0.15),
+    rgba(110, 70, 255, 0.12)
+  );
+
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  text-decoration: none;
+
+  white-space: nowrap;
+
+  transition: all 0.3s ease;
+}
+
+.sl-cta-button span {
+  font-size: 20px;
+
+  transition: transform 0.3s ease;
+}
+
+.sl-cta-button:hover {
+  transform: translateY(-3px);
+
+  border-color: rgba(0, 220, 255, 0.7);
+
+  box-shadow: 0 10px 35px rgba(0, 190, 255, 0.15);
+}
+
+.sl-cta-button:hover span {
+  transform: translateX(5px);
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+  .sl-pricing-section {
+    padding: 90px 20px;
+  }
+
+  .sl-package-grid,
+  .sl-recurring-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sl-package-card:last-child {
+    grid-column: 1 / -1;
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .sl-recurring-card:last-child {
+    grid-column: 1 / -1;
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .sl-pricing-cta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .sl-cta-button {
+    width: fit-content;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+  .sl-pricing-section {
+    padding: 75px 15px;
+  }
+
+  .sl-pricing-intro {
+    margin-bottom: 50px;
+  }
+
+  .sl-package-grid,
+  .sl-recurring-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sl-package-card:last-child,
+  .sl-recurring-card:last-child {
+    grid-column: auto;
+
+    max-width: none;
+  }
+
+  .sl-package-card {
+    padding: 25px;
+    border-radius: 20px;
+  }
+
+  .sl-package-heading {
+    min-height: auto;
+  }
+
+  .sl-package-heading h3 {
+    font-size: 24px;
+  }
+
+  .sl-package-price {
+    margin-top: 25px;
+  }
+
+  .sl-recurring-section {
+    margin-top: 100px;
+  }
+
+  .sl-recurring-header {
+    margin-bottom: 35px;
+  }
+
+  .sl-recurring-header h2 {
+    font-size: 42px;
+    letter-spacing: -1.5px;
+  }
+
+  .sl-recurring-card {
+    padding: 25px;
+  }
+
+  .sl-pricing-cta {
+    margin-top: 80px;
+    padding: 30px 25px;
+    border-radius: 20px;
+  }
+
+  .sl-cta-content h3 {
+    font-size: 29px;
+  }
+
+  .sl-cta-button {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 420px) {
+  .sl-pricing-section {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .sl-package-card,
+  .sl-recurring-card {
+    padding: 22px;
+  }
+
+  .sl-recurring-header h2 {
+    font-size: 36px;
+  }
+
+  .sl-package-price span,
+  .sl-recurring-price strong {
+    font-size: 22px;
+  }
+
+  .sl-pricing-cta {
+    padding: 25px 20px;
+  }
+}

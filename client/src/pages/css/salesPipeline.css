@@ -1,0 +1,831 @@
+.sales-pipeline-page {
+  min-height: 100%;
+  padding: 24px;
+  background: var(--background, #080b11);
+  color: var(--text-primary, #f4f7fb);
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.sales-pipeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+
+.sales-pipeline-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.sales-pipeline-back {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9px;
+
+  color: #8d99aa;
+  background: rgba(255, 255, 255, 0.025);
+
+  text-decoration: none;
+
+  transition: 0.2s ease;
+}
+
+.sales-pipeline-back:hover {
+  color: #4ddfff;
+  border-color: rgba(77, 223, 255, 0.25);
+  background: rgba(77, 223, 255, 0.05);
+}
+
+.sales-pipeline-label {
+  margin-bottom: 5px;
+
+  color: #4ddfff;
+
+  font-size: 8px;
+  font-weight: 800;
+
+  letter-spacing: 1.5px;
+}
+
+.sales-pipeline-heading h1 {
+  margin: 0;
+
+  font-size: 25px;
+  line-height: 1.2;
+
+  font-weight: 750;
+}
+
+.sales-pipeline-heading p {
+  margin: 6px 0 0;
+
+  color: #758194;
+
+  font-size: 11px;
+}
+
+.sales-pipeline-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sales-pipeline-refresh,
+.sales-pipeline-add {
+  height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  border-radius: 9px;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  text-decoration: none;
+}
+
+.sales-pipeline-refresh {
+  width: 38px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  color: #8995a7;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.sales-pipeline-refresh:hover {
+  color: #4ddfff;
+  border-color: rgba(77, 223, 255, 0.25);
+}
+
+.sales-pipeline-refresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sales-pipeline-add {
+  padding: 0 14px;
+
+  border: 1px solid rgba(77, 223, 255, 0.25);
+
+  color: #061015;
+
+  background: #4ddfff;
+
+  transition: 0.2s ease;
+}
+
+.sales-pipeline-add:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.sales-pipeline-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+
+  margin-bottom: 18px;
+}
+
+.pipeline-summary-card {
+  min-height: 75px;
+
+  padding: 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  border-radius: 11px;
+
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.pipeline-summary-card span {
+  display: block;
+
+  margin-bottom: 9px;
+
+  color: #697688;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.pipeline-summary-card strong {
+  display: block;
+
+  color: #edf3f9;
+
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.sales-pipeline-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 14px;
+}
+
+.pipeline-search {
+  width: 300px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 0 11px;
+
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+
+  color: #667486;
+
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.pipeline-search:focus-within {
+  border-color: rgba(77, 223, 255, 0.3);
+}
+
+.pipeline-search input {
+  width: 100%;
+
+  border: 0;
+  outline: 0;
+
+  color: #e7edf5;
+
+  background: transparent;
+
+  font: inherit;
+  font-size: 10px;
+}
+
+.pipeline-search input::placeholder {
+  color: #596678;
+}
+
+.pipeline-search button {
+  display: flex;
+
+  padding: 0;
+
+  border: 0;
+
+  color: #657386;
+  background: transparent;
+
+  cursor: pointer;
+}
+
+.pipeline-toolbar-info {
+  color: #687588;
+
+  font-size: 9px;
+}
+
+/* =========================================================
+   BOARD
+========================================================= */
+
+.sales-pipeline-board {
+  display: grid;
+
+  grid-template-columns: repeat(10, minmax(245px, 1fr));
+
+  gap: 10px;
+
+  width: 100%;
+
+  overflow-x: auto;
+
+  padding-bottom: 8px;
+
+  scrollbar-width: thin;
+}
+
+/* =========================================================
+   COLUMN
+========================================================= */
+
+.sales-pipeline-column {
+  min-width: 245px;
+  min-height: 440px;
+
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: 11px;
+
+  background: rgba(255, 255, 255, 0.014);
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.pipeline-column-drag-active {
+  border-color: rgba(77, 223, 255, 0.12);
+}
+
+/* =========================================================
+   COLUMN HEADER
+========================================================= */
+
+.pipeline-column-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  padding: 13px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pipeline-column-header h2 {
+  margin: 0 0 4px;
+
+  color: #dfe7ef;
+
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.pipeline-column-header p {
+  max-width: 165px;
+
+  margin: 0;
+
+  color: #5f6d7f;
+
+  font-size: 7px;
+  line-height: 1.35;
+}
+
+.pipeline-column-count {
+  min-width: 22px;
+  height: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 6px;
+
+  color: #778597;
+
+  background: rgba(255, 255, 255, 0.045);
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   COLUMN BODY
+========================================================= */
+
+.pipeline-column-body {
+  min-height: 350px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+
+  padding: 9px;
+}
+
+/* =========================================================
+   LEAD CARD
+========================================================= */
+
+.pipeline-lead-card {
+  padding: 11px;
+
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  border-radius: 9px;
+
+  background: #0c1119;
+
+  cursor: grab;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.pipeline-lead-card:hover {
+  transform: translateY(-1px);
+
+  border-color: rgba(77, 223, 255, 0.17);
+
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.pipeline-lead-card:active {
+  cursor: grabbing;
+}
+
+.pipeline-card-moving {
+  opacity: 0.5;
+}
+
+/* =========================================================
+   CARD TOP
+========================================================= */
+
+.pipeline-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 9px;
+}
+
+.pipeline-company-icon {
+  width: 27px;
+  height: 27px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 7px;
+
+  color: #4ddfff;
+
+  background: rgba(77, 223, 255, 0.07);
+}
+
+.pipeline-card-menu {
+  display: flex;
+
+  padding: 2px;
+
+  border: 0;
+
+  color: #586577;
+  background: transparent;
+
+  cursor: pointer;
+}
+
+.pipeline-card-menu:hover {
+  color: #aab6c5;
+}
+
+/* =========================================================
+   COMPANY
+========================================================= */
+
+.pipeline-company-name {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #e9eff6;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  line-height: 1.35;
+
+  text-decoration: none;
+}
+
+.pipeline-company-name:hover {
+  color: #4ddfff;
+}
+
+.pipeline-contact-name {
+  margin-bottom: 7px;
+
+  color: #6c7a8c;
+
+  font-size: 8px;
+}
+
+/* =========================================================
+   META
+========================================================= */
+
+.pipeline-card-meta {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  margin-bottom: 9px;
+
+  color: #657386;
+
+  font-size: 8px;
+}
+
+/* =========================================================
+   VALUE
+========================================================= */
+
+.pipeline-deal-value {
+  display: flex;
+  align-items: center;
+
+  gap: 3px;
+
+  padding-top: 8px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.045);
+
+  color: #4ddfff;
+}
+
+.pipeline-deal-value strong {
+  font-size: 10px;
+}
+
+.pipeline-deal-value span {
+  margin-left: auto;
+
+  color: #6e7c8d;
+
+  font-size: 8px;
+}
+
+/* =========================================================
+   PROBLEM / NEXT ACTION
+========================================================= */
+
+.pipeline-card-section {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+
+  margin-top: 8px;
+
+  padding: 7px;
+
+  border-radius: 6px;
+
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.pipeline-card-section span {
+  color: #586678;
+
+  font-size: 7px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.4px;
+}
+
+.pipeline-card-section strong {
+  color: #9ca9b9;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  line-height: 1.4;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.pipeline-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 10px;
+  padding-top: 8px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.045);
+}
+
+.pipeline-footer-date,
+.pipeline-contact-icons {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  color: #596778;
+
+  font-size: 8px;
+}
+
+.pipeline-contact-icons {
+  gap: 6px;
+}
+
+.pipeline-contact-icons a {
+  display: flex;
+
+  color: #627185;
+
+  text-decoration: none;
+
+  transition: 0.2s ease;
+}
+
+.pipeline-contact-icons a:hover {
+  color: #4ddfff;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.pipeline-empty {
+  min-height: 100px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-direction: column;
+
+  gap: 7px;
+
+  border: 1px dashed rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+
+  color: #4f5d6f;
+
+  font-size: 8px;
+}
+
+.pipeline-empty-icon {
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 7px;
+
+  background: rgba(255, 255, 255, 0.025);
+}
+
+/* =========================================================
+   COLUMN ADD
+========================================================= */
+
+.pipeline-column-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  margin: 0 9px 9px;
+  padding: 8px;
+
+  border: 1px dashed rgba(255, 255, 255, 0.07);
+  border-radius: 7px;
+
+  color: #657386;
+
+  background: transparent;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  text-decoration: none;
+
+  transition: 0.2s ease;
+}
+
+.pipeline-column-add:hover {
+  color: #4ddfff;
+
+  border-color: rgba(77, 223, 255, 0.2);
+
+  background: rgba(77, 223, 255, 0.025);
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.sales-pipeline-loading {
+  min-height: 400px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  color: #6b788a;
+
+  font-size: 10px;
+}
+
+.pipeline-spin {
+  animation: pipelineSpin 0.8s linear infinite;
+}
+
+@keyframes pipelineSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.sales-pipeline-error {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 15px;
+  padding: 11px 13px;
+
+  border: 1px solid rgba(255, 80, 80, 0.13);
+  border-radius: 8px;
+
+  color: #9c6e6e;
+
+  background: rgba(255, 60, 60, 0.035);
+
+  font-size: 9px;
+}
+
+.sales-pipeline-error strong {
+  color: #d88a8a;
+}
+
+.sales-pipeline-error span {
+  flex: 1;
+}
+
+.sales-pipeline-error button {
+  padding: 5px 9px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+
+  color: #aab5c2;
+
+  background: rgba(255, 255, 255, 0.03);
+
+  font-size: 8px;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+  .sales-pipeline-page {
+    padding: 16px;
+  }
+
+  .sales-pipeline-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sales-pipeline-header {
+    align-items: flex-start;
+  }
+
+  .sales-pipeline-board {
+    grid-template-columns: repeat(10, minmax(230px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .sales-pipeline-header {
+    flex-direction: column;
+  }
+
+  .sales-pipeline-heading {
+    width: 100%;
+  }
+
+  .sales-pipeline-actions {
+    width: 100%;
+  }
+
+  .sales-pipeline-refresh {
+    width: 42px;
+  }
+
+  .sales-pipeline-add {
+    flex: 1;
+  }
+
+  .sales-pipeline-summary {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sales-pipeline-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pipeline-search {
+    width: 100%;
+  }
+
+  .pipeline-toolbar-info {
+    text-align: right;
+  }
+
+  .sales-pipeline-board {
+    grid-template-columns: repeat(10, minmax(220px, 1fr));
+  }
+}

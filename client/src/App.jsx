@@ -32,7 +32,9 @@ import DiscoveryGuide from './pages/DiscoveryGuide'
 import SolutionGuide from './pages/SolutionGuide'
 import ProposalGuide from './pages/ProposalGuide'
 import FollowUpGuide from './pages/FollowUpGuide'
+import LeadDetails from './pages/LeadDetails.jsx'
 
+import SalesPipeline from './pages/SalesPipeline'
 // Your StartupLift loader
 import PageLoader from './components/PageLoader.jsx'
 import { initClarity } from './lib/clarity.js'
@@ -170,8 +172,9 @@ export default function App() {
             <Route path="/dashboard" element={<Dashboard />} />
 
             <Route path="/leads" element={<Leads />} />
-
             <Route path="/leads/new" element={<NewLead />} />
+            <Route path="/leads/:id" element={<LeadDetails />} />
+
             <Route path="/lead-guide" element={<LeadGuide />} />
 
             <Route path="/sales/call-guide" element={<SalesCallGuide />} />
@@ -179,8 +182,8 @@ export default function App() {
             <Route path="/sales/solution-guide" element={<SolutionGuide />} />
             <Route path="/sales/proposal-guide" element={<ProposalGuide />} />
             <Route path="/sales/follow-up-guide" element={<FollowUpGuide />} />
-            <Route path="/leads/:id" element={<EditLead />} />
 
+            <Route path="/sales/pipeline" element={<SalesPipeline />} />
             <Route path="/profile" element={<Profile />} />
 
             <Route path="/payroll" element={<PayrollManagement />} />

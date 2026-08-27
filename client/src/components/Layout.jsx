@@ -21,6 +21,7 @@ import {
   Lightbulb,
   FileText,
   RefreshCw,
+  Workflow,
 } from 'lucide-react'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -130,6 +131,12 @@ export default function Layout() {
               to="/leads/new"
               icon={<UserPlus size={18} />}
               label="Add New Lead"
+              onClick={closeMobileMenu}
+            />
+            <NavItem
+              to="/sales/pipeline"
+              icon={<Workflow size={18} />}
+              label="Sales Pipeline"
               onClick={closeMobileMenu}
             />
           </div>

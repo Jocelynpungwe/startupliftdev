@@ -5,6 +5,7 @@ import dashboardReducer from '../features/dashboard/dashboardSlice.js'
 import userReducer from '../features/users/userSlice.js'
 import payrollReducer from '../features/payroll/payrollSlice.js'
 import contactReducer from '../features/contact/contactSlice'
+import leadActivitiesReducer from '../features/leadActivities/leadActivitiesSlice.js'
 
 export const store = configureStore({
   reducer: {
@@ -14,5 +15,6 @@ export const store = configureStore({
     users: userReducer,
     payroll: payrollReducer,
     contact: contactReducer,
+    leadActivity: leadActivitiesReducer,
   },
 })

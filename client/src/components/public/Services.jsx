@@ -1,126 +1,61 @@
 import React from 'react'
-import '../../styles/Packages.css'
-import SectionTitle from './usable/SectionTitle'
 import { Link } from 'react-router-dom'
+import '../../styles/newPackage.css'
+import SectionTitle from './usable/SectionTitle'
 
 const packages = [
   {
-    id: 'starter',
+    id: 'Essential',
     number: '01',
-    icon: '🌱',
-    name: 'Starter',
+    icon: '🚀',
+    name: 'Essential',
     title: 'Get Your Business Online',
     description: 'For entrepreneurs and small businesses starting from zero.',
     price: '$250 – $550',
     features: [
-      'Professional responsive website',
-      'Custom design',
+      'Responsive website',
+      'Page 1-3',
       'Mobile-friendly design',
-      'Core business pages',
-      'Contact form',
-      'Social media integration',
+      'Core project requirements',
       'Basic SEO setup',
-      'Google Analytics setup',
-      'Google Search Console setup',
-      'Website deployment',
     ],
     button: 'Get Started',
   },
   {
-    id: 'business',
+    id: 'Growth',
     number: '02',
-    icon: '🚀',
-    name: 'Business',
+    icon: '🌱',
+    name: 'Growth',
     title: 'Build a Stronger Online Presence',
     description:
       'For established businesses that need a stronger website and better online visibility.',
     price: '$500 – $750',
     featured: true,
     features: [
-      'Everything in Starter',
-      'More customized pages',
-      'Advanced on-page SEO',
-      'Keyword research',
-      'Local SEO foundation',
-      'Google Business Profile guidance',
+      'Everything in Essential',
+      'Additional feature',
       'Conversion-focused design',
-      'Advanced analytics setup',
-      'Lead-generation forms',
-      'Performance optimization',
-      'Traffic-growth strategy',
+      'SEO foundation',
+      'Growth-focused improvements',
     ],
     button: 'Grow My Business',
   },
   {
-    id: 'growth',
+    id: 'Premium',
     number: '03',
     icon: '📈',
-    name: 'Growth',
+    name: 'Premium',
     title: 'Website + SEO + Traffic',
-    description:
-      'For businesses that want more than a website and are ready to actively grow online.',
+    description: 'For businesses that need a more complete digital solution.',
     price: 'Custom Pricing',
     features: [
-      'Website development',
-      'SEO strategy',
-      'Keyword research',
-      'On-page SEO',
-      'Technical SEO',
-      'Local SEO',
-      'Traffic-growth strategy',
-      'Analytics',
-      'Conversion optimization',
-      'Search performance monitoring',
-      'Monthly reporting',
+      'Everything in Growth',
+      'Advanced functionality',
+      'Custom integrations',
+      'Advanced optimization',
+      'Priority support',
     ],
     button: 'Start Growing',
-  },
-  {
-    id: 'ecommerce',
-    number: '04',
-    icon: '🛒',
-    name: 'E-Commerce',
-    title: 'Start Selling Online',
-    description:
-      'For businesses that want to sell products and services online.',
-    price: '$650 – $850',
-    features: [
-      'Custom e-commerce website',
-      'Product management',
-      'Product pages',
-      'Shopping cart',
-      'Checkout',
-      'Payment gateway integration',
-      'Customer experience optimization',
-      'Mobile responsive design',
-      'Basic SEO',
-      'Analytics',
-      'Website deployment',
-    ],
-    button: 'Build My Store',
-  },
-  {
-    id: 'custom',
-    number: '05',
-    icon: '⚙️',
-    name: 'Custom',
-    title: 'Build Something Unique',
-    description:
-      'For businesses that need a custom digital system beyond a traditional website.',
-    price: 'Starting at $800+',
-    features: [
-      'Custom web applications',
-      'Customer portals',
-      'Dashboards',
-      'API integrations',
-      'Business automation',
-      'Custom databases',
-      'Authentication systems',
-      'Advanced functionality',
-      'Custom business systems',
-      'Advanced analytics',
-    ],
-    button: 'Discuss My Project',
   },
 ]
 
@@ -177,56 +112,59 @@ const recurringServices = [
 
 function Packages() {
   return (
-    <section className="packages-section" id="packages">
-      <div className="packages-container">
-        {/* Section Header */}
-        <SectionTitle
-          section="OUR PACKAGES"
-          h2_start=" Build it."
-          h2_glow="Grow it."
-          h2_end="Own it."
-          par="Choose the package that fits where your business is today. Whether
-            you're starting from scratch or ready to grow, StartupLift can help
-            you take the next step."
-        />
+    <section className="sl-pricing-section" id="packages">
+      <div className="sl-pricing-container">
+        {/* HEADER */}
+        <div className="sl-pricing-intro">
+          <SectionTitle
+            section="OUR PACKAGES"
+            h2_start=" Build it."
+            h2_glow="Grow it."
+            h2_end="Own it."
+            par="Choose the package that fits where your business is today. Whether you're starting from scratch or ready to grow, StartupLift can help you take the next step."
+          />
+        </div>
 
-        {/* Main Packages */}
-        <div className="packages-grid">
+        {/* MAIN PACKAGES */}
+        <div className="sl-package-grid">
           {packages.map((pkg) => (
             <article
-              className={`package-card ${
-                pkg.featured ? 'package-card-featured' : ''
+              className={`sl-package-card ${
+                pkg.featured ? 'sl-package-card-featured' : ''
               }`}
               key={pkg.id}
             >
               {pkg.featured && (
-                <div className="package-badge">MOST POPULAR</div>
+                <div className="sl-package-popular">
+                  <span></span>
+                  MOST POPULAR
+                </div>
               )}
 
-              <div className="package-top">
-                <div className="package-number">{pkg.number}</div>
+              <div className="sl-package-top">
+                <span className="sl-package-number">{pkg.number}</span>
 
-                <div className="package-icon">{pkg.icon}</div>
+                <div className="sl-package-icon">{pkg.icon}</div>
               </div>
 
-              <div className="package-heading">
-                <span className="package-name">{pkg.name}</span>
+              <div className="sl-package-heading">
+                <span className="sl-package-name">{pkg.name}</span>
 
                 <h3>{pkg.title}</h3>
 
                 <p>{pkg.description}</p>
               </div>
 
-              <div className="package-price">
+              <div className="sl-package-price">
                 <span>{pkg.price}</span>
               </div>
 
-              <div className="package-divider" />
+              <div className="sl-package-line"></div>
 
-              <ul className="package-features">
+              <ul className="sl-package-features">
                 {pkg.features.map((feature, index) => (
                   <li key={index}>
-                    <span className="check">✓</span>
+                    <span className="sl-check">✓</span>
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -234,20 +172,20 @@ function Packages() {
 
               <Link
                 to="/contact"
-                className="secondary-button"
+                className="sl-package-button"
                 style={{ marginTop: '16px' }}
               >
                 {pkg.button}
-                <span style={{ marginLeft: '16px' }}>→</span>
+                <span>→</span>
               </Link>
             </article>
           ))}
         </div>
 
-        {/* Recurring Services */}
-        <div className="recurring-section">
-          <div className="recurring-header">
-            <span className="packages-eyebrow">ONGOING SUPPORT</span>
+        {/* RECURRING SERVICES */}
+        <div className="sl-recurring-section">
+          <div className="sl-recurring-header">
+            <div className="sl-recurring-label">ONGOING SUPPORT</div>
 
             <h2>
               Don't just <span>launch.</span>
@@ -262,23 +200,27 @@ function Packages() {
             </p>
           </div>
 
-          <div className="recurring-grid">
+          <div className="sl-recurring-grid">
             {recurringServices.map((service) => (
-              <article className="recurring-card" key={service.name}>
-                <div className="package-top">
-                  <div className="package-number">{service.number}</div>
+              <article className="sl-recurring-card" key={service.name}>
+                <div className="sl-recurring-top">
+                  <span>{service.number}</span>
 
-                  <div className="package-icon">{service.icon}</div>
+                  <div className="sl-recurring-icon">{service.icon}</div>
                 </div>
 
-                <h3>{service.name}</h3>
+                <div className="sl-recurring-heading">
+                  <h3>{service.name}</h3>
 
-                <p className="recurring-description">{service.description}</p>
+                  <p>{service.description}</p>
+                </div>
 
-                <div className="recurring-price">
+                <div className="sl-recurring-price">
                   <strong>{service.price}</strong>
                   <span>{service.period}</span>
                 </div>
+
+                <div className="sl-recurring-divider"></div>
 
                 <ul>
                   {service.features.map((feature, index) => (
@@ -289,24 +231,24 @@ function Packages() {
                   ))}
                 </ul>
 
-                <Link
-                  to="/contact"
-                  className="secondary-button"
-                  style={{ marginTop: '16px', width: '100%' }}
-                >
-                  Learn More <span style={{ marginLeft: '16px' }}>→</span>
+                <Link to="/contact" className="sl-recurring-button">
+                  Learn More
+                  <span>→</span>
                 </Link>
               </article>
             ))}
           </div>
         </div>
 
-        {/* Bottom CTA */}
-        <div className="packages-cta">
-          <div>
+        {/* CTA */}
+        <div className="sl-pricing-cta">
+          <div className="sl-cta-content">
             <span>NOT SURE WHERE TO START?</span>
 
-            <h3>Let's figure out your next step.</h3>
+            <h3>
+              Let's figure out
+              <strong> your next step.</strong>
+            </h3>
 
             <p>
               Tell us about your business, your goals, and where you want to go.
@@ -314,7 +256,7 @@ function Packages() {
             </p>
           </div>
 
-          <Link to="/contact" className="cta-button">
+          <Link to="/contact" className="sl-cta-button">
             Get a Free Consultation
             <span>→</span>
           </Link>
