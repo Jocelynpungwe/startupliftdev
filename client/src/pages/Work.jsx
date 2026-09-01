@@ -32,6 +32,15 @@ const projects = [
     tags: ['Branding', 'Design', 'SEO'],
     className: 'portfolio-purple',
     link: 'https://eclatservices.netlify.app/',
+  },  {
+    title: 'Royal Memoria',
+    category: 'Web development',
+    image: '/royal.png',
+    description:
+      'Royal Memoria is a multinational corporation with a diverse portfolio of subsidiaries operating in multiple countries..',
+    tags: ['React', 'Responsive', 'SEO'],
+    className: 'portfolio-dark',
+    link: 'https://royalmemoria.netlify.app/',
   },
   // {
   //   title: 'Growth Platform',
@@ -77,6 +86,7 @@ export default function Work() {
           link_1="/contact"
           link_2="/services"
         />
+        
         <HeroPortVisual />
       </section>
       {/* FILTER */}
