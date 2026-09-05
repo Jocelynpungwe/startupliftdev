@@ -33,6 +33,7 @@ import SolutionGuide from './pages/SolutionGuide'
 import ProposalGuide from './pages/ProposalGuide'
 import FollowUpGuide from './pages/FollowUpGuide'
 import LeadDetails from './pages/LeadDetails.jsx'
+import ProjectFormModal from './components/ProjectFormModel.jsx'
 
 import SalesPipeline from './pages/SalesPipeline'
 // Your StartupLift loader
@@ -198,6 +199,7 @@ export default function App() {
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <ProjectFormModal />
     </>
   )
 }
