@@ -2,8 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
-import { X } from 'lucide-react'
-import Form from '../../../components/Form'
+
 import { openProjectForm } from '../../../features/form/projectFormSlice'
 
 export default function HeroReuse({
