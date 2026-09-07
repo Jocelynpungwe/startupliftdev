@@ -37,12 +37,12 @@ export default function PublicNavbar({ lightMode, setLightMode }) {
         <Link to="/" className="brand" onClick={closeSidebar}>
           <span
             className="brand-text"
-            style={{ marginTop: '50px', marginLeft: '-50px' }}
+            style={{ marginTop: '20px', marginLeft: '-20px' }}
           >
             <img
-              src="/logo.png"
+              src="/onlyLogo.png"
               alt="StartupLift Dev Logo"
-              style={{ width: '150px', height: '100%' }}
+              style={{ width: '60px', height: '100%' }}
             />
           </span>
         </Link>
@@ -102,7 +102,7 @@ export default function PublicNavbar({ lightMode, setLightMode }) {
           <div className="mobile-sidebar-brand">
             <div>
               <img
-                src="/favcon.png"
+                src="/onlyLogo.png"
                 alt="StartupLift Dev"
                 style={{ width: '30%', height: '100%' }}
               />
