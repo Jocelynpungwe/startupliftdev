@@ -620,7 +620,7 @@ export default function NewLead() {
 
           <div className="lead-form-grid">
             <TextAreaField
-              label="Needs"
+              label="Script Start"
               name="needs"
               value={form.needs}
               onChange={update}
@@ -628,7 +628,7 @@ export default function NewLead() {
             />
 
             <TextAreaField
-              label="Goals"
+              label="What is the Problem?"
               name="goals"
               value={form.goals}
               onChange={update}
@@ -636,7 +636,7 @@ export default function NewLead() {
             />
 
             <TextAreaField
-              label="Target audience"
+              label="What can we do?"
               name="targetAudience"
               value={form.targetAudience}
               onChange={update}
@@ -644,7 +644,7 @@ export default function NewLead() {
             />
 
             <TextAreaField
-              label="Current solution"
+              label="How are we going to do that?"
               name="currentSolution"
               value={form.currentSolution}
               onChange={update}
@@ -652,7 +652,7 @@ export default function NewLead() {
             />
 
             <TextAreaField
-              label="Pain points"
+              label="Try Close"
               name="painPoints"
               value={form.painPoints}
               onChange={update}

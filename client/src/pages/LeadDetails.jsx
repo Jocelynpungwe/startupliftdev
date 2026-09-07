@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, Links, useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
@@ -868,35 +868,35 @@ function LeadDetails() {
           >
             <div className="details-form-grid">
               <TextArea
-                label="Needs"
+                label="Script Start"
                 name="needs"
                 value={formData.needs}
                 onChange={handleChange}
               />
 
               <TextArea
-                label="Goals"
+                label="What is the problem?"
                 name="goals"
                 value={formData.goals}
                 onChange={handleChange}
               />
 
               <TextArea
-                label="Target audience"
+                label="What can we do?"
                 name="targetAudience"
                 value={formData.targetAudience}
                 onChange={handleChange}
               />
 
               <TextArea
-                label="Current solution"
+                label="How are we going to do that?"
                 name="currentSolution"
                 value={formData.currentSolution}
                 onChange={handleChange}
               />
 
               <TextArea
-                label="Pain points"
+                label="Try Close"
                 name="painPoints"
                 value={formData.painPoints}
                 onChange={handleChange}
@@ -1091,11 +1091,13 @@ function LeadDetails() {
                     value={lead.email || 'Not provided'}
                   />
 
-                  <InfoItem
-                    icon={<Globe size={18} />}
-                    label="Website"
-                    value={lead.website || 'No website'}
-                  />
+                  <Link to={lead.website} target="_">
+                    <InfoItem
+                      icon={<Globe size={18} />}
+                      label="Website"
+                      value={lead.website || 'No website'}
+                    />
+                  </Link>
 
                   <InfoItem
                     icon={<MapPin size={18} />}
@@ -1174,31 +1176,31 @@ function LeadDetails() {
               >
                 <div className="detail-text-grid">
                   <DetailText
-                    label="Needs"
+                    label="Script Start"
                     value={lead.needs}
                     empty="No needs recorded."
                   />
 
                   <DetailText
-                    label="Goals"
+                    label="What is the problem?"
                     value={lead.goals}
                     empty="No goals recorded."
                   />
 
                   <DetailText
-                    label="Target audience"
+                    label="What can we do?"
                     value={lead.targetAudience}
                     empty="No target audience recorded."
                   />
 
                   <DetailText
-                    label="Current solution"
+                    label="How are we going to do that?"
                     value={lead.currentSolution}
                     empty="No current solution recorded."
                   />
 
                   <DetailText
-                    label="Pain points"
+                    label="Try Close"
                     value={lead.painPoints}
                     empty="No pain points recorded."
                   />

@@ -179,10 +179,6 @@ export default function App() {
             <Route path="/lead-guide" element={<LeadGuide />} />
 
             <Route path="/sales/call-guide" element={<SalesCallGuide />} />
-            <Route path="/sales/discovery-guide" element={<DiscoveryGuide />} />
-            <Route path="/sales/solution-guide" element={<SolutionGuide />} />
-            <Route path="/sales/proposal-guide" element={<ProposalGuide />} />
-            <Route path="/sales/follow-up-guide" element={<FollowUpGuide />} />
 
             <Route path="/sales/pipeline" element={<SalesPipeline />} />
             <Route path="/profile" element={<Profile />} />

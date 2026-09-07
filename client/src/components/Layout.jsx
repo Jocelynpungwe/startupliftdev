@@ -158,30 +158,6 @@ export default function Layout() {
               label="Call Guide"
               onClick={closeMobileMenu}
             />
-            <NavItem
-              to="/sales/discovery-guide"
-              icon={<Search size={18} />}
-              label="Analysis Guide"
-              onClick={closeMobileMenu}
-            />
-            <NavItem
-              to="/sales/solution-guide"
-              icon={<Lightbulb size={18} />}
-              label="Solution Presentation"
-              onClick={closeMobileMenu}
-            />
-            <NavItem
-              to="/sales/proposal-guide"
-              icon={<FileText size={18} />}
-              label="Proposal & Pricing"
-              onClick={closeMobileMenu}
-            />
-            <NavItem
-              to="/sales/follow-up-guide"
-              icon={<RefreshCw size={18} />}
-              label="Follow-Up & Closing"
-              onClick={closeMobileMenu}
-            />
           </div>
 
           {/* MANAGEMENT */}
