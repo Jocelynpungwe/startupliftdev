@@ -236,6 +236,8 @@ export default function EditLead() {
 
                   <option value="pending">Pending</option>
 
+                  <option value="contacted">Contacted</option>
+
                   <option value="approved">Approved</option>
 
                   <option value="rejected">Rejected</option>

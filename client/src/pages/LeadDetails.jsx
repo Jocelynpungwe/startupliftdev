@@ -175,6 +175,7 @@ const sourceOptions = [
 
 const statusOptions = [
   ['new', 'New'],
+  ['contacted', 'Contacted'],
   ['pending', 'Pending'],
   ['approved', 'Approved'],
   ['rejected', 'Rejected'],
@@ -859,51 +860,6 @@ function LeadDetails() {
             </div>
           </DetailsSection>
 
-          {/* NEED ANALYSIS */}
-
-          <DetailsSection
-            icon={<MessageSquare size={18} />}
-            title="Need analysis"
-            description="Understand what the prospect needs and wants."
-          >
-            <div className="details-form-grid">
-              <TextArea
-                label="Script Start"
-                name="needs"
-                value={formData.needs}
-                onChange={handleChange}
-              />
-
-              <TextArea
-                label="What is the problem?"
-                name="goals"
-                value={formData.goals}
-                onChange={handleChange}
-              />
-
-              <TextArea
-                label="What can we do?"
-                name="targetAudience"
-                value={formData.targetAudience}
-                onChange={handleChange}
-              />
-
-              <TextArea
-                label="How are we going to do that?"
-                name="currentSolution"
-                value={formData.currentSolution}
-                onChange={handleChange}
-              />
-
-              <TextArea
-                label="Try Close"
-                name="painPoints"
-                value={formData.painPoints}
-                onChange={handleChange}
-              />
-            </div>
-          </DetailsSection>
-
           {/* OPPORTUNITY */}
 
           <DetailsSection
@@ -1164,46 +1120,6 @@ function LeadDetails() {
                   <span>Primary problem</span>
 
                   <strong>{getProblemLabel(lead.primaryProblem)}</strong>
-                </div>
-              </DetailsSection>
-
-              {/* NEED ANALYSIS */}
-
-              <DetailsSection
-                icon={<MessageSquare size={18} />}
-                title="Need analysis"
-                description="What the prospect needs and what they are trying to achieve."
-              >
-                <div className="detail-text-grid">
-                  <DetailText
-                    label="Script Start"
-                    value={lead.needs}
-                    empty="No needs recorded."
-                  />
-
-                  <DetailText
-                    label="What is the problem?"
-                    value={lead.goals}
-                    empty="No goals recorded."
-                  />
-
-                  <DetailText
-                    label="What can we do?"
-                    value={lead.targetAudience}
-                    empty="No target audience recorded."
-                  />
-
-                  <DetailText
-                    label="How are we going to do that?"
-                    value={lead.currentSolution}
-                    empty="No current solution recorded."
-                  />
-
-                  <DetailText
-                    label="Try Close"
-                    value={lead.painPoints}
-                    empty="No pain points recorded."
-                  />
                 </div>
               </DetailsSection>
 

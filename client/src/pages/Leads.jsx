@@ -1,185 +1,3 @@
-// import React, { useEffect, useState } from 'react'
-// import { useDispatch, useSelector } from 'react-redux'
-// import { Link } from 'react-router-dom'
-// import { Search, Pencil, Trash2, Plus } from 'lucide-react'
-// import { deleteLead, fetchLeads } from '../features/leads/leadsSlice.js'
-
-// export default function Leads() {
-//   const dispatch = useDispatch()
-//   const { items, loading, error } = useSelector((s) => s.leads)
-//   const user = useSelector((s) => s.auth.user)
-
-//   const [filters, setFilters] = useState({
-//     search: '',
-//     status: 'all',
-//     sort: 'newest',
-//     mine: 'false',
-//   })
-
-//   useEffect(() => {
-//     const timer = setTimeout(() => dispatch(fetchLeads(filters)), 250)
-//     return () => clearTimeout(timer)
-//   }, [dispatch, filters])
-
-//   const canEdit =
-//     user?.role === 'admin' || user?.permissions?.includes('lead:update')
-//   const canDelete =
-//     user?.role === 'admin' || user?.permissions?.includes('lead:delete')
-
-//   const remove = async (id) => {
-//     if (confirm('Delete this lead?')) {
-//       dispatch(deleteLead(id))
-//     }
-//   }
-
-//   return (
-//     <div>
-//       <div className="page-heading">
-//         <div>
-//           <h2>All Leads</h2>
-//           <p>Search and manage the complete sales pipeline.</p>
-//         </div>
-//         {user?.permissions?.includes('lead:create') && (
-//           <Link className="primary-btn compact" to="/leads/new">
-//             <Plus size={17} /> Add lead
-//           </Link>
-//         )}
-//       </div>
-
-//       <section className="panel">
-//         <div className="filters">
-//           <div className="search-box">
-//             <Search size={18} />
-//             <input
-//               placeholder="Search company, email, phone..."
-//               value={filters.search}
-//               onChange={(e) =>
-//                 setFilters({ ...filters, search: e.target.value })
-//               }
-//             />
-//           </div>
-
-//           <select
-//             value={filters.status}
-//             onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-//           >
-//             <option value="all">All statuses</option>
-//             <option value="new">New</option>
-//             <option value="approved">Approved</option>
-//             <option value="rejected">Rejected</option>
-//             <option value="pending">Pending</option>
-//           </select>
-
-//           <select
-//             value={filters.sort}
-//             onChange={(e) => setFilters({ ...filters, sort: e.target.value })}
-//           >
-//             <option value="newest">Latest first</option>
-//             <option value="oldest">Oldest first</option>
-//             <option value="valueHigh">Deal value: high to low</option>
-//             <option value="valueLow">Deal value: low to high</option>
-//           </select>
-
-//           <label className="check">
-//             <input
-//               type="checkbox"
-//               checked={filters.mine === 'true'}
-//               onChange={(e) =>
-//                 setFilters({
-//                   ...filters,
-//                   mine: e.target.checked ? 'true' : 'false',
-//                 })
-//               }
-//             />
-//             My leads
-//           </label>
-//         </div>
-
-//         {error && <div className="alert error">{error}</div>}
-//         {loading && <div className="loading small">Loading leads...</div>}
-
-//         <div className="table-wrap">
-//           <table>
-//             <thead>
-//               <tr>
-//                 <th>Company</th>
-//                 <th>Salesperson</th>
-//                 <th>Contact</th>
-//                 <th>Status</th>
-//                 <th>Deal</th>
-//                 <th>Created</th>
-//                 {(canEdit || canDelete) && <th>Actions</th>}
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {items.map((lead) => (
-//                 <tr key={lead._id}>
-//                   <td>
-//                     <strong>{lead.companyName}</strong>
-//                     <small>{lead.location}</small>
-//                   </td>
-//                   <td>
-//                     {lead.salesPerson?.firstName} {lead.salesPerson?.lastName}
-//                   </td>
-//                   <td>
-//                     <span>{lead.email}</span>
-//                     <small>{lead.phone}</small>
-//                   </td>
-//                   <td>
-//                     <span className={statusColors[lead.status]}>
-//                       {lead.status}
-//                     </span>
-//                   </td>
-//                   <td>${Number(lead.dealValue || 0).toLocaleString()}</td>
-//                   <td>{new Date(lead.createdAt).toLocaleDateString()}</td>
-//                   {(canEdit || canDelete) && (
-//                     <td>
-//                       <div className="actions">
-//                         {canEdit && (
-//                           <Link
-//                             className="icon-btn"
-//                             to={`/leads/${lead._id}`}
-//                             title="Edit"
-//                           >
-//                             <Pencil size={16} />
-//                           </Link>
-//                         )}
-//                         {canDelete && (
-//                           <button
-//                             className="icon-btn danger"
-//                             onClick={() => remove(lead._id)}
-//                             title="Delete"
-//                           >
-//                             <Trash2 size={16} />
-//                           </button>
-//                         )}
-//                       </div>
-//                     </td>
-//                   )}
-//                 </tr>
-//               ))}
-//               {!items.length && !loading && (
-//                 <tr>
-//                   <td colSpan="7" className="empty-cell">
-//                     No leads found.
-//                   </td>
-//                 </tr>
-//               )}
-//             </tbody>
-//           </table>
-//         </div>
-//       </section>
-//     </div>
-//   )
-// }
-
-// const statusColors = {
-//   approved: 'status approved',
-//   rejected: 'status rejected',
-//   pending: 'status pending',
-//   new: 'status new',
-// }
-
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -197,6 +15,7 @@ import {
   XCircle,
   Building2,
   RefreshCw,
+  PhoneCall,
 } from 'lucide-react'
 
 import { deleteLead, fetchLeads } from '../features/leads/leadsSlice.js'
@@ -246,6 +65,7 @@ export default function Leads() {
       total: items.length,
 
       approved: items.filter((lead) => lead.status === 'approved').length,
+      contacted: items.filter((lead) => lead.status === 'contacted').length,
 
       pending: items.filter((lead) => lead.status === 'pending').length,
 
@@ -347,6 +167,14 @@ export default function Leads() {
           label="Approved"
           value={statistics.approved}
           description="Successful deals"
+          type="success"
+        />
+
+        <LeadStat
+          icon={<PhoneCall size={19} />}
+          label="Contacted"
+          value={statistics.contacted}
+          description="Send Email"
           type="success"
         />
 
@@ -459,6 +287,7 @@ export default function Leads() {
               <option value="new">New</option>
 
               <option value="approved">Approved</option>
+              <option value="contacted">Contacted</option>
 
               <option value="pending">Pending</option>
 
@@ -760,6 +589,12 @@ function StatusBadge({ status }) {
       label: 'Pending',
       className: 'pending',
       icon: <Clock3 size={13} />,
+    },
+
+    contacted: {
+      label: 'Contacted',
+      className: 'approved',
+      icon: <PhoneCall size={13} />,
     },
 
     rejected: {

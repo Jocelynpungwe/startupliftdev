@@ -526,6 +526,7 @@ export default function NewLead() {
               onChange={update}
               options={[
                 ['new', 'New'],
+                ['contacted', 'Contacted'],
                 ['pending', 'Pending'],
                 ['approved', 'Approved'],
                 ['rejected', 'Rejected'],
@@ -603,60 +604,6 @@ export default function NewLead() {
                   problem.label,
                 ]),
               ]}
-            />
-          </div>
-        </div>
-
-        {/* =================================================
-            SECTION 5 — NEED ANALYSIS
-        ================================================= */}
-
-        <div className="form-section">
-          <SectionTitle
-            icon={<MessageSquare size={18} />}
-            title="Need analysis"
-            description="Capture what the prospect actually needs."
-          />
-
-          <div className="lead-form-grid">
-            <TextAreaField
-              label="Script Start"
-              name="needs"
-              value={form.needs}
-              onChange={update}
-              placeholder="What does the client need?"
-            />
-
-            <TextAreaField
-              label="What is the Problem?"
-              name="goals"
-              value={form.goals}
-              onChange={update}
-              placeholder="What are they trying to achieve?"
-            />
-
-            <TextAreaField
-              label="What can we do?"
-              name="targetAudience"
-              value={form.targetAudience}
-              onChange={update}
-              placeholder="Who are their customers?"
-            />
-
-            <TextAreaField
-              label="How are we going to do that?"
-              name="currentSolution"
-              value={form.currentSolution}
-              onChange={update}
-              placeholder="What are they currently using?"
-            />
-
-            <TextAreaField
-              label="Try Close"
-              name="painPoints"
-              value={form.painPoints}
-              onChange={update}
-              placeholder="What problems or frustrations are they experiencing?"
             />
           </div>
         </div>
