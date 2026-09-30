@@ -339,7 +339,7 @@ export default function FinanceDashboard() {
       <div className="fin-stats four">
         {/* REVENUE */}
 
-        <div>
+        <div style={{ color: 'green' }}>
           <DollarSign />
 
           <span>Revenue</span>
@@ -351,7 +351,7 @@ export default function FinanceDashboard() {
 
         {/* EXPENSES */}
 
-        <div>
+        <div style={{ color: 'red' }}>
           <TrendingDown />
 
           <span>Expenses</span>
