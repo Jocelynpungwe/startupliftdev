@@ -9,6 +9,7 @@ import userRoutes from './routes/userRoutes.js'
 import payrollRoutes from './routes/payrollRoutes.js'
 import contactRoutes from './routes/contactRoutes.js'
 import leadActivityRoutes from './routes/leadActivityRoutes.js'
+import financeRoutes from './routes/financeRoutes.js'
 
 import { notFound, errorHandler } from './middleware/error.js'
 
@@ -47,6 +48,7 @@ app.use('/api/v1/dashboard', dashboardRoutes)
 app.use('/api/v1/users', userRoutes)
 app.use('/api/v1/payroll', payrollRoutes)
 app.use('/api/v1/contact', contactRoutes)
+app.use('/api/v1/finance', financeRoutes)
 app.use('/api/v1', leadActivityRoutes)
 
 app.use(notFound)

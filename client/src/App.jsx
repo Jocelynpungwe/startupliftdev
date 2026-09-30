@@ -36,6 +36,13 @@ import LeadDetails from './pages/LeadDetails.jsx'
 import ProjectFormModal from './components/ProjectFormModel.jsx'
 
 import SalesPipeline from './pages/SalesPipeline'
+import FinanceDashboard from './pages/finance/FinanceDashboard.jsx'
+import IncomePage from './pages/finance/IncomePage.jsx'
+import ExpensesPage from './pages/finance/ExpensesPage.jsx'
+import SubscriptionsPage from './pages/finance/SubscriptionsPage.jsx'
+import ProfitLossPage from './pages/finance/ProfitLossPage.jsx'
+import CashFlowPage from './pages/finance/CashFlowPage.jsx'
+import ReportsPage from './pages/finance/ReportsPage.jsx'
 // Your StartupLift loader
 import PageLoader from './components/PageLoader.jsx'
 import { initClarity } from './lib/clarity.js'
@@ -47,6 +54,10 @@ export default function App() {
   const { user, initialized: authInitialized } = useSelector(
     (state) => state.auth,
   )
+
+  const canAccessFinance =
+    ['admin', 'manager', 'finance'].includes(user?.role) ||
+    user?.permissions?.includes('finance:read')
 
   /*
   =========================================================
@@ -182,6 +193,77 @@ export default function App() {
 
             <Route path="/sales/pipeline" element={<SalesPipeline />} />
             <Route path="/profile" element={<Profile />} />
+
+            <Route
+              path="/finance"
+              element={
+                canAccessFinance ? (
+                  <FinanceDashboard />
+                ) : (
+                  <Navigate to="/dashboard" replace />
+                )
+              }
+            />
+            <Route
+              path="/finance/income"
+              element={
+                canAccessFinance ? (
+                  <IncomePage />
+                ) : (
+                  <Navigate to="/dashboard" replace />
+                )
+              }
+            />
+            <Route
+              path="/finance/expenses"
+              element={
+                canAccessFinance ? (
+                  <ExpensesPage />
+                ) : (
+                  <Navigate to="/dashboard" replace />
+                )
+              }
+            />
+            <Route
+              path="/finance/subscriptions"
+              element={
+                canAccessFinance ? (
+                  <SubscriptionsPage />
+                ) : (
+                  <Navigate to="/dashboard" replace />
+                )
+              }
+            />
+            <Route
+              path="/finance/profit-loss"
+              element={
+                canAccessFinance ? (
+                  <ProfitLossPage />
+                ) : (
+                  <Navigate to="/dashboard" replace />
+                )
+              }
+            />
+            <Route
+              path="/finance/cash-flow"
+              element={
+                canAccessFinance ? (
+                  <CashFlowPage />
+                ) : (
+                  <Navigate to="/dashboard" replace />
+                )
+              }
+            />
+            <Route
+              path="/finance/reports"
+              element={
+                canAccessFinance ? (
+                  <ReportsPage />
+                ) : (
+                  <Navigate to="/dashboard" replace />
+                )
+              }
+            />
 
             <Route path="/payroll" element={<PayrollManagement />} />
 

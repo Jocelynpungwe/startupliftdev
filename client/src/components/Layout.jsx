@@ -22,6 +22,7 @@ import {
   FileText,
   RefreshCw,
   Workflow,
+  DollarSign,
 } from 'lucide-react'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -40,6 +41,10 @@ export default function Layout() {
     user?.role === 'admin' || user?.permissions?.includes('user:create')
 
   const canManagePayroll = user?.role === 'admin' || user?.role === 'manager'
+
+  const canAccessFinance =
+    ['admin', 'manager', 'finance'].includes(user?.role) ||
+    user?.permissions?.includes('finance:read')
 
   const handleLogout = () => {
     dispatch(logout())
@@ -159,6 +164,55 @@ export default function Layout() {
               onClick={closeMobileMenu}
             />
           </div>
+
+          {/* FINANCE */}
+          {canAccessFinance && (
+            <div className="nav-section">
+              <div className="nav-section-title">Finance</div>
+              <NavItem
+                to="/finance"
+                icon={<BarChart3 size={18} />}
+                label="Financial Overview"
+                onClick={closeMobileMenu}
+              />
+              <NavItem
+                to="/finance/income"
+                icon={<DollarSign size={18} />}
+                label="Income"
+                onClick={closeMobileMenu}
+              />
+              <NavItem
+                to="/finance/expenses"
+                icon={<WalletCards size={18} />}
+                label="Expenses"
+                onClick={closeMobileMenu}
+              />
+              <NavItem
+                to="/finance/subscriptions"
+                icon={<RefreshCw size={18} />}
+                label="Subscriptions"
+                onClick={closeMobileMenu}
+              />
+              <NavItem
+                to="/finance/profit-loss"
+                icon={<FileText size={18} />}
+                label="Profit & Loss"
+                onClick={closeMobileMenu}
+              />
+              <NavItem
+                to="/finance/cash-flow"
+                icon={<Workflow size={18} />}
+                label="Cash Flow"
+                onClick={closeMobileMenu}
+              />
+              <NavItem
+                to="/finance/reports"
+                icon={<FileText size={18} />}
+                label="Financial Reports"
+                onClick={closeMobileMenu}
+              />
+            </div>
+          )}
 
           {/* MANAGEMENT */}
 
@@ -310,6 +364,7 @@ function formatRole(role) {
     manager: 'Manager',
     sales: 'Sales Representative',
     salesperson: 'Sales Representative',
+    finance: 'Finance',
   }
 
   return roles[role] || role.charAt(0).toUpperCase() + role.slice(1)
