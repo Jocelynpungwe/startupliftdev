@@ -1,60 +1,325 @@
 import React, { useEffect, useState } from 'react'
+
 import '../../styles/finance.css'
-import { getFinanceReport } from '../../services/financeService'
-const m = (n) =>
-  new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(
-    n || 0,
-  )
+
+import {
+  DollarSign,
+  TrendingDown,
+  TrendingUp,
+  Wallet,
+  RefreshCw,
+} from 'lucide-react'
+
+import { getProfitAndLoss } from '../../services/financeService'
+
+const money = (value) =>
+  new Intl.NumberFormat('en-CA', {
+    style: 'currency',
+    currency: 'CAD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(Number(value) || 0)
+
 export default function ProfitLossPage() {
-  const [r, setR] = useState(null),
-    [range, setRange] = useState({ startDate: '', endDate: '' })
+  const [report, setReport] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  const [range, setRange] = useState({
+    startDate: '',
+    endDate: '',
+  })
+
+  // ============================================================
+  // LOAD P&L
+  // ============================================================
+
+  const loadReport = async () => {
+    try {
+      setLoading(true)
+      setError('')
+
+      const params = {}
+
+      if (range.startDate) {
+        params.startDate = range.startDate
+      }
+
+      if (range.endDate) {
+        params.endDate = range.endDate
+      }
+
+      const response = await getProfitAndLoss(params)
+
+      console.log('Profit & Loss response:', response)
+
+      // IMPORTANT:
+      // Backend returns:
+      //
+      // {
+      //   success: true,
+      //   profitAndLoss: {...}
+      // }
+
+      setReport(response?.profitAndLoss || {})
+    } catch (error) {
+      console.error('Profit & Loss error:', error)
+
+      setError(
+        error.response?.data?.message || 'Unable to load Profit & Loss report.',
+      )
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    getFinanceReport(range).then((x) => setR(x.report))
+    loadReport()
   }, [range.startDate, range.endDate])
+
+  // ============================================================
+  // VALUES
+  // ============================================================
+
+  const revenue = Number(report?.revenue || 0)
+
+  const directCosts = Number(report?.directCosts || 0)
+
+  const grossProfit = Number(report?.grossProfit || 0)
+
+  const operatingExpenses = Number(report?.operatingExpenses || 0)
+
+  const totalExpenses = Number(report?.totalExpenses || 0)
+
+  const netProfit = Number(report?.netProfit || 0)
+
+  const profitMargin = Number(report?.profitMargin || 0)
+
+  // ============================================================
+  // LOADING
+  // ============================================================
+
+  if (loading && !report) {
+    return (
+      <div className="fin-page">
+        <div className="fin-card pad">
+          <div className="fin-empty">
+            <RefreshCw size={30} />
+
+            <p>Loading Profit & Loss...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ============================================================
+  // PAGE
+  // ============================================================
+
   return (
     <div className="fin-page">
+      {/* HEADER */}
+
       <div className="fin-heading">
         <div>
           <h1>Profit & Loss</h1>
+
           <p>Income statement based on paid revenue and paid expenses.</p>
         </div>
+
+        {/* DATE RANGE */}
+
         <div className="fin-date-range">
           <input
             type="date"
-            onChange={(e) => setRange({ ...range, startDate: e.target.value })}
+            value={range.startDate}
+            onChange={(e) =>
+              setRange({
+                ...range,
+                startDate: e.target.value,
+              })
+            }
           />
+
           <span>to</span>
+
           <input
             type="date"
-            onChange={(e) => setRange({ ...range, endDate: e.target.value })}
+            value={range.endDate}
+            onChange={(e) =>
+              setRange({
+                ...range,
+                endDate: e.target.value,
+              })
+            }
           />
         </div>
       </div>
+
+      {/* ERROR */}
+
+      {error && <div className="fin-error">{error}</div>}
+
+      {/* ======================================================
+          SUMMARY
+      ====================================================== */}
+
+      <div className="fin-stats four">
+        {/* REVENUE */}
+
+        <div>
+          <DollarSign />
+
+          <span>Revenue</span>
+
+          <strong>{money(revenue)}</strong>
+
+          <small>Paid income</small>
+        </div>
+
+        {/* DIRECT COSTS */}
+
+        <div>
+          <TrendingDown />
+
+          <span>Direct Costs</span>
+
+          <strong>{money(directCosts)}</strong>
+
+          <small>Cost of delivering services</small>
+        </div>
+
+        {/* GROSS PROFIT */}
+
+        <div>
+          <Wallet />
+
+          <span>Gross Profit</span>
+
+          <strong>{money(grossProfit)}</strong>
+
+          <small>Revenue − direct costs</small>
+        </div>
+
+        {/* NET PROFIT */}
+
+        <div>
+          <TrendingUp />
+
+          <span>Net Profit</span>
+
+          <strong className={netProfit >= 0 ? 'positive' : 'negative'}>
+            {money(netProfit)}
+          </strong>
+
+          <small>{profitMargin.toFixed(1)}% margin</small>
+        </div>
+      </div>
+
+      {/* ======================================================
+          P&L STATEMENT
+      ====================================================== */}
+
       <div className="fin-card fin-statement">
-        <h2>Profit & Loss Statement</h2>
+        <div className="fin-statement-header">
+          <div>
+            <h2>Profit & Loss Statement</h2>
+
+            <p>Income Statement</p>
+          </div>
+        </div>
+
+        {/* REVENUE */}
+
         <div>
           <span>Revenue</span>
-          <b>{m(r?.revenue)}</b>
+
+          <b className="positive">{money(revenue)}</b>
         </div>
+
+        {/* DIRECT COSTS */}
+
         <div>
           <span>Direct Costs</span>
-          <b>-{m(r?.directCosts)}</b>
+
+          <b>-{money(directCosts)}</b>
         </div>
+
+        {/* GROSS PROFIT */}
+
         <div className="subtotal">
           <span>Gross Profit</span>
-          <b>{m(r?.grossProfit)}</b>
+
+          <b>{money(grossProfit)}</b>
         </div>
+
+        {/* OPERATING EXPENSES */}
+
         <div>
           <span>Operating Expenses</span>
-          <b>-{m(r?.operatingExpenses)}</b>
+
+          <b>-{money(operatingExpenses)}</b>
         </div>
+
+        {/* TOTAL EXPENSES */}
+
+        <div>
+          <span>Total Expenses</span>
+
+          <b>-{money(totalExpenses)}</b>
+        </div>
+
+        {/* NET PROFIT */}
+
         <div className="total">
           <span>Net Profit</span>
-          <b>{m(r?.netProfit)}</b>
+
+          <b className={netProfit >= 0 ? 'positive' : 'negative'}>
+            {money(netProfit)}
+          </b>
         </div>
+
+        {/* PROFIT MARGIN */}
+
         <div>
           <span>Net Profit Margin</span>
-          <b>{(r?.margin || 0).toFixed(1)}%</b>
+
+          <b className={profitMargin >= 0 ? 'positive' : 'negative'}>
+            {profitMargin.toFixed(1)}%
+          </b>
+        </div>
+      </div>
+
+      {/* ======================================================
+          CALCULATION BREAKDOWN
+      ====================================================== */}
+
+      <div className="fin-card pad">
+        <h2>P&L Breakdown</h2>
+
+        <div className="fin-kv">
+          <span>Total Revenue</span>
+
+          <b>{money(revenue)}</b>
+
+          <span>Less: Direct Costs</span>
+
+          <b>-{money(directCosts)}</b>
+
+          <span>Gross Profit</span>
+
+          <b>{money(grossProfit)}</b>
+
+          <span>Less: Operating Expenses</span>
+
+          <b>-{money(operatingExpenses)}</b>
+
+          <span>Net Profit</span>
+
+          <b className={netProfit >= 0 ? 'positive' : 'negative'}>
+            {money(netProfit)}
+          </b>
         </div>
       </div>
     </div>

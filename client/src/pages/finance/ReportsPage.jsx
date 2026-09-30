@@ -1,103 +1,526 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+
 import '../../styles/finance.css'
-import { Download } from 'lucide-react'
-import { getFinanceReport } from '../../services/financeService'
-const m = (n) =>
-  new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(
-    n || 0,
-  )
-const nice = (s) =>
-  s
+
+import {
+  Download,
+  TrendingUp,
+  TrendingDown,
+  Wallet,
+  RefreshCw,
+} from 'lucide-react'
+
+import { getIncome, getExpenses } from '../../services/financeService'
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+const money = (value) =>
+  new Intl.NumberFormat('en-CA', {
+    style: 'currency',
+    currency: 'CAD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(Number(value) || 0)
+
+const nice = (value = '') =>
+  value
     .split('-')
-    .map((x) => x[0].toUpperCase() + x.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
+
+const formatDate = (date) => {
+  if (!date) return '-'
+
+  return new Date(date).toLocaleDateString('en-CA', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
+}
+
+// ============================================================
+// REPORTS PAGE
+// ============================================================
+
 export default function ReportsPage() {
-  const [r, setR] = useState(null),
-    [range, setRange] = useState({ startDate: '', endDate: '' })
+  const [income, setIncome] = useState([])
+
+  const [expenses, setExpenses] = useState([])
+
+  const [loading, setLoading] = useState(true)
+
+  const [error, setError] = useState('')
+
+  const [range, setRange] = useState({
+    startDate: '',
+    endDate: '',
+  })
+
+  // ==========================================================
+  // LOAD REPORT
+  // ==========================================================
+
+  const loadReport = async () => {
+    try {
+      setLoading(true)
+      setError('')
+
+      const params = {}
+
+      if (range.startDate) {
+        params.startDate = range.startDate
+      }
+
+      if (range.endDate) {
+        params.endDate = range.endDate
+      }
+
+      const [incomeResponse, expenseResponse] = await Promise.all([
+        getIncome(params),
+        getExpenses(params),
+      ])
+
+      console.log('Reports income:', incomeResponse)
+
+      console.log('Reports expenses:', expenseResponse)
+
+      setIncome(
+        Array.isArray(incomeResponse)
+          ? incomeResponse
+          : incomeResponse?.income || [],
+      )
+
+      setExpenses(
+        Array.isArray(expenseResponse)
+          ? expenseResponse
+          : expenseResponse?.expenses || [],
+      )
+    } catch (error) {
+      console.error('Financial reports error:', error)
+
+      setError(
+        error.response?.data?.message || 'Unable to load financial report.',
+      )
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    getFinanceReport(range).then((x) => setR(x.report))
+    loadReport()
   }, [range.startDate, range.endDate])
-  const csv = () => {
+
+  // ==========================================================
+  // PAID TRANSACTIONS
+  // ==========================================================
+
+  const paidIncome = useMemo(
+    () => income.filter((item) => item.status === 'paid'),
+    [income],
+  )
+
+  const paidExpenses = useMemo(
+    () => expenses.filter((item) => item.status === 'paid'),
+    [expenses],
+  )
+
+  // ==========================================================
+  // TOTALS
+  // ==========================================================
+
+  const totalRevenue = useMemo(
+    () =>
+      paidIncome.reduce((total, item) => total + Number(item.amount || 0), 0),
+    [paidIncome],
+  )
+
+  const totalExpenses = useMemo(
+    () =>
+      paidExpenses.reduce((total, item) => total + Number(item.amount || 0), 0),
+    [paidExpenses],
+  )
+
+  const netProfit = totalRevenue - totalExpenses
+
+  // ==========================================================
+  // REVENUE BY CATEGORY
+  // ==========================================================
+
+  const revenueByCategory = useMemo(() => {
+    return paidIncome.reduce((result, item) => {
+      const category = item.category || 'other'
+
+      if (!result[category]) {
+        result[category] = 0
+      }
+
+      result[category] += Number(item.amount || 0)
+
+      return result
+    }, {})
+  }, [paidIncome])
+
+  // ==========================================================
+  // EXPENSES BY CATEGORY
+  // ==========================================================
+
+  const expenseByCategory = useMemo(() => {
+    return paidExpenses.reduce((result, item) => {
+      const category = item.category || 'other'
+
+      if (!result[category]) {
+        result[category] = 0
+      }
+
+      result[category] += Number(item.amount || 0)
+
+      return result
+    }, {})
+  }, [paidExpenses])
+
+  // ==========================================================
+  // ALL TRANSACTIONS
+  // ==========================================================
+
+  const transactions = useMemo(() => {
+    const incomeRows = income.map((item) => ({
+      id: item._id,
+      type: 'Income',
+      description: item.description,
+      category: item.category,
+      date: item.paymentDate,
+      amount: Number(item.amount || 0),
+      status: item.status,
+      party: item.clientName || '',
+    }))
+
+    const expenseRows = expenses.map((item) => ({
+      id: item._id,
+      type: 'Expense',
+      description: item.description,
+      category: item.category,
+      date: item.expenseDate,
+      amount: Number(item.amount || 0),
+      status: item.status,
+      party: item.vendor || '',
+    }))
+
+    return [...incomeRows, ...expenseRows].sort(
+      (a, b) => new Date(b.date) - new Date(a.date),
+    )
+  }, [income, expenses])
+
+  // ==========================================================
+  // CSV EXPORT
+  // ==========================================================
+
+  const exportCSV = () => {
+    if (!transactions.length) {
+      window.alert('There are no transactions to export.')
+
+      return
+    }
+
     const rows = [
-      ['Type', 'Description', 'Category', 'Date', 'Amount'],
-      ...(r?.income || []).map((x) => [
-        'Income',
-        x.description,
-        x.category,
-        x.paymentDate,
-        x.amount,
-      ]),
-      ...(r?.expenses || []).map((x) => [
-        'Expense',
-        x.description,
-        x.category,
-        x.expenseDate,
-        x.amount,
+      [
+        'Type',
+        'Description',
+        'Client / Vendor',
+        'Category',
+        'Status',
+        'Date',
+        'Amount',
+      ],
+
+      ...transactions.map((item) => [
+        item.type,
+        item.description,
+        item.party,
+        nice(item.category),
+        nice(item.status),
+        formatDate(item.date),
+        item.amount,
       ]),
     ]
-    const blob = new Blob(
-      [
-        rows
-          .map((row) =>
-            row
-              .map((v) => `"${String(v ?? '').replaceAll('"', '""')}"`)
-              .join(','),
-          )
-          .join('\n'),
-      ],
-      { type: 'text/csv' },
-    )
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = 'financial-report.csv'
-    a.click()
-    URL.revokeObjectURL(a.href)
+
+    const csvContent = rows
+      .map((row) =>
+        row
+          .map((value) => `"${String(value ?? '').replaceAll('"', '""')}"`)
+          .join(','),
+      )
+      .join('\n')
+
+    const blob = new Blob([csvContent], {
+      type: 'text/csv;charset=utf-8;',
+    })
+
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement('a')
+
+    link.href = url
+
+    link.download = `financial-report-${new Date()
+      .toISOString()
+      .slice(0, 10)}.csv`
+
+    document.body.appendChild(link)
+
+    link.click()
+
+    document.body.removeChild(link)
+
+    URL.revokeObjectURL(url)
   }
+
+  // ==========================================================
+  // LOADING
+  // ==========================================================
+
+  if (loading && !income.length && !expenses.length) {
+    return (
+      <div className="fin-page">
+        <div className="fin-card pad">
+          <div className="fin-empty">
+            <RefreshCw size={30} />
+
+            <p>Loading financial reports...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ==========================================================
+  // PAGE
+  // ==========================================================
+
   return (
     <div className="fin-page">
+      {/* HEADER */}
+
       <div className="fin-heading">
         <div>
           <h1>Financial Reports</h1>
-          <p>Review category performance and export transaction data.</p>
+
+          <p>
+            Review financial performance by category and export transaction
+            data.
+          </p>
         </div>
-        <button className="fin-btn" onClick={csv}>
-          <Download size={17} /> Export CSV
+
+        <button
+          className="fin-btn"
+          onClick={exportCSV}
+          disabled={!transactions.length}
+        >
+          <Download size={17} />
+          Export CSV
         </button>
       </div>
+
+      {/* DATE RANGE */}
+
       <div className="fin-date-range">
         <input
           type="date"
-          onChange={(e) => setRange({ ...range, startDate: e.target.value })}
+          value={range.startDate}
+          onChange={(e) =>
+            setRange({
+              ...range,
+              startDate: e.target.value,
+            })
+          }
         />
+
         <span>to</span>
+
         <input
           type="date"
-          onChange={(e) => setRange({ ...range, endDate: e.target.value })}
+          value={range.endDate}
+          onChange={(e) =>
+            setRange({
+              ...range,
+              endDate: e.target.value,
+            })
+          }
         />
       </div>
+
+      {/* ERROR */}
+
+      {error && <div className="fin-error">{error}</div>}
+
+      {/* ======================================================
+          SUMMARY
+      ====================================================== */}
+
+      <div className="fin-stats">
+        <div>
+          <TrendingUp />
+
+          <span>Total Revenue</span>
+
+          <strong className="positive">{money(totalRevenue)}</strong>
+
+          <small>{paidIncome.length} paid transactions</small>
+        </div>
+
+        <div>
+          <TrendingDown />
+
+          <span>Total Expenses</span>
+
+          <strong className="negative">{money(totalExpenses)}</strong>
+
+          <small>{paidExpenses.length} paid transactions</small>
+        </div>
+
+        <div>
+          <Wallet />
+
+          <span>Net Profit</span>
+
+          <strong className={netProfit >= 0 ? 'positive' : 'negative'}>
+            {money(netProfit)}
+          </strong>
+
+          <small>Revenue − expenses</small>
+        </div>
+      </div>
+
+      {/* ======================================================
+          CATEGORY REPORTS
+      ====================================================== */}
+
       <div className="fin-grid-2">
+        {/* REVENUE */}
+
         <div className="fin-card pad">
           <h2>Revenue by Category</h2>
-          <div className="fin-kv">
-            {Object.entries(r?.revenueByCategory || {}).map(([k, v]) => (
-              <>
-                <span key={`${k}a`}>{nice(k)}</span>
-                <b key={`${k}b`}>{m(v)}</b>
-              </>
-            ))}
-          </div>
+
+          {Object.keys(revenueByCategory).length ? (
+            <div className="fin-kv">
+              {Object.entries(revenueByCategory).map(([category, value]) => (
+                <React.Fragment key={category}>
+                  <span>{nice(category)}</span>
+
+                  <b className="positive">{money(value)}</b>
+                </React.Fragment>
+              ))}
+            </div>
+          ) : (
+            <div className="fin-empty">
+              <p>No paid income recorded.</p>
+            </div>
+          )}
         </div>
+
+        {/* EXPENSES */}
+
         <div className="fin-card pad">
           <h2>Expenses by Category</h2>
-          <div className="fin-kv">
-            {Object.entries(r?.expenseByCategory || {}).map(([k, v]) => (
-              <>
-                <span key={`${k}a`}>{nice(k)}</span>
-                <b key={`${k}b`}>{m(v)}</b>
-              </>
-            ))}
+
+          {Object.keys(expenseByCategory).length ? (
+            <div className="fin-kv">
+              {Object.entries(expenseByCategory).map(([category, value]) => (
+                <React.Fragment key={category}>
+                  <span>{nice(category)}</span>
+
+                  <b className="negative">{money(value)}</b>
+                </React.Fragment>
+              ))}
+            </div>
+          ) : (
+            <div className="fin-empty">
+              <p>No paid expenses recorded.</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ======================================================
+          TRANSACTIONS
+      ====================================================== */}
+
+      <div className="fin-card pad">
+        <div className="fin-section-heading">
+          <div>
+            <h2>Transaction Report</h2>
+
+            <p>
+              {transactions.length} transaction
+              {transactions.length === 1 ? '' : 's'}
+            </p>
           </div>
         </div>
+
+        {transactions.length ? (
+          <div className="fin-table-wrap">
+            <table className="fin-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Description</th>
+                  <th>Client / Vendor</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {transactions.map((item) => (
+                  <tr key={`${item.type}-${item.id}`}>
+                    <td>{formatDate(item.date)}</td>
+
+                    <td>
+                      <span
+                        className={
+                          item.type === 'Income'
+                            ? 'fin-type income'
+                            : 'fin-type outgoing'
+                        }
+                      >
+                        {item.type}
+                      </span>
+                    </td>
+
+                    <td>{item.description}</td>
+
+                    <td>{item.party || '-'}</td>
+
+                    <td>{nice(item.category)}</td>
+
+                    <td>{nice(item.status)}</td>
+
+                    <td
+                      className={
+                        item.type === 'Income' ? 'positive' : 'negative'
+                      }
+                    >
+                      {item.type === 'Expense' ? '-' : ''}
+
+                      {money(item.amount)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="fin-empty">
+            <Wallet size={30} />
+
+            <h3>No transactions</h3>
+
+            <p>Income and expenses will appear here once recorded.</p>
+          </div>
+        )}
       </div>
     </div>
   )
