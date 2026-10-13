@@ -43,28 +43,31 @@ const projects = [
     link: 'https://royalmemoria.netlify.app/',
   },
   {
-    title: 'Our Beauty Studio',
+    title: 'Maison Amara',
     category: 'Web Design',
+    image: '/maisonamara.webp',
     description:
-      'An elegant website for a beauty studio, showcasing treatments and making it easy for clients to book their next appointment.',
+      'A cinematic website for a luxury makeup atelier, pairing elegant typography with full-screen film and a simple booking flow.',
     tags: ['Responsive', 'Booking', 'SEO'],
     className: 'portfolio-purple',
     link: 'https://ourbeautystudio.netlify.app/',
   },
   {
-    title: 'Our Cleaning Demo',
+    title: 'VitaGrace Cleaning Services',
     category: 'Web Design',
+    image: '/vitagrace.webp',
     description:
-      'A clean, trustworthy website for a cleaning company, highlighting services, pricing and quick quote requests.',
+      'A fresh, trustworthy website for a cleaning company, with a before-and-after story, service details and quick quote requests.',
     tags: ['Responsive', 'Lead Generation', 'SEO'],
     className: 'portfolio-blue',
     link: 'https://ourcleaningdemo.netlify.app/',
   },
   {
-    title: 'Our Hair Studio',
+    title: 'Crown Atelier',
     category: 'Web Design',
+    image: '/crownatelier.webp',
     description:
-      'A stylish website for a hair salon, presenting services, styles and a simple path to booking a visit.',
+      'A warm, editorial website for a hair studio, showcasing services, client transformations and an easy path to booking.',
     tags: ['Responsive', 'Booking', 'SEO'],
     className: 'portfolio-dark',
     link: 'https://ourhairstudio.netlify.app/',
@@ -72,18 +75,20 @@ const projects = [
   {
     title: 'IVP ASBL',
     category: 'Web development',
+    image: '/ivp.webp',
     description:
-      'A professional website for a non-profit organisation, sharing its mission, activities and ways to get involved.',
-    tags: ['Responsive', 'Content', 'SEO'],
+      'A bilingual website for a non-profit caring for the most vulnerable, alongside its MF Médical beauty services, with appointment booking and donations.',
+    tags: ['Responsive', 'Donations', 'SEO'],
     className: 'portfolio-purple',
     link: 'https://ivp-asbl.netlify.app/',
   },
   {
-    title: 'Our Car Detailing',
+    title: 'Vanta Detail Studio',
     category: 'Web Design',
+    image: '/vanta.webp',
     description:
-      'A bold website for a car detailing business, featuring packages, results and an easy way to request a service.',
-    tags: ['Responsive', 'Lead Generation', 'SEO'],
+      'A bold, cinematic website for a car detailing studio, featuring packages, results, a gallery and online booking.',
+    tags: ['Responsive', 'Booking', 'SEO'],
     className: 'portfolio-blue',
     link: 'https://ourcardetailing.netlify.app/',
   },
