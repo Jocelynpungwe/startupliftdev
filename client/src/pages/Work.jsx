@@ -42,6 +42,51 @@ const projects = [
     className: 'portfolio-dark',
     link: 'https://royalmemoria.netlify.app/',
   },
+  {
+    title: 'Our Beauty Studio',
+    category: 'Web Design',
+    description:
+      'An elegant website for a beauty studio, showcasing treatments and making it easy for clients to book their next appointment.',
+    tags: ['Responsive', 'Booking', 'SEO'],
+    className: 'portfolio-purple',
+    link: 'https://ourbeautystudio.netlify.app/',
+  },
+  {
+    title: 'Our Cleaning Demo',
+    category: 'Web Design',
+    description:
+      'A clean, trustworthy website for a cleaning company, highlighting services, pricing and quick quote requests.',
+    tags: ['Responsive', 'Lead Generation', 'SEO'],
+    className: 'portfolio-blue',
+    link: 'https://ourcleaningdemo.netlify.app/',
+  },
+  {
+    title: 'Our Hair Studio',
+    category: 'Web Design',
+    description:
+      'A stylish website for a hair salon, presenting services, styles and a simple path to booking a visit.',
+    tags: ['Responsive', 'Booking', 'SEO'],
+    className: 'portfolio-dark',
+    link: 'https://ourhairstudio.netlify.app/',
+  },
+  {
+    title: 'IVP ASBL',
+    category: 'Web development',
+    description:
+      'A professional website for a non-profit organisation, sharing its mission, activities and ways to get involved.',
+    tags: ['Responsive', 'Content', 'SEO'],
+    className: 'portfolio-purple',
+    link: 'https://ivp-asbl.netlify.app/',
+  },
+  {
+    title: 'Our Car Detailing',
+    category: 'Web Design',
+    description:
+      'A bold website for a car detailing business, featuring packages, results and an easy way to request a service.',
+    tags: ['Responsive', 'Lead Generation', 'SEO'],
+    className: 'portfolio-blue',
+    link: 'https://ourcardetailing.netlify.app/',
+  },
   // {
   //   title: 'Growth Platform',
   //   category: 'Web Application',
@@ -120,12 +165,16 @@ export default function Work() {
                 <article className={`portfolio-card ${project.className}`}>
                   <div
                     className="portfolio-preview"
-                    style={{
-                      backgroundImage: `url(${project.image})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      backgroundRepeat: 'no-repeat',
-                    }}
+                    style={
+                      project.image
+                        ? {
+                            backgroundImage: `url(${project.image})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            backgroundRepeat: 'no-repeat',
+                          }
+                        : undefined
+                    }
                   >
                     {/* <div className="browser-bar">
                       <span></span>
