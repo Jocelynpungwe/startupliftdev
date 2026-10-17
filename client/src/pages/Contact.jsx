@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Instagram, Facebook, Mail, Clock, Globe } from 'lucide-react'
 import HeroContactVisual from '../components/public/usable/HeroContactVisual.jsx'
 import HeroReuse from '../components/public/usable/HeroReuse.jsx'

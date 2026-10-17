@@ -15,18 +15,13 @@ import {
   getIncome,
   getExpenses,
 } from '../../services/financeService'
+import { money } from '../../lib/format'
+import DateRange from '../../components/finance/DateRange'
+import { SkeletonCards, SkeletonRows } from '../../components/ui/Skeleton'
 
 // ============================================================
 // HELPERS
 // ============================================================
-
-const money = (value) =>
-  new Intl.NumberFormat('en-CA', {
-    style: 'currency',
-    currency: 'CAD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(Number(value) || 0)
 
 const getMonthKey = (date) => {
   const d = new Date(date)
@@ -93,11 +88,7 @@ export default function CashFlowPage() {
           }),
         ])
 
-      console.log('Cash flow summary:', summaryResponse)
 
-      console.log('Cash flow income:', incomeResponse)
-
-      console.log('Cash flow expenses:', expenseResponse)
 
       setSummaryData(summaryResponse)
 
@@ -214,12 +205,10 @@ export default function CashFlowPage() {
   if (loading && !summaryData) {
     return (
       <div className="fin-page">
-        <div className="fin-card pad">
-          <div className="fin-empty">
-            <RefreshCw size={30} />
+        <SkeletonCards count={3} />
 
-            <p>Loading cash flow...</p>
-          </div>
+        <div className="fin-card pad">
+          <SkeletonRows rows={5} columns={4} />
         </div>
       </div>
     )
@@ -244,31 +233,7 @@ export default function CashFlowPage() {
 
         {/* DATE RANGE */}
 
-        <div className="fin-date-range">
-          <input
-            type="date"
-            value={range.startDate}
-            onChange={(e) =>
-              setRange({
-                ...range,
-                startDate: e.target.value,
-              })
-            }
-          />
-
-          <span>to</span>
-
-          <input
-            type="date"
-            value={range.endDate}
-            onChange={(e) =>
-              setRange({
-                ...range,
-                endDate: e.target.value,
-              })
-            }
-          />
-        </div>
+        <DateRange value={range} onChange={setRange} />
       </div>
 
       {/* ERROR */}

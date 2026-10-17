@@ -11,14 +11,9 @@ import {
 } from 'lucide-react'
 
 import { getProfitAndLoss } from '../../services/financeService'
-
-const money = (value) =>
-  new Intl.NumberFormat('en-CA', {
-    style: 'currency',
-    currency: 'CAD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(Number(value) || 0)
+import { money } from '../../lib/format'
+import DateRange from '../../components/finance/DateRange'
+import { SkeletonCards, SkeletonRows } from '../../components/ui/Skeleton'
 
 export default function ProfitLossPage() {
   const [report, setReport] = useState(null)
@@ -50,8 +45,6 @@ export default function ProfitLossPage() {
       }
 
       const response = await getProfitAndLoss(params)
-
-      console.log('Profit & Loss response:', response)
 
       // IMPORTANT:
       // Backend returns:
@@ -102,12 +95,10 @@ export default function ProfitLossPage() {
   if (loading && !report) {
     return (
       <div className="fin-page">
-        <div className="fin-card pad">
-          <div className="fin-empty">
-            <RefreshCw size={30} />
+        <SkeletonCards count={3} />
 
-            <p>Loading Profit & Loss...</p>
-          </div>
+        <div className="fin-card pad">
+          <SkeletonRows rows={5} columns={4} />
         </div>
       </div>
     )
@@ -130,31 +121,7 @@ export default function ProfitLossPage() {
 
         {/* DATE RANGE */}
 
-        <div className="fin-date-range">
-          <input
-            type="date"
-            value={range.startDate}
-            onChange={(e) =>
-              setRange({
-                ...range,
-                startDate: e.target.value,
-              })
-            }
-          />
-
-          <span>to</span>
-
-          <input
-            type="date"
-            value={range.endDate}
-            onChange={(e) =>
-              setRange({
-                ...range,
-                endDate: e.target.value,
-              })
-            }
-          />
-        </div>
+        <DateRange value={range} onChange={setRange} />
       </div>
 
       {/* ERROR */}

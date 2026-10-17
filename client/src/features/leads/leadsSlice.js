@@ -117,6 +117,50 @@ export const updateLeadStage = createAsyncThunk(
 
 /*
 |--------------------------------------------------------------------------
+| FETCH ONE LEAD (lead details page)
+|--------------------------------------------------------------------------
+*/
+
+export const fetchLead = createAsyncThunk(
+  'leads/fetchOne',
+  async (id, thunkAPI) => {
+    try {
+      const res = await api.get(`/leads/${id}`)
+
+      return res.data.lead
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || 'Could not load lead',
+      )
+    }
+  },
+)
+
+/*
+|--------------------------------------------------------------------------
+| UPDATE LEAD STATUS (sales pipeline board)
+|--------------------------------------------------------------------------
+*/
+
+export const updateLeadStatus = createAsyncThunk(
+  'leads/updateStatus',
+  async ({ id, status }, thunkAPI) => {
+    try {
+      const res = await api.patch(`/leads/${id}/status`, {
+        status,
+      })
+
+      return res.data.lead
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || 'Could not update lead status',
+      )
+    }
+  },
+)
+
+/*
+|--------------------------------------------------------------------------
 | FETCH LEAD ACTIVITIES
 |--------------------------------------------------------------------------
 */
@@ -447,6 +491,58 @@ const slice = createSlice({
         /*
           | Update pipeline
           */
+
+        const pipelineIndex = state.pipeline.findIndex(
+          (lead) => lead._id === updatedLead._id,
+        )
+
+        if (pipelineIndex !== -1) {
+          state.pipeline[pipelineIndex] = updatedLead
+        }
+      })
+
+      /*
+      |--------------------------------------------------------------------------
+      | FETCH ONE LEAD
+      |--------------------------------------------------------------------------
+      */
+
+      .addCase(fetchLead.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+
+      .addCase(fetchLead.fulfilled, (state, action) => {
+        state.loading = false
+
+        const lead = action.payload
+        const index = state.items.findIndex((item) => item._id === lead._id)
+
+        if (index === -1) state.items.push(lead)
+        else state.items[index] = lead
+      })
+
+      .addCase(fetchLead.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload
+      })
+
+      /*
+      |--------------------------------------------------------------------------
+      | UPDATE LEAD STATUS
+      |--------------------------------------------------------------------------
+      */
+
+      .addCase(updateLeadStatus.fulfilled, (state, action) => {
+        const updatedLead = action.payload
+
+        const itemIndex = state.items.findIndex(
+          (lead) => lead._id === updatedLead._id,
+        )
+
+        if (itemIndex !== -1) {
+          state.items[itemIndex] = updatedLead
+        }
 
         const pipelineIndex = state.pipeline.findIndex(
           (lead) => lead._id === updatedLead._id,

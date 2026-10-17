@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import '../../styles/finance.css'
 
 import { Plus, Pencil, Trash2, CircleDollarSign, RefreshCw } from 'lucide-react'
 
@@ -11,29 +12,13 @@ import {
   deleteSubscription,
   recordSubscriptionPayment,
 } from '../../services/financeService'
+import { money as formatCurrency, formatDate } from '../../lib/format'
+import { useConfirm, useToast } from '../../components/ui/UiProvider.jsx'
+import { SkeletonRows } from '../../components/ui/Skeleton.jsx'
 
 // ============================================================
 // HELPERS
 // ============================================================
-
-const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-CA', {
-    style: 'currency',
-    currency: 'CAD',
-  }).format(Number(amount || 0))
-}
-
-const formatDate = (date) => {
-  if (!date) {
-    return '-'
-  }
-
-  return new Intl.DateTimeFormat('en-CA', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  }).format(new Date(date))
-}
 
 const formatText = (text) => {
   if (!text) {
@@ -66,6 +51,8 @@ const getMonthlyAmount = (subscription) => {
 // ============================================================
 
 export default function SubscriptionsPage() {
+  const confirm = useConfirm()
+  const toast = useToast()
   const [subscriptions, setSubscriptions] = useState([])
 
   const [loading, setLoading] = useState(true)
@@ -179,9 +166,13 @@ export default function SubscriptionsPage() {
   // ============================================================
 
   const handleDelete = async (subscription) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${subscription.name}"?`,
-    )
+    const confirmed = await confirm({
+      title: `Delete "${subscription.name}"?`,
+      message:
+        'The subscription will be removed. Income and expenses already recorded from it are kept.',
+      confirmLabel: 'Delete subscription',
+      tone: 'danger',
+    })
 
     if (!confirmed) {
       return
@@ -215,11 +206,11 @@ export default function SubscriptionsPage() {
 
     const action = isIncoming ? 'received' : 'paid'
 
-    const confirmed = window.confirm(
-      `Record ${formatCurrency(
-        subscription.amount,
-      )} ${action} for "${subscription.name}"?`,
-    )
+    const confirmed = await confirm({
+      title: 'Record this payment?',
+      message: `${formatCurrency(subscription.amount)} ${action} for "${subscription.name}" will be added to your ${isIncoming ? 'income' : 'expenses'}.`,
+      confirmLabel: 'Record payment',
+    })
 
     if (!confirmed) {
       return
@@ -239,7 +230,7 @@ export default function SubscriptionsPage() {
 
       await loadSubscriptions()
 
-      window.alert(result.message || 'Payment recorded successfully.')
+      toast.success(result.message || 'Payment recorded successfully.')
     } catch (error) {
       console.error('Record subscription payment error:', error)
 
@@ -309,11 +300,7 @@ export default function SubscriptionsPage() {
 
       <div className="fin-card">
         {loading ? (
-          <div className="fin-empty">
-            <RefreshCw size={28} />
-
-            <p>Loading subscriptions...</p>
-          </div>
+          <SkeletonRows rows={4} columns={6} />
         ) : subscriptions.length === 0 ? (
           <div className="fin-empty">
             <CircleDollarSign size={38} />

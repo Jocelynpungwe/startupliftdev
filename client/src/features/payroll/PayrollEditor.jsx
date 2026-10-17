@@ -3,9 +3,11 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { updatePayroll } from './payrollSlice.js'
+import { useToast } from '../../components/ui/UiProvider.jsx'
 
 export default function PayrollEditor({ employee, payroll, onClose }) {
   const dispatch = useDispatch()
+  const toast = useToast()
 
   const [meetingHours, setMeetingHours] = useState(payroll?.meetingHours || 0)
 
@@ -110,7 +112,7 @@ export default function PayrollEditor({ employee, payroll, onClose }) {
     } catch (error) {
       console.error('Payroll update failed:', error)
 
-      alert(error || 'Failed to update payroll')
+      toast.error(error || 'Failed to update payroll')
     } finally {
       setSaving(false)
     }

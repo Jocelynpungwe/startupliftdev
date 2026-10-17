@@ -16,6 +16,7 @@ import {
 } from 'recharts'
 
 import {
+  AlertTriangle,
   DollarSign,
   Users,
   CheckCircle2,
@@ -28,6 +29,9 @@ import {
 } from 'lucide-react'
 
 import { fetchDashboard } from '../features/dashboard/dashboardSlice.js'
+import { SkeletonCards, SkeletonRows } from '../components/ui/Skeleton.jsx'
+import EmptyState from '../components/ui/EmptyState.jsx'
+import { moneyWhole } from '../lib/format'
 
 const PIE_COLORS = [
   '#2563eb',
@@ -51,15 +55,33 @@ export default function Dashboard() {
 
   if (loading && !data) {
     return (
-      <div className="dashboard-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading dashboard...</p>
+      <div className="crm-dashboard">
+        <SkeletonCards count={5} />
+        <div className="dashboard-panel" style={{ padding: 22 }}>
+          <SkeletonRows rows={5} columns={3} />
+        </div>
       </div>
     )
   }
 
   if (error) {
-    return <div className="dashboard-error">{error}</div>
+    return (
+      <EmptyState
+        tone="error"
+        icon={AlertTriangle}
+        title="We couldn't load the dashboard"
+        message={error}
+        action={
+          <button
+            type="button"
+            className="ui-btn ui-btn--primary"
+            onClick={() => dispatch(fetchDashboard())}
+          >
+            Try again
+          </button>
+        }
+      />
+    )
   }
 
   if (!data) return null
@@ -69,7 +91,19 @@ export default function Dashboard() {
     value: person.leads,
   }))
 
-  const formatMoney = (value) => `$${Number(value || 0).toLocaleString()}`
+  const formatMoney = moneyWhole
+
+  // Admins get the whole team; everyone else only ever receives their own data.
+  const isTeam = data.scope === 'team'
+
+  const statusRows = [
+    ['New', data.deals.new, '#60a5fa'],
+    ['Contacted', data.deals.contacted, '#22d3ee'],
+    ['Emailed', data.deals.emailed, '#a78bfa'],
+    ['Pending', data.deals.pending, '#fbbf24'],
+    ['Approved', data.deals.approved, '#34d399'],
+    ['Rejected', data.deals.rejected, '#f87171'],
+  ]
 
   return (
     <div className="crm-dashboard">
@@ -81,14 +115,18 @@ export default function Dashboard() {
         <div>
           <div className="dashboard-eyebrow">
             <span className="live-dot"></span>
-            SALES OVERVIEW
+            {isTeam ? 'TEAM OVERVIEW' : 'MY OVERVIEW'}
           </div>
 
           <h1>
             Welcome back, <span>{user?.firstName || 'there'}</span>
           </h1>
 
-          <p>Here's what's happening with your sales pipeline today.</p>
+          <p>
+            {isTeam
+              ? "Here's how every salesperson on the team is performing."
+              : "Here's how your own leads are performing."}
+          </p>
         </div>
 
         <div className="dashboard-header-actions">
@@ -122,7 +160,7 @@ export default function Dashboard() {
           title="Total Leads"
           value={data.kpis.totalLeads}
           icon={<Users size={21} />}
-          trend="Lead pipeline"
+          trend={isTeam ? 'Across the team' : 'Assigned to you'}
           className="purple"
         />
 
@@ -143,10 +181,10 @@ export default function Dashboard() {
         />
 
         <DashboardKpi
-          title="Pending"
-          value={data.kpis.pending}
+          title="In progress"
+          value={data.kpis.inProgress ?? data.kpis.pending}
           icon={<Clock3 size={21} />}
-          trend="Waiting for review"
+          trend="New, contacted or emailed"
           className="orange"
         />
       </div>
@@ -248,63 +286,103 @@ export default function Dashboard() {
           </div>
         </section>
 
-        {/* LEADS PIE CHART */}
+        {isTeam ? (
+          <section className="dashboard-panel salesperson-panel">
+            <div className="panel-top">
+              <div>
+                <div className="panel-label">SALES TEAM</div>
 
-        <section className="dashboard-panel salesperson-panel">
-          <div className="panel-top">
-            <div>
-              <div className="panel-label">SALES TEAM</div>
+                <h2>Leads by salesperson</h2>
 
-              <h2>Leads by salesperson</h2>
+                <p>Lead distribution across your team.</p>
+              </div>
 
-              <p>Lead distribution across your team.</p>
+              <div className="panel-icon purple-icon">
+                <Users size={20} />
+              </div>
             </div>
 
-            <div className="panel-icon purple-icon">
-              <Users size={20} />
+            <div className="pie-chart-wrapper">
+              {pie.length ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={pie}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="48%"
+                      innerRadius={70}
+                      outerRadius={105}
+                      paddingAngle={4}
+                      stroke="none"
+                    >
+                      {pie.map((_, index) => (
+                        <Cell
+                          key={index}
+                          fill={PIE_COLORS[index % PIE_COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+
+                    <Tooltip
+                      contentStyle={{
+                        background: '#0f172a',
+                        border: '1px solid rgba(255,255,255,.1)',
+                        borderRadius: '12px',
+                        color: '#fff',
+                      }}
+                    />
+
+                    <Legend verticalAlign="bottom" iconType="circle" />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="empty-state">No lead data yet.</div>
+              )}
             </div>
-          </div>
+          </section>
+        ) : (
+          <section className="dashboard-panel salesperson-panel">
+            <div className="panel-top">
+              <div>
+                <div className="panel-label">MY LEADS</div>
 
-          <div className="pie-chart-wrapper">
-            {pie.length ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={pie}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="48%"
-                    innerRadius={70}
-                    outerRadius={105}
-                    paddingAngle={4}
-                    stroke="none"
-                  >
-                    {pie.map((_, index) => (
-                      <Cell
-                        key={index}
-                        fill={PIE_COLORS[index % PIE_COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
+                <h2>Where your leads stand</h2>
 
-                  <Tooltip
-                    contentStyle={{
-                      background: '#0f172a',
-                      border: '1px solid rgba(255,255,255,.1)',
-                      borderRadius: '12px',
-                      color: '#fff',
-                    }}
-                  />
+                <p>Your leads by status.</p>
+              </div>
 
-                  <Legend verticalAlign="bottom" iconType="circle" />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="empty-state">No lead data yet.</div>
-            )}
-          </div>
-        </section>
+              <div className="panel-icon purple-icon">
+                <Users size={20} />
+              </div>
+            </div>
+
+            <div className="status-breakdown">
+              {statusRows.map(([label, value, color]) => {
+                const total = data.deals.total || 0
+                const width = total ? (Number(value || 0) / total) * 100 : 0
+
+                return (
+                  <div className="status-breakdown__row" key={label}>
+                    <div className="status-breakdown__head">
+                      <span>
+                        <i style={{ background: color }} />
+                        {label}
+                      </span>
+
+                      <strong>{value || 0}</strong>
+                    </div>
+
+                    <div className="status-breakdown__bar">
+                      <div style={{ width: `${width}%`, background: color }} />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </section>
+        )}
       </div>
 
       {/* =====================================================
@@ -319,7 +397,7 @@ export default function Dashboard() {
             <div>
               <div className="panel-label">PERSONAL</div>
 
-              <h2>My deal performance</h2>
+              <h2>{isTeam ? 'My deal performance' : 'Deal performance'}</h2>
 
               <p>Your current sales performance.</p>
             </div>
@@ -355,7 +433,10 @@ export default function Dashboard() {
                 value={data.personal.rejected}
               />
 
-              <PerformanceItem label="Pending" value={data.personal.pending} />
+              <PerformanceItem
+                label="In progress"
+                value={data.personal.inProgress ?? data.personal.pending}
+              />
 
               <PerformanceItem
                 label="Approved Revenue"
@@ -390,7 +471,10 @@ export default function Dashboard() {
 
             <DealStat label="Rejected" value={data.deals.rejected} />
 
-            <DealStat label="Pending" value={data.deals.pending} />
+            <DealStat
+              label="In progress"
+              value={data.deals.inProgress ?? data.deals.pending}
+            />
 
             <DealStat
               label="Approval Rate"
@@ -412,7 +496,11 @@ export default function Dashboard() {
 
             <h2>Top deals</h2>
 
-            <p>Your largest approved deals.</p>
+            <p>
+              {isTeam
+                ? 'The largest approved deals across the team.'
+                : 'Your largest approved deals.'}
+            </p>
           </div>
 
           <div className="panel-icon purple-icon">
@@ -454,80 +542,87 @@ export default function Dashboard() {
       </section>
 
       {/* =====================================================
-          SALESPERSON TABLE
+          SALESPERSON TABLE  (admin only: every salesperson's numbers)
       ===================================================== */}
 
-      <section className="dashboard-panel">
-        <div className="panel-top">
-          <div>
-            <div className="panel-label">TEAM PERFORMANCE</div>
+      {isTeam && (
+        <section className="dashboard-panel">
+          <div className="panel-top">
+            <div>
+              <div className="panel-label">TEAM PERFORMANCE</div>
 
-            <h2>Salesperson summary</h2>
+              <h2>Every salesperson</h2>
 
-            <p>Lead count, approvals and revenue.</p>
+              <p>Leads by status, approvals and revenue for each person.</p>
+            </div>
           </div>
-        </div>
 
-        <div className="sales-table-wrapper">
-          <table className="sales-table">
-            <thead>
-              <tr>
-                <th>Salesperson</th>
-                <th>Leads</th>
-                <th>Approved</th>
-                <th>Approval %</th>
-                <th>Revenue</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {data.leadsBySalesperson.map((person) => (
-                <tr key={person.salespersonId}>
-                  <td>
-                    <div className="salesperson-cell">
-                      <div className="mini-avatar">{person.name?.[0]}</div>
-
-                      <strong>{person.name}</strong>
-                    </div>
-                  </td>
-
-                  <td>{person.leads}</td>
-
-                  <td>
-                    <span className="approved-number">{person.approved}</span>
-                  </td>
-
-                  <td>
-                    <div className="approval-bar">
-                      <div
-                        style={{
-                          width: `${
-                            person.leads
-                              ? (person.approved / person.leads) * 100
-                              : 0
-                          }%`,
-                        }}
-                      />
-                    </div>
-
-                    <span className="approval-percent">
-                      {person.leads
-                        ? `${((person.approved / person.leads) * 100).toFixed(
-                            1,
-                          )}%`
-                        : '0%'}
-                    </span>
-                  </td>
-
-                  <td className="revenue-cell">
-                    {formatMoney(person.revenue)}
-                  </td>
+          <div className="sales-table-wrapper">
+            <table className="sales-table">
+              <thead>
+                <tr>
+                  <th>Salesperson</th>
+                  <th>Leads</th>
+                  <th>New</th>
+                  <th>Contacted</th>
+                  <th>Emailed</th>
+                  <th>Pending</th>
+                  <th>Approved</th>
+                  <th>Rejected</th>
+                  <th>Approval %</th>
+                  <th>Revenue</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+              </thead>
+
+              <tbody>
+                {data.leadsBySalesperson.map((person) => {
+                  const rate = person.leads
+                    ? (person.approved / person.leads) * 100
+                    : 0
+
+                  return (
+                    <tr key={person.salespersonId}>
+                      <td>
+                        <div className="salesperson-cell">
+                          <div className="mini-avatar">{person.name?.[0]}</div>
+
+                          <strong>{person.name}</strong>
+                        </div>
+                      </td>
+
+                      <td>{person.leads}</td>
+                      <td>{person.new ?? 0}</td>
+                      <td>{person.contacted ?? 0}</td>
+                      <td>{person.emailed ?? 0}</td>
+                      <td>{person.pending ?? 0}</td>
+
+                      <td>
+                        <span className="approved-number">{person.approved}</span>
+                      </td>
+
+                      <td>{person.rejected ?? 0}</td>
+
+                      <td>
+                        <div className="approval-bar">
+                          <div style={{ width: `${rate}%` }} />
+                        </div>
+
+                        <span className="approval-percent">
+                          {rate.toFixed(1)}%
+                        </span>
+                      </td>
+
+                      <td className="revenue-cell">
+                        {formatMoney(person.revenue)}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
     </div>
   )
 }

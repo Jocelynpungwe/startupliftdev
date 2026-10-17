@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { fetchMyPayroll } from '../features/payroll/payrollSlice.js'
@@ -171,18 +172,10 @@ export default function Profile() {
           </div>
 
           {canManagePayroll && (
-            <button
-              className="profile-primary-button"
-              type="button"
-              onClick={() => {
-                alert(
-                  'Payroll management will be available from the Users/Payroll management page.',
-                )
-              }}
-            >
+            <Link className="profile-primary-button" to="/payroll">
               <span className="button-icon">↗</span>
               Manage Payroll
-            </button>
+            </Link>
           )}
         </div>
 

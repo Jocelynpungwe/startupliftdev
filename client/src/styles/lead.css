@@ -105,7 +105,7 @@
 
 .lead-stat-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
 
   gap: 14px;
   margin-bottom: 20px;
@@ -118,29 +118,11 @@
   padding: 18px;
   border-radius: 16px;
 
-  background: linear-gradient(
-    145deg,
-    rgba(17, 25, 45, 0.95),
-    rgba(8, 14, 29, 0.96)
-  );
+  background: #0b101c;
 
   border: 1px solid rgba(148, 163, 184, 0.1);
 
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
-}
-
-.lead-stat-card::after {
-  content: '';
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  right: -45px;
-  bottom: -55px;
-
-  background: rgba(37, 99, 235, 0.14);
-
-  filter: blur(30px);
-  border-radius: 50%;
 }
 
 .lead-stat-top {
@@ -218,15 +200,11 @@
 
   border-radius: 18px;
 
-  background: linear-gradient(
-    145deg,
-    rgba(14, 22, 39, 0.96),
-    rgba(7, 12, 25, 0.98)
-  );
+  background: #0b101c;
 
   border: 1px solid rgba(148, 163, 184, 0.1);
 
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
 .leads-panel-header {
@@ -855,38 +833,6 @@
    LOADING
 ========================================================= */
 
-.lead-loading {
-  min-height: 120px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-
-  color: #718097;
-
-  font-size: 12px;
-}
-
-.loading-spinner {
-  width: 17px;
-  height: 17px;
-
-  border-radius: 50%;
-
-  border: 2px solid rgba(59, 130, 246, 0.15);
-
-  border-top-color: #3b82f6;
-
-  animation: crm-spin 0.7s linear infinite;
-}
-
-@keyframes crm-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 /* =========================================================
    ERROR
 ========================================================= */
@@ -937,12 +883,6 @@
    RESPONSIVE
 ========================================================= */
 
-@media (max-width: 1200px) {
-  .lead-stat-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 800px) {
   .crm-page-header {
     align-items: flex-start;
@@ -974,7 +914,12 @@
 
 @media (max-width: 500px) {
   .lead-stat-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .lead-stat-grid > * {
+    padding: 14px;
   }
 
   .crm-page-header h1 {
@@ -985,4 +930,114 @@
     align-items: flex-start;
     gap: 12px;
   }
+}
+
+/* =========================================================
+   STATUS BADGES: contacted + emailed
+========================================================= */
+
+.lead-status.contacted {
+  color: #22d3ee;
+  background: rgba(34, 211, 238, 0.09);
+  border: 1px solid rgba(34, 211, 238, 0.14);
+}
+
+.lead-status.emailed {
+  color: #a78bfa;
+  background: rgba(167, 139, 250, 0.1);
+  border: 1px solid rgba(167, 139, 250, 0.16);
+}
+
+/* =========================================================
+   LEADS GROUPED BY MONTH CREATED
+========================================================= */
+
+.month-chips {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  padding: 14px 20px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  color: #8b95a9;
+}
+
+.month-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 6px 12px;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+
+  background: transparent;
+  color: #b6c0d1;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background 0.16s,
+    border-color 0.16s,
+    color 0.16s;
+}
+
+.month-chip span {
+  padding: 2px 7px;
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.08);
+  color: #8b95a9;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.month-chip:hover {
+  border-color: rgba(255, 255, 255, 0.24);
+  color: #f1f5f9;
+}
+
+.month-chip.active {
+  border-color: #6878ff;
+  background: rgba(104, 120, 255, 0.16);
+  color: #fff;
+}
+
+.month-chip.active span {
+  background: rgba(104, 120, 255, 0.35);
+  color: #fff;
+}
+
+.month-chip:focus-visible {
+  outline: 2px solid #6878ff;
+  outline-offset: 2px;
+}
+
+.crm-table tr.month-row td {
+  padding: 14px 20px 10px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.month-row__label {
+  margin-right: 12px;
+
+  color: #f1f5f9;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.month-row__count {
+  color: #8b95a9;
+  font-size: 12.5px;
 }

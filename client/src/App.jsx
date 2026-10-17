@@ -1,51 +1,61 @@
-import React, { useEffect, useState } from 'react'
+import React, { Suspense, lazy, useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { initAnalytics, trackPageView } from './lib/analytics.js'
+import { initClarity } from './lib/clarity.js'
 
 import { loadMe, initialized } from './features/auth/authSlice.js'
 
-// Public website
+// Public website (small, shipped in the main bundle for a fast first paint)
 import PublicLayout from './layouts/PublicLayout.jsx'
 import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
 import Services from './pages/Services.jsx'
 import Contact from './pages/Contact.jsx'
 import Work from './pages/Work.jsx'
+import ProjectFormModal from './components/ProjectFormModel.jsx'
+import ScrollToTop from './components/ScrollToTop.jsx'
+import PageLoader from './components/PageLoader.jsx'
+import { UiProvider } from './components/ui/UiProvider.jsx'
 
-// CRM
-import Layout from './components/Layout.jsx'
+// CRM shell (code-split with the CRM pages)
+const Layout = lazy(() => import('./components/Layout.jsx'))
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 
-import Login from './pages/Login.jsx'
-import Dashboard from './pages/Dashboard.jsx'
-import Leads from './pages/Leads.jsx'
-import NewLead from './pages/NewLead.jsx'
-import EditLead from './pages/EditLead.jsx'
-import Profile from './pages/Profile.jsx'
-import Users from './pages/Users.jsx'
-import PayrollManagement from './pages/PayrollManagement.jsx'
-import LeadGuide from './pages/LeadGuide.jsx'
-import ScrollToTop from './components/ScrollToTop.jsx'
-import SalesCallGuide from './pages/SalesCallGuide'
-import DiscoveryGuide from './pages/DiscoveryGuide'
-import SolutionGuide from './pages/SolutionGuide'
-import ProposalGuide from './pages/ProposalGuide'
-import FollowUpGuide from './pages/FollowUpGuide'
-import LeadDetails from './pages/LeadDetails.jsx'
-import ProjectFormModal from './components/ProjectFormModel.jsx'
+// CRM pages are code-split so public visitors never download them
+// (this keeps recharts and the CRM page code off the marketing site).
+const Login = lazy(() => import('./pages/Login.jsx'))
+const Dashboard = lazy(() => import('./pages/Dashboard.jsx'))
+const Leads = lazy(() => import('./pages/Leads.jsx'))
+const NewLead = lazy(() => import('./pages/NewLead.jsx'))
+const LeadDetails = lazy(() => import('./pages/LeadDetails.jsx'))
+const SalesPipeline = lazy(() => import('./pages/SalesPipeline.jsx'))
+const LeadGuide = lazy(() => import('./pages/LeadGuide.jsx'))
+const SalesCallGuide = lazy(() => import('./pages/SalesCallGuide.jsx'))
+const Profile = lazy(() => import('./pages/Profile.jsx'))
+const Users = lazy(() => import('./pages/Users.jsx'))
+const PayrollManagement = lazy(() => import('./pages/PayrollManagement.jsx'))
+const FinanceDashboard = lazy(
+  () => import('./pages/finance/FinanceDashboard.jsx'),
+)
+const IncomePage = lazy(() => import('./pages/finance/IncomePage.jsx'))
+const ExpensesPage = lazy(() => import('./pages/finance/ExpensesPage.jsx'))
+const SubscriptionsPage = lazy(
+  () => import('./pages/finance/SubscriptionsPage.jsx'),
+)
+const ProfitLossPage = lazy(() => import('./pages/finance/ProfitLossPage.jsx'))
+const CashFlowPage = lazy(() => import('./pages/finance/CashFlowPage.jsx'))
+const ReportsPage = lazy(() => import('./pages/finance/ReportsPage.jsx'))
 
-import SalesPipeline from './pages/SalesPipeline'
-import FinanceDashboard from './pages/finance/FinanceDashboard.jsx'
-import IncomePage from './pages/finance/IncomePage.jsx'
-import ExpensesPage from './pages/finance/ExpensesPage.jsx'
-import SubscriptionsPage from './pages/finance/SubscriptionsPage.jsx'
-import ProfitLossPage from './pages/finance/ProfitLossPage.jsx'
-import CashFlowPage from './pages/finance/CashFlowPage.jsx'
-import ReportsPage from './pages/finance/ReportsPage.jsx'
-// Your StartupLift loader
-import PageLoader from './components/PageLoader.jsx'
-import { initClarity } from './lib/clarity.js'
+const FINANCE_ROUTES = [
+  ['/finance', FinanceDashboard],
+  ['/finance/income', IncomePage],
+  ['/finance/expenses', ExpensesPage],
+  ['/finance/subscriptions', SubscriptionsPage],
+  ['/finance/profit-loss', ProfitLossPage],
+  ['/finance/cash-flow', CashFlowPage],
+  ['/finance/reports', ReportsPage],
+]
 
 export default function App() {
   const dispatch = useDispatch()
@@ -59,46 +69,16 @@ export default function App() {
     ['admin', 'manager', 'finance'].includes(user?.role) ||
     user?.permissions?.includes('finance:read')
 
-  /*
-  =========================================================
-  INITIAL PAGE LOAD
-  =========================================================
-
-  This is separate from route navigation.
-
-  It runs when React first loads after:
-  - browser refresh
-  - opening the website
-  - entering the URL directly
-  */
-
-  const [initialPageLoading, setInitialPageLoading] = useState(true)
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setInitialPageLoading(false)
-    }, 800)
-
-    return () => clearTimeout(timer)
-  }, [])
-
   useEffect(() => {
     initAnalytics()
+    initClarity()
   }, [])
 
   useEffect(() => {
     trackPageView(location.pathname + location.search)
   }, [location])
 
-  useEffect(() => {
-    initClarity()
-  }, [])
-  /*
-  =========================================================
-  CHECK EXISTING CRM LOGIN
-  =========================================================
-  */
-
+  // Restore an existing CRM session (only waits when a token exists)
   useEffect(() => {
     const token = localStorage.getItem('crm_token')
 
@@ -109,175 +89,67 @@ export default function App() {
     }
   }, [dispatch])
 
-  /*
-  =========================================================
-  SHOW LOADER ON INITIAL PAGE LOAD
-  =========================================================
-
-  This happens ONLY when App.jsx first mounts.
-
-  Clicking:
-  Home → About
-  About → Services
-  Services → Contact
-
-  will NOT trigger this again.
-  */
-
-  if (initialPageLoading) {
-    return <PageLoader />
-  }
-
-  /*
-  =========================================================
-  WAIT FOR CRM AUTHENTICATION
-  =========================================================
-
-  Only relevant when checking an existing CRM session.
-  */
-
   if (!authInitialized) {
     return <PageLoader />
   }
 
-  /*
-  =========================================================
-  APPLICATION ROUTES
-  =========================================================
-  */
-
   return (
-    <>
+    <UiProvider>
       <ScrollToTop />
-      <Routes>
-        {/* =================================================
-          PUBLIC WEBSITE
-      ================================================= */}
-
-        <Route element={<PublicLayout />}>
-          <Route path="/" element={<Home />} />
-
-          <Route path="/about" element={<About />} />
-
-          <Route path="/services" element={<Services />} />
-
-          <Route path="/work" element={<Work />} />
-
-          <Route path="/contact" element={<Contact />} />
-        </Route>
-
-        {/* =================================================
-          CRM LOGIN
-      ================================================= */}
-
-        <Route
-          path="/login"
-          element={user ? <Navigate to="/dashboard" replace /> : <Login />}
-        />
-
-        {/* =================================================
-          PROTECTED CRM
-      ================================================= */}
-
-        <Route element={<ProtectedRoute />}>
-          <Route element={<Layout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-
-            <Route path="/leads" element={<Leads />} />
-            <Route path="/leads/new" element={<NewLead />} />
-            <Route path="/leads/:id" element={<LeadDetails />} />
-
-            <Route path="/lead-guide" element={<LeadGuide />} />
-
-            <Route path="/sales/call-guide" element={<SalesCallGuide />} />
-
-            <Route path="/sales/pipeline" element={<SalesPipeline />} />
-            <Route path="/profile" element={<Profile />} />
-
-            <Route
-              path="/finance"
-              element={
-                canAccessFinance ? (
-                  <FinanceDashboard />
-                ) : (
-                  <Navigate to="/dashboard" replace />
-                )
-              }
-            />
-            <Route
-              path="/finance/income"
-              element={
-                canAccessFinance ? (
-                  <IncomePage />
-                ) : (
-                  <Navigate to="/dashboard" replace />
-                )
-              }
-            />
-            <Route
-              path="/finance/expenses"
-              element={
-                canAccessFinance ? (
-                  <ExpensesPage />
-                ) : (
-                  <Navigate to="/dashboard" replace />
-                )
-              }
-            />
-            <Route
-              path="/finance/subscriptions"
-              element={
-                canAccessFinance ? (
-                  <SubscriptionsPage />
-                ) : (
-                  <Navigate to="/dashboard" replace />
-                )
-              }
-            />
-            <Route
-              path="/finance/profit-loss"
-              element={
-                canAccessFinance ? (
-                  <ProfitLossPage />
-                ) : (
-                  <Navigate to="/dashboard" replace />
-                )
-              }
-            />
-            <Route
-              path="/finance/cash-flow"
-              element={
-                canAccessFinance ? (
-                  <CashFlowPage />
-                ) : (
-                  <Navigate to="/dashboard" replace />
-                )
-              }
-            />
-            <Route
-              path="/finance/reports"
-              element={
-                canAccessFinance ? (
-                  <ReportsPage />
-                ) : (
-                  <Navigate to="/dashboard" replace />
-                )
-              }
-            />
-
-            <Route path="/payroll" element={<PayrollManagement />} />
-
-            <Route path="/users" element={<Users />} />
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          {/* Public website */}
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/work" element={<Work />} />
+            <Route path="/contact" element={<Contact />} />
           </Route>
-        </Route>
 
-        {/* =================================================
-          FALLBACK
-      ================================================= */}
+          {/* CRM login */}
+          <Route
+            path="/login"
+            element={user ? <Navigate to="/dashboard" replace /> : <Login />}
+          />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          {/* Protected CRM */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Layout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+
+              <Route path="/leads" element={<Leads />} />
+              <Route path="/leads/new" element={<NewLead />} />
+              <Route path="/leads/:id" element={<LeadDetails />} />
+
+              <Route path="/lead-guide" element={<LeadGuide />} />
+              <Route path="/sales/call-guide" element={<SalesCallGuide />} />
+              <Route path="/sales/pipeline" element={<SalesPipeline />} />
+              <Route path="/profile" element={<Profile />} />
+
+              {FINANCE_ROUTES.map(([path, Page]) => (
+                <Route
+                  key={path}
+                  path={path}
+                  element={
+                    canAccessFinance ? (
+                      <Page />
+                    ) : (
+                      <Navigate to="/dashboard" replace />
+                    )
+                  }
+                />
+              ))}
+
+              <Route path="/payroll" element={<PayrollManagement />} />
+              <Route path="/users" element={<Users />} />
+            </Route>
+          </Route>
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
       <ProjectFormModal />
-    </>
+    </UiProvider>
   )
 }

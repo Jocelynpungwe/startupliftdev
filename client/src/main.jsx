@@ -8,16 +8,7 @@ import './styles.css'
 
 import './home.css'
 import './styles/business.css'
-import './styles/dashboad.css'
-import './styles/navbar.css'
-
-import './styles/login.css'
-import './styles/lead.css'
-import './styles/newLead.css'
-import './styles/editLead.css'
 import './styles/management.css'
-import './styles/user.css'
-import './styles/profile.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

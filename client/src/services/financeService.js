@@ -21,14 +21,6 @@ export const getFinanceSummary = (params = {}) =>
   api.get('/finance/summary', q(params)).then((response) => response.data)
 
 // ============================================================
-// FINANCE REPORTS
-// Keep this because your Reports page may use it
-// ============================================================
-
-export const getFinanceReport = (params = {}) =>
-  api.get('/finance/reports', q(params)).then((response) => response.data)
-
-// ============================================================
 // PROFIT & LOSS
 // NEW
 // ============================================================

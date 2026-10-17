@@ -1,0 +1,499 @@
+/* =========================================================
+   CRM DESIGN TOKENS + SHARED UI PRIMITIVES
+   One token set for radii, surfaces, text and status colours.
+   Components: toasts, confirm dialog, skeletons, empty states,
+   dropdown menu, buttons.
+========================================================= */
+
+:root {
+  --ui-font: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* surfaces (never pure black) */
+  --ui-bg: #060912;
+  --ui-surface: #0b101c;
+  --ui-surface-2: #101727;
+  --ui-line: rgba(255, 255, 255, 0.08);
+  --ui-line-2: rgba(255, 255, 255, 0.14);
+
+  /* text */
+  --ui-text: #f1f5f9;
+  --ui-text-2: #b6c0d1;
+  --ui-mute: #8b95a9;
+
+  /* brand accent (matches --blue-500 in styles.css) */
+  --ui-accent: #6878ff;
+  --ui-accent-hover: #7b8aff;
+  --ui-accent-soft: rgba(104, 120, 255, 0.14);
+
+  /* status */
+  --ui-success: #34d399;
+  --ui-danger: #f87171;
+  --ui-warning: #fbbf24;
+  --ui-info: #60a5fa;
+
+  /* shape + motion */
+  --ui-r-sm: 8px;
+  --ui-r-md: 12px;
+  --ui-r-lg: 16px;
+  --ui-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  --ui-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* the CRM uses Inter (public site keeps DM Sans / Playfair) */
+.crm-shell,
+.ui-toasts,
+.ui-overlay,
+.palette {
+  font-family: var(--ui-font);
+}
+
+/* ------------------------------------------------------------ buttons */
+
+.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 38px;
+  padding: 8px 16px;
+
+  border: 1px solid transparent;
+  border-radius: var(--ui-r-sm);
+
+  font: 600 13.5px/1 var(--ui-font);
+
+  cursor: pointer;
+
+  transition:
+    background 0.16s,
+    border-color 0.16s,
+    color 0.16s,
+    transform 0.16s;
+}
+
+.ui-btn:active {
+  transform: translateY(1px);
+}
+
+.ui-btn--primary {
+  background: var(--ui-accent);
+  color: #fff;
+}
+
+.ui-btn--primary:hover {
+  background: var(--ui-accent-hover);
+}
+
+.ui-btn--danger {
+  background: #dc2626;
+  color: #fff;
+}
+
+.ui-btn--danger:hover {
+  background: #ef4444;
+}
+
+.ui-btn--ghost {
+  border-color: var(--ui-line-2);
+  background: transparent;
+  color: var(--ui-text-2);
+}
+
+.ui-btn--ghost:hover {
+  border-color: var(--ui-text-2);
+  color: var(--ui-text);
+}
+
+.ui-btn:focus-visible,
+.ui-toast button:focus-visible,
+.ui-menu button:focus-visible,
+.ui-menu a:focus-visible {
+  outline: 2px solid var(--ui-accent);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------- toasts */
+
+.ui-toasts {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 100000;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  width: min(380px, calc(100vw - 32px));
+
+  pointer-events: none;
+}
+
+.ui-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+
+  padding: 13px 14px;
+
+  border: 1px solid var(--ui-line-2);
+  border-left-width: 3px;
+  border-radius: var(--ui-r-md);
+
+  background: var(--ui-surface-2);
+  color: var(--ui-text);
+  box-shadow: var(--ui-shadow);
+
+  pointer-events: auto;
+  animation: ui-toast-in 0.28s var(--ui-ease);
+}
+
+.ui-toast p {
+  flex: 1;
+  margin: 0;
+
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.ui-toast button {
+  display: grid;
+  place-items: center;
+
+  width: 24px;
+  height: 24px;
+  margin: -2px -4px 0 0;
+
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ui-mute);
+
+  cursor: pointer;
+}
+
+.ui-toast button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ui-text);
+}
+
+.ui-toast--success {
+  border-left-color: var(--ui-success);
+}
+.ui-toast--success > svg {
+  color: var(--ui-success);
+}
+.ui-toast--error {
+  border-left-color: var(--ui-danger);
+}
+.ui-toast--error > svg {
+  color: var(--ui-danger);
+}
+.ui-toast--info {
+  border-left-color: var(--ui-info);
+}
+.ui-toast--info > svg {
+  color: var(--ui-info);
+}
+
+@keyframes ui-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+}
+
+/* ------------------------------------------------------ confirm dialog */
+
+.ui-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100001;
+
+  display: grid;
+  place-items: center;
+
+  padding: 16px;
+
+  background: rgba(2, 4, 10, 0.72);
+  backdrop-filter: blur(5px);
+
+  animation: ui-fade 0.15s ease-out;
+}
+
+.ui-dialog {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 16px;
+
+  width: min(440px, 100%);
+  padding: 22px;
+
+  border: 1px solid var(--ui-line-2);
+  border-radius: var(--ui-r-lg);
+
+  background: var(--ui-surface-2);
+  color: var(--ui-text);
+  box-shadow: var(--ui-shadow);
+
+  animation: ui-pop 0.2s var(--ui-ease);
+}
+
+.ui-dialog__icon {
+  display: grid;
+  place-items: center;
+
+  width: 42px;
+  height: 42px;
+
+  border-radius: 12px;
+
+  background: var(--ui-accent-soft);
+  color: var(--ui-accent);
+}
+
+.ui-dialog__icon--danger {
+  background: rgba(248, 113, 113, 0.14);
+  color: var(--ui-danger);
+}
+
+.ui-dialog__body h2 {
+  margin: 2px 0 6px;
+
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.ui-dialog__body p {
+  margin: 0;
+
+  color: var(--ui-text-2);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.ui-dialog__actions {
+  grid-column: 1 / -1;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  margin-top: 18px;
+}
+
+@keyframes ui-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes ui-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+/* ----------------------------------------------------------- skeletons */
+
+.ui-skeleton {
+  display: block;
+
+  border-radius: 6px;
+
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 75%
+  );
+  background-size: 200% 100%;
+
+  animation: ui-shimmer 1.4s linear infinite;
+}
+
+@keyframes ui-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.ui-skeleton-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+
+  margin-bottom: 18px;
+}
+
+.ui-skeleton-card {
+  display: grid;
+  gap: 12px;
+
+  padding: 20px;
+
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-r-lg);
+
+  background: var(--ui-surface);
+}
+
+.ui-skeleton-rows {
+  display: grid;
+  gap: 4px;
+}
+
+.ui-skeleton-row {
+  display: grid;
+  gap: 16px;
+  align-items: center;
+
+  padding: 18px 16px;
+
+  border-bottom: 1px solid var(--ui-line);
+}
+
+/* --------------------------------------------------------- empty state */
+
+.ui-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 44px 20px;
+
+  text-align: center;
+}
+
+.ui-empty__icon {
+  display: grid;
+  place-items: center;
+
+  width: 48px;
+  height: 48px;
+  margin-bottom: 14px;
+
+  border: 1px solid var(--ui-line-2);
+  border-radius: 14px;
+
+  background: var(--ui-surface-2);
+  color: var(--ui-mute);
+}
+
+.ui-empty--error .ui-empty__icon {
+  border-color: rgba(248, 113, 113, 0.35);
+  color: var(--ui-danger);
+}
+
+.ui-empty h3 {
+  margin: 0 0 6px;
+
+  color: var(--ui-text);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ui-empty p {
+  max-width: 34ch;
+  margin: 0;
+
+  color: var(--ui-mute);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.ui-empty__action {
+  margin-top: 16px;
+}
+
+/* ------------------------------------------------------------ dropdown */
+
+.ui-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 200;
+
+  min-width: 220px;
+  padding: 6px;
+
+  border: 1px solid var(--ui-line-2);
+  border-radius: var(--ui-r-md);
+
+  background: var(--ui-surface-2);
+  box-shadow: var(--ui-shadow);
+
+  transform-origin: top right;
+  animation: ui-menu-in 0.14s var(--ui-ease);
+}
+
+.ui-menu__head {
+  padding: 10px 12px 8px;
+
+  border-bottom: 1px solid var(--ui-line);
+  margin-bottom: 6px;
+}
+
+.ui-menu__head strong {
+  display: block;
+
+  color: var(--ui-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ui-menu__head span {
+  color: var(--ui-mute);
+  font-size: 12px;
+}
+
+.ui-menu a,
+.ui-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  padding: 9px 12px;
+
+  border: 0;
+  border-radius: var(--ui-r-sm);
+
+  background: transparent;
+  color: var(--ui-text-2);
+  font: 500 13px/1 var(--ui-font);
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.ui-menu a:hover,
+.ui-menu button:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ui-text);
+}
+
+.ui-menu .is-danger:hover {
+  background: rgba(248, 113, 113, 0.1);
+  color: var(--ui-danger);
+}
+
+@keyframes ui-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-toast,
+  .ui-overlay,
+  .ui-dialog,
+  .ui-menu,
+  .ui-skeleton {
+    animation: none;
+  }
+}

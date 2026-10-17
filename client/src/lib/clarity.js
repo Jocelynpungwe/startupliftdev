@@ -1,14 +1,11 @@
-import Clarity from '@microsoft/clarity'
-
 const CLARITY_PROJECT_ID = import.meta.env.VITE_CLARITY_PROJECT_ID
 
+// Loaded on demand so the Clarity SDK stays out of the main bundle
+// (and is skipped entirely when no project id is configured).
 export const initClarity = () => {
-  if (!CLARITY_PROJECT_ID) {
-    console.warn('Microsoft Clarity Project ID is missing.')
-    return
-  }
+  if (!CLARITY_PROJECT_ID) return
 
-  Clarity.init(CLARITY_PROJECT_ID)
-
-  console.log('Microsoft Clarity initialized')
+  import('@microsoft/clarity').then(({ default: Clarity }) => {
+    Clarity.init(CLARITY_PROJECT_ID)
+  })
 }

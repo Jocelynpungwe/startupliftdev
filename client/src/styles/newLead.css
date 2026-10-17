@@ -99,8 +99,7 @@
   overflow: hidden;
 
   box-shadow:
-    0 25px 70px rgba(0, 0, 0, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+    0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
 /* FORM HEADER */
@@ -588,4 +587,111 @@
   .new-lead-title h2 {
     font-size: 22px;
   }
+}
+
+/* =========================================================
+   BUSINESS PROBLEMS: three selectable cards
+========================================================= */
+
+.problem-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.problem-card {
+  position: relative;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+
+  padding: 16px;
+
+  border: 1px solid var(--ui-line-2, rgba(255, 255, 255, 0.14));
+  border-radius: 12px;
+
+  background: var(--ui-surface, #0b101c);
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.16s,
+    background 0.16s;
+}
+
+.problem-card:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.problem-card input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.problem-card:has(input:focus-visible) {
+  outline: 2px solid var(--ui-accent, #6878ff);
+  outline-offset: 2px;
+}
+
+.problem-card__check {
+  flex: none;
+
+  display: grid;
+  place-items: center;
+
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+
+  border: 1.5px solid var(--ui-line-2, rgba(255, 255, 255, 0.2));
+  border-radius: 7px;
+
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+
+  transition:
+    background 0.16s,
+    border-color 0.16s;
+}
+
+.problem-card__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.problem-card__text strong {
+  color: var(--ui-text, #f1f5f9);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.problem-card__text small {
+  color: var(--ui-mute, #8b95a9);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.problem-card.selected {
+  border-color: var(--ui-accent, #6878ff);
+  background: var(--ui-accent-soft, rgba(104, 120, 255, 0.14));
+}
+
+.problem-card.selected .problem-card__check {
+  border-color: var(--ui-accent, #6878ff);
+  background: var(--ui-accent, #6878ff);
+}
+
+@media (max-width: 800px) {
+  .problem-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* breathing room between a field grid and the full-width field below it */
+.lead-form-grid + .lead-field {
+  margin-top: 18px;
 }

@@ -40,9 +40,11 @@ export default function PublicNavbar({ lightMode, setLightMode }) {
             style={{ marginTop: '20px', marginLeft: '-20px' }}
           >
             <img
-              src="/onlyLogo.png"
+              src="/logo-mark.png"
               alt="StartupLift Dev Logo"
-              style={{ width: '60px', height: '100%' }}
+              width="52"
+              height="43"
+              style={{ width: '52px', height: 'auto' }}
             />
           </span>
         </Link>
@@ -102,9 +104,11 @@ export default function PublicNavbar({ lightMode, setLightMode }) {
           <div className="mobile-sidebar-brand">
             <div>
               <img
-                src="/onlyLogo.png"
+                src="/logo-mark.png"
                 alt="StartupLift Dev"
-                style={{ width: '30%', height: '100%' }}
+                width="36"
+                height="30"
+                style={{ width: '36px', height: 'auto' }}
               />
             </div>
 

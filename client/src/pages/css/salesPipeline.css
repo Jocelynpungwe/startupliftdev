@@ -146,7 +146,7 @@
 
 .sales-pipeline-summary {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 10px;
 
   margin-bottom: 18px;
@@ -264,7 +264,7 @@
 .sales-pipeline-board {
   display: grid;
 
-  grid-template-columns: repeat(10, minmax(245px, 1fr));
+  grid-template-columns: repeat(5, minmax(200px, 1fr));
 
   gap: 10px;
 
@@ -282,7 +282,7 @@
 ========================================================= */
 
 .sales-pipeline-column {
-  min-width: 245px;
+  min-width: 0;
   min-height: 440px;
 
   display: flex;
@@ -434,21 +434,36 @@
   background: rgba(77, 223, 255, 0.07);
 }
 
-.pipeline-card-menu {
-  display: flex;
+.pipeline-card-move {
+  max-width: 120px;
+  padding: 4px 8px;
 
-  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
 
-  border: 0;
+  background: rgba(255, 255, 255, 0.03);
+  color: #8b95a9;
 
-  color: #586577;
-  background: transparent;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 500;
 
   cursor: pointer;
 }
 
-.pipeline-card-menu:hover {
-  color: #aab6c5;
+.pipeline-card-move:hover {
+  color: #e9eff6;
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.pipeline-card-move:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.pipeline-card-move option {
+  background: #101727;
+  color: #f1f5f9;
 }
 
 /* =========================================================
@@ -783,7 +798,7 @@
   }
 
   .sales-pipeline-board {
-    grid-template-columns: repeat(10, minmax(230px, 1fr));
+    grid-template-columns: repeat(5, minmax(220px, 1fr));
   }
 }
 

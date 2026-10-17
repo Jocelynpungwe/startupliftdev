@@ -13,9 +13,12 @@ export default function Testimonial() {
       <div className="testimonial-author">
         <div className="author-avatar">
           <img
-            src="/onlyLogo.png"
+            src="/logo-mark.png"
             alt="StartupLift Dev"
-            style={{ width: '100%', height: '100%', marginTop: '-5px' }}
+            width="40"
+            height="33"
+            loading="lazy"
+            style={{ width: '100%', height: 'auto', marginTop: '-5px' }}
           />
         </div>
 

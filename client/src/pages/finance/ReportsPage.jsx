@@ -11,18 +11,14 @@ import {
 } from 'lucide-react'
 
 import { getIncome, getExpenses } from '../../services/financeService'
+import { money, formatDate } from '../../lib/format'
+import DateRange from '../../components/finance/DateRange'
+import { SkeletonCards, SkeletonRows } from '../../components/ui/Skeleton'
+import { useToast } from '../../components/ui/UiProvider.jsx'
 
 // ============================================================
 // HELPERS
 // ============================================================
-
-const money = (value) =>
-  new Intl.NumberFormat('en-CA', {
-    style: 'currency',
-    currency: 'CAD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(Number(value) || 0)
 
 const nice = (value = '') =>
   value
@@ -30,21 +26,13 @@ const nice = (value = '') =>
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
 
-const formatDate = (date) => {
-  if (!date) return '-'
-
-  return new Date(date).toLocaleDateString('en-CA', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
-}
 
 // ============================================================
 // REPORTS PAGE
 // ============================================================
 
 export default function ReportsPage() {
+  const toast = useToast()
   const [income, setIncome] = useState([])
 
   const [expenses, setExpenses] = useState([])
@@ -82,9 +70,6 @@ export default function ReportsPage() {
         getExpenses(params),
       ])
 
-      console.log('Reports income:', incomeResponse)
-
-      console.log('Reports expenses:', expenseResponse)
 
       setIncome(
         Array.isArray(incomeResponse)
@@ -218,7 +203,7 @@ export default function ReportsPage() {
 
   const exportCSV = () => {
     if (!transactions.length) {
-      window.alert('There are no transactions to export.')
+      toast.info('There are no transactions to export.')
 
       return
     }
@@ -283,12 +268,10 @@ export default function ReportsPage() {
   if (loading && !income.length && !expenses.length) {
     return (
       <div className="fin-page">
-        <div className="fin-card pad">
-          <div className="fin-empty">
-            <RefreshCw size={30} />
+        <SkeletonCards count={3} />
 
-            <p>Loading financial reports...</p>
-          </div>
+        <div className="fin-card pad">
+          <SkeletonRows rows={5} columns={4} />
         </div>
       </div>
     )
@@ -324,31 +307,7 @@ export default function ReportsPage() {
 
       {/* DATE RANGE */}
 
-      <div className="fin-date-range">
-        <input
-          type="date"
-          value={range.startDate}
-          onChange={(e) =>
-            setRange({
-              ...range,
-              startDate: e.target.value,
-            })
-          }
-        />
-
-        <span>to</span>
-
-        <input
-          type="date"
-          value={range.endDate}
-          onChange={(e) =>
-            setRange({
-              ...range,
-              endDate: e.target.value,
-            })
-          }
-        />
-      </div>
+      <DateRange value={range} onChange={setRange} />
 
       {/* ERROR */}
 

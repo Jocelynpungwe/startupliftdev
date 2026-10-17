@@ -5,7 +5,6 @@ import {
   ArrowLeft,
   RefreshCw,
   Plus,
-  MoreHorizontal,
   Building2,
   MapPin,
   DollarSign,
@@ -16,70 +15,12 @@ import {
   X,
 } from 'lucide-react'
 
-import { fetchPipeline, updateLeadStage } from '../features/leads/leadsSlice'
+import { fetchPipeline, updateLeadStatus } from '../features/leads/leadsSlice'
+import { useToast } from '../components/ui/UiProvider.jsx'
+import { PIPELINE_COLUMNS, problemLabel } from '../lib/leadOptions.js'
+import { moneyWhole as formatCurrency } from '../lib/format'
 
 import './css/salesPipeline.css'
-
-const STAGES = [
-  {
-    id: 'new',
-    title: 'New',
-    description: 'Newly discovered leads',
-  },
-  {
-    id: 'contacted',
-    title: 'Contacted',
-    description: 'Initial outreach completed',
-  },
-  {
-    id: 'qualified',
-    title: 'Qualified',
-    description: 'Lead appears to be a fit',
-  },
-  {
-    id: 'discovery',
-    title: 'Discovery',
-    description: 'Understanding their needs',
-  },
-  {
-    id: 'solution-presented',
-    title: 'Solution Presented',
-    description: 'Solution has been discussed',
-  },
-  {
-    id: 'proposal',
-    title: 'Proposal',
-    description: 'Proposal has been presented',
-  },
-  {
-    id: 'negotiation',
-    title: 'Negotiation',
-    description: 'Discussing terms and pricing',
-  },
-  {
-    id: 'won',
-    title: 'Won',
-    description: 'Deal successfully closed',
-  },
-  {
-    id: 'lost',
-    title: 'Lost',
-    description: 'Opportunity was lost',
-  },
-  {
-    id: 'nurture',
-    title: 'Nurture',
-    description: 'Follow up later',
-  },
-]
-
-const formatCurrency = (value = 0) => {
-  return new Intl.NumberFormat('en-CA', {
-    style: 'currency',
-    currency: 'CAD',
-    maximumFractionDigits: 0,
-  }).format(Number(value) || 0)
-}
 
 const formatDate = (date) => {
   if (!date) return 'No date'
@@ -98,10 +39,10 @@ const formatDate = (date) => {
 
 function SalesPipeline() {
   const dispatch = useDispatch()
+  const toast = useToast()
 
   const {
     pipeline = [],
-    pipelineSummary = {},
     pipelineLoading,
     pipelineError,
   } = useSelector((state) => state.leads)
@@ -110,65 +51,61 @@ function SalesPipeline() {
   const [draggedLead, setDraggedLead] = useState(null)
   const [movingLeadId, setMovingLeadId] = useState(null)
 
-  /*
-  |--------------------------------------------------------------------------
-  | LOAD PIPELINE
-  |--------------------------------------------------------------------------
-  */
-
   useEffect(() => {
     dispatch(fetchPipeline())
   }, [dispatch])
 
   /*
-  |--------------------------------------------------------------------------
-  | FILTER LEADS
-  |--------------------------------------------------------------------------
-  */
+   * The board is driven by lead status. Only the four pipeline statuses are
+   * shown (rejected leads stay in All Leads).
+   */
+  const boardLeads = useMemo(() => {
+    const columnIds = PIPELINE_COLUMNS.map((c) => c.id)
+    const inPipeline = pipeline.filter((lead) => columnIds.includes(lead.status))
 
-  const filteredLeads = useMemo(() => {
-    if (!search.trim()) {
-      return pipeline
-    }
+    if (!search.trim()) return inPipeline
 
     const value = search.toLowerCase().trim()
 
-    return pipeline.filter((lead) => {
-      return (
+    return inPipeline.filter(
+      (lead) =>
         lead.companyName?.toLowerCase().includes(value) ||
         lead.contactName?.toLowerCase().includes(value) ||
         lead.email?.toLowerCase().includes(value) ||
         lead.phone?.toLowerCase().includes(value) ||
-        lead.location?.toLowerCase().includes(value)
-      )
-    })
+        lead.location?.toLowerCase().includes(value),
+    )
   }, [pipeline, search])
 
-  /*
-  |--------------------------------------------------------------------------
-  | GET STAGE LEADS
-  |--------------------------------------------------------------------------
-  */
-
-  const getStageLeads = (stageId) => {
-    return filteredLeads.filter((lead) => lead.stage === stageId)
-  }
-
-  /*
-  |--------------------------------------------------------------------------
-  | REFRESH
-  |--------------------------------------------------------------------------
-  */
+  const getColumnLeads = (statusId) =>
+    boardLeads.filter((lead) => lead.status === statusId)
 
   const refreshPipeline = () => {
     dispatch(fetchPipeline())
   }
 
   /*
-  |--------------------------------------------------------------------------
-  | DRAG START
-  |--------------------------------------------------------------------------
-  */
+   * MOVE A LEAD (drag & drop and the "Move to" selector share this)
+   */
+  const moveLead = async (lead, newStatus) => {
+    if (!lead || lead.status === newStatus) return
+
+    setMovingLeadId(lead._id)
+
+    try {
+      await dispatch(updateLeadStatus({ id: lead._id, status: newStatus })).unwrap()
+
+      const title = PIPELINE_COLUMNS.find((c) => c.id === newStatus)?.title
+      toast.success(`${lead.companyName} moved to ${title}.`)
+    } catch (error) {
+      toast.error(
+        typeof error === 'string' ? error : 'Could not move the lead.',
+      )
+    } finally {
+      setMovingLeadId(null)
+      setDraggedLead(null)
+    }
+  }
 
   const handleDragStart = (event, lead) => {
     setDraggedLead(lead)
@@ -177,110 +114,37 @@ function SalesPipeline() {
     event.dataTransfer.setData('text/plain', lead._id)
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | DRAG END
-  |--------------------------------------------------------------------------
-  */
-
-  const handleDragEnd = () => {
-    setDraggedLead(null)
-  }
-
-  /*
-  |--------------------------------------------------------------------------
-  | DRAG OVER
-  |--------------------------------------------------------------------------
-  */
+  const handleDragEnd = () => setDraggedLead(null)
 
   const handleDragOver = (event) => {
     event.preventDefault()
     event.dataTransfer.dropEffect = 'move'
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | DROP LEAD
-  |--------------------------------------------------------------------------
-  */
-
-  const handleDrop = async (event, newStage) => {
+  const handleDrop = (event, newStatus) => {
     event.preventDefault()
 
     const leadId = event.dataTransfer.getData('text/plain')
-
     const lead = draggedLead || pipeline.find((item) => item._id === leadId)
 
-    if (!lead) {
-      return
-    }
-
-    if (lead.stage === newStage) {
+    if (!lead || lead.status === newStatus) {
       setDraggedLead(null)
       return
     }
 
-    setMovingLeadId(lead._id)
-
-    try {
-      await dispatch(
-        updateLeadStage({
-          id: lead._id,
-          stage: newStage,
-        }),
-      ).unwrap()
-    } catch (error) {
-      console.error('Failed to update lead stage:', error)
-    } finally {
-      setMovingLeadId(null)
-      setDraggedLead(null)
-    }
+    moveLead(lead, newStatus)
   }
-
-  /*
-  |--------------------------------------------------------------------------
-  | STAGE COUNT
-  |--------------------------------------------------------------------------
-  */
-
-  const getStageCount = (stageId) => {
-    return getStageLeads(stageId).length
-  }
-
-  /*
-  |--------------------------------------------------------------------------
-  | TOTAL PIPELINE VALUE
-  |--------------------------------------------------------------------------
-  */
-
-  const calculatedPipelineValue = pipeline.reduce((total, lead) => {
-    return total + (Number(lead.dealValue) || 0)
-  }, 0)
-
-  /*
-  |--------------------------------------------------------------------------
-  | OPEN PIPELINE VALUE
-  |--------------------------------------------------------------------------
-  */
-
-  const openPipelineValue = pipeline
-    .filter((lead) => lead.stage !== 'won' && lead.stage !== 'lost')
-    .reduce((total, lead) => {
-      return total + (Number(lead.dealValue) || 0)
-    }, 0)
 
   return (
     <div className="sales-pipeline-page">
-      {/* =====================================================
-          HEADER
-      ===================================================== */}
+      {/* HEADER */}
 
       <header className="sales-pipeline-header">
         <div className="sales-pipeline-heading">
           <Link
-            to="/sales"
+            to="/leads"
             className="sales-pipeline-back"
-            aria-label="Back to sales department"
+            aria-label="Back to all leads"
           >
             <ArrowLeft size={17} />
           </Link>
@@ -290,7 +154,7 @@ function SalesPipeline() {
 
             <h1>Sales Pipeline</h1>
 
-            <p>Track opportunities from first contact to closed deal.</p>
+            <p>Move leads through each status, from new to approved.</p>
           </div>
         </div>
 
@@ -301,6 +165,7 @@ function SalesPipeline() {
             onClick={refreshPipeline}
             disabled={pipelineLoading}
             title="Refresh pipeline"
+            aria-label="Refresh pipeline"
           >
             <RefreshCw
               size={16}
@@ -315,48 +180,27 @@ function SalesPipeline() {
         </div>
       </header>
 
-      {/* =====================================================
-          SUMMARY
-      ===================================================== */}
+      {/* SUMMARY: one card per status */}
 
       <section className="sales-pipeline-summary">
         <div className="pipeline-summary-card">
-          <span>Total Leads</span>
-          <strong>{pipelineSummary.total ?? pipeline.length}</strong>
-        </div>
-
-        <div className="pipeline-summary-card">
-          <span>Pipeline Value</span>
+          <span>In pipeline</span>
           <strong>
-            {formatCurrency(
-              pipelineSummary.totalValue ?? calculatedPipelineValue,
-            )}
+            {pipeline.filter((l) => PIPELINE_COLUMNS.some((c) => c.id === l.status)).length}
           </strong>
         </div>
 
-        <div className="pipeline-summary-card">
-          <span>Open Pipeline</span>
-          <strong>{formatCurrency(openPipelineValue)}</strong>
-        </div>
-
-        <div className="pipeline-summary-card">
-          <span>Proposals</span>
-          <strong>
-            {pipelineSummary.proposal ?? getStageCount('proposal')}
-          </strong>
-        </div>
-
-        <div className="pipeline-summary-card">
-          <span>Negotiations</span>
-          <strong>
-            {pipelineSummary.negotiation ?? getStageCount('negotiation')}
-          </strong>
-        </div>
+        {PIPELINE_COLUMNS.map((column) => (
+          <div className="pipeline-summary-card" key={column.id}>
+            <span>{column.title}</span>
+            <strong>
+              {pipeline.filter((lead) => lead.status === column.id).length}
+            </strong>
+          </div>
+        ))}
       </section>
 
-      {/* =====================================================
-          TOOLBAR
-      ===================================================== */}
+      {/* TOOLBAR */}
 
       <section className="sales-pipeline-toolbar">
         <div className="pipeline-search">
@@ -367,6 +211,7 @@ function SalesPipeline() {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search companies, contacts..."
+            aria-label="Search the pipeline"
           />
 
           {search && (
@@ -382,14 +227,12 @@ function SalesPipeline() {
 
         <div className="pipeline-toolbar-info">
           {search
-            ? `${filteredLeads.length} matching leads`
-            : `${pipeline.length} leads`}
+            ? `${boardLeads.length} matching leads`
+            : `${boardLeads.length} leads`}
         </div>
       </section>
 
-      {/* =====================================================
-          ERROR
-      ===================================================== */}
+      {/* ERROR */}
 
       {pipelineError && (
         <div className="sales-pipeline-error">
@@ -402,9 +245,7 @@ function SalesPipeline() {
         </div>
       )}
 
-      {/* =====================================================
-          LOADING
-      ===================================================== */}
+      {/* LOADING */}
 
       {pipelineLoading && pipeline.length === 0 && (
         <div className="sales-pipeline-loading">
@@ -414,42 +255,36 @@ function SalesPipeline() {
         </div>
       )}
 
-      {/* =====================================================
-          PIPELINE BOARD
-      ===================================================== */}
+      {/* BOARD */}
 
       {!(pipelineLoading && pipeline.length === 0) && (
         <section className="sales-pipeline-board">
-          {STAGES.map((stage) => {
-            const stageLeads = getStageLeads(stage.id)
+          {PIPELINE_COLUMNS.map((column) => {
+            const columnLeads = getColumnLeads(column.id)
 
             return (
               <div
-                key={stage.id}
+                key={column.id}
                 className={`sales-pipeline-column ${
                   draggedLead ? 'pipeline-column-drag-active' : ''
                 }`}
                 onDragOver={handleDragOver}
-                onDrop={(event) => handleDrop(event, stage.id)}
+                onDrop={(event) => handleDrop(event, column.id)}
               >
-                {/* COLUMN HEADER */}
-
                 <div className="pipeline-column-header">
                   <div>
-                    <h2>{stage.title}</h2>
+                    <h2>{column.title}</h2>
 
-                    <p>{stage.description}</p>
+                    <p>{column.description}</p>
                   </div>
 
                   <span className="pipeline-column-count">
-                    {stageLeads.length}
+                    {columnLeads.length}
                   </span>
                 </div>
 
-                {/* LEADS */}
-
                 <div className="pipeline-column-body">
-                  {stageLeads.length === 0 ? (
+                  {columnLeads.length === 0 ? (
                     <div className="pipeline-empty">
                       <div className="pipeline-empty-icon">
                         <Building2 size={16} />
@@ -458,7 +293,7 @@ function SalesPipeline() {
                       <span>Drop a lead here</span>
                     </div>
                   ) : (
-                    stageLeads.map((lead) => (
+                    columnLeads.map((lead) => (
                       <article
                         key={lead._id}
                         className={`pipeline-lead-card ${
@@ -470,23 +305,28 @@ function SalesPipeline() {
                         onDragStart={(event) => handleDragStart(event, lead)}
                         onDragEnd={handleDragEnd}
                       >
-                        {/* CARD TOP */}
-
                         <div className="pipeline-card-top">
                           <div className="pipeline-company-icon">
                             <Building2 size={15} />
                           </div>
 
-                          <button
-                            type="button"
-                            className="pipeline-card-menu"
-                            aria-label={`Actions for ${lead.companyName}`}
+                          {/* works on touch screens and with the keyboard */}
+                          <select
+                            className="pipeline-card-move"
+                            value={lead.status}
+                            disabled={movingLeadId === lead._id}
+                            onChange={(event) =>
+                              moveLead(lead, event.target.value)
+                            }
+                            aria-label={`Move ${lead.companyName} to another status`}
                           >
-                            <MoreHorizontal size={16} />
-                          </button>
+                            {PIPELINE_COLUMNS.map((c) => (
+                              <option key={c.id} value={c.id}>
+                                {c.title}
+                              </option>
+                            ))}
+                          </select>
                         </div>
-
-                        {/* COMPANY */}
 
                         <Link
                           to={`/leads/${lead._id}`}
@@ -501,8 +341,6 @@ function SalesPipeline() {
                           </div>
                         )}
 
-                        {/* LOCATION */}
-
                         {lead.location && (
                           <div className="pipeline-card-meta">
                             <MapPin size={12} />
@@ -511,29 +349,21 @@ function SalesPipeline() {
                           </div>
                         )}
 
-                        {/* DEAL VALUE */}
+                        {Number(lead.dealValue) > 0 && (
+                          <div className="pipeline-deal-value">
+                            <DollarSign size={13} />
 
-                        <div className="pipeline-deal-value">
-                          <DollarSign size={13} />
-
-                          <strong>{formatCurrency(lead.dealValue)}</strong>
-
-                          {lead.probability > 0 && (
-                            <span>{lead.probability}%</span>
-                          )}
-                        </div>
-
-                        {/* PROBLEM */}
+                            <strong>{formatCurrency(lead.dealValue)}</strong>
+                          </div>
+                        )}
 
                         {lead.primaryProblem && (
                           <div className="pipeline-card-section">
                             <span>Problem</span>
 
-                            <strong>{lead.primaryProblem}</strong>
+                            <strong>{problemLabel(lead.primaryProblem)}</strong>
                           </div>
                         )}
-
-                        {/* NEXT ACTION */}
 
                         {lead.nextAction && (
                           <div className="pipeline-card-section">
@@ -542,8 +372,6 @@ function SalesPipeline() {
                             <strong>{lead.nextAction}</strong>
                           </div>
                         )}
-
-                        {/* FOOTER */}
 
                         <div className="pipeline-card-footer">
                           <div className="pipeline-footer-date">
@@ -556,17 +384,15 @@ function SalesPipeline() {
                             {lead.phone && (
                               <a
                                 href={`tel:${lead.phone}`}
-                                onClick={(event) => event.stopPropagation()}
                                 aria-label={`Call ${lead.companyName}`}
                               >
                                 <Phone size={12} />
                               </a>
                             )}
 
-                            {lead.email && (
+                            {lead.email && lead.email !== 'noemail@gmail.com' && (
                               <a
                                 href={`mailto:${lead.email}`}
-                                onClick={(event) => event.stopPropagation()}
                                 aria-label={`Email ${lead.companyName}`}
                               >
                                 <Mail size={12} />
@@ -578,8 +404,6 @@ function SalesPipeline() {
                     ))
                   )}
                 </div>
-
-                {/* ADD BUTTON */}
 
                 <Link to="/leads/new" className="pipeline-column-add">
                   <Plus size={14} />

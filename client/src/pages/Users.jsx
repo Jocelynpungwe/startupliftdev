@@ -7,6 +7,7 @@ import {
   updateUser,
   deleteUser,
 } from '../features/users/userSlice.js'
+import { useConfirm, useToast } from '../components/ui/UiProvider.jsx'
 
 const permissionsList = [
   ['dashboard:read', 'View Dashboard'],
@@ -36,6 +37,8 @@ const defaultPermissions = {
 
 export default function Users() {
   const dispatch = useDispatch()
+  const confirm = useConfirm()
+  const toast = useToast()
 
   const { users, loading, error } = useSelector((state) => state.users)
 
@@ -95,13 +98,19 @@ export default function Users() {
   }
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm(
-      'Are you sure you want to delete this user?',
-    )
+    const confirmed = await confirm({
+      title: 'Delete this user?',
+      message: 'They will lose access to the CRM immediately.',
+      confirmLabel: 'Delete user',
+      tone: 'danger',
+    })
 
     if (!confirmed) return
 
-    dispatch(deleteUser(id))
+    const result = await dispatch(deleteUser(id))
+
+    if (deleteUser.fulfilled.match(result)) toast.success('User deleted.')
+    else toast.error(result.payload || 'Could not delete the user.')
   }
 
   return (

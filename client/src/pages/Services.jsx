@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import Work from '../components/public/Services'
-import AllHero from '../components/AllHero'
 import HeroReuse from '../components/public/usable/HeroReuse'
 import HeroServiceVisual from '../components/public/usable/HeroServiceVisual'
 

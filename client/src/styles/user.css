@@ -133,15 +133,14 @@
 
 .users-create-card,
 .users-list-card {
-  background: linear-gradient(145deg, #111722, #0d121b);
+  background: #0b101c;
 
   border: 1px solid rgba(255, 255, 255, 0.07);
 
   border-radius: 20px;
 
   box-shadow:
-    0 25px 70px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+    0 8px 24px rgba(0, 0, 0, 0.18);
 
   overflow: hidden;
 }

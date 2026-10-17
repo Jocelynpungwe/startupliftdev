@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import WhyUs from '../components/public/WhyUs'
 import HeroPortVisual from '../components/public/usable/HeroPortVisual'
 import HeroReuse from '../components/public/usable/HeroReuse'
 
@@ -8,7 +7,7 @@ const projects = [
   {
     title: 'YVNG Saints',
     category: 'Web development',
-    image: '/youngimg.png',
+    image: 'work-yvng',
     description:
       'YVNG Saints brings faith and contemporary streetwear together in pieces made to be seen, felt and lived in.',
     tags: ['React', 'Responsive', 'SEO'],
@@ -26,7 +25,7 @@ const projects = [
   {
     title: 'Eclat Cleaning Services',
     category: 'Brand & Web',
-    image: '/eclatimage.png',
+    image: 'work-eclat',
     description:
       'Professional residential and commercial cleaning services designed to keep your space fresh, healthy, and spotless.',
     tags: ['Branding', 'Design', 'SEO'],
@@ -35,7 +34,7 @@ const projects = [
   },  {
     title: 'Royal Memoria',
     category: 'Web development',
-    image: '/royal.png',
+    image: 'work-royal',
     description:
       'Royal Memoria is a multinational corporation with a diverse portfolio of subsidiaries operating in multiple countries..',
     tags: ['React', 'Responsive', 'SEO'],
@@ -118,15 +117,16 @@ export default function Work() {
                 key={project.title}
               >
                 <article className={`portfolio-card ${project.className}`}>
-                  <div
-                    className="portfolio-preview"
-                    style={{
-                      backgroundImage: `url(${project.image})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      backgroundRepeat: 'no-repeat',
-                    }}
-                  >
+                  <div className="portfolio-preview">
+                    <img
+                      className="portfolio-shot"
+                      src={`/${project.image}-1200.jpg`}
+                      srcSet={`/${project.image}-640.jpg 640w, /${project.image}-1200.jpg 1200w`}
+                      sizes="(min-width: 900px) 50vw, 100vw"
+                      alt={`${project.title} homepage preview`}
+                      loading="lazy"
+                      decoding="async"
+                    />
                     {/* <div className="browser-bar">
                       <span></span>
                       <span></span>

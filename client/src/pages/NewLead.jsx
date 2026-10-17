@@ -13,18 +13,28 @@ import {
   Search,
   Target,
   CircleAlert,
-  DollarSign,
   Calendar,
-  Clock,
   MessageSquare,
   Tag,
   FileText,
   ArrowLeft,
   Save,
-  ChevronDown,
 } from 'lucide-react'
 
 import { createLead } from '../features/leads/leadsSlice.js'
+import {
+  CONTACT_METHODS,
+  LEAD_STATUSES,
+  NO_EMAIL,
+  PRIORITY_OPTIONS,
+  SOURCE_OPTIONS,
+} from '../lib/leadOptions.js'
+import {
+  Field,
+  ProblemPicker,
+  SectionTitle,
+  SelectField,
+} from '../components/lead/LeadFormParts.jsx'
 
 const initial = {
   // =====================================================
@@ -34,7 +44,7 @@ const initial = {
   companyName: '',
   contactName: '',
   phone: '',
-  email: '',
+  email: NO_EMAIL,
   website: '',
   location: '',
   industry: '',
@@ -78,17 +88,7 @@ const initial = {
   currentSolution: '',
   painPoints: '',
 
-  budget: '',
-  timeline: '',
 
-  // =====================================================
-  // DEAL
-  // =====================================================
-
-  service: '',
-  services: [],
-  dealValue: '',
-  probability: '',
 
   // =====================================================
   // FOLLOW-UP
@@ -105,71 +105,6 @@ const initial = {
   tags: [],
   notes: '',
 }
-
-const problemOptions = [
-  {
-    value: 'no-website',
-    label: 'No website',
-  },
-  {
-    value: 'outdated-website',
-    label: 'Outdated website',
-  },
-  {
-    value: 'broken-link',
-    label: 'Website link not working',
-  },
-  {
-    value: 'poor-mobile-experience',
-    label: 'Poor mobile experience',
-  },
-  {
-    value: 'poor-seo',
-    label: 'Poor SEO / difficult to find',
-  },
-  {
-    value: 'no-booking-system',
-    label: 'No booking system',
-  },
-  {
-    value: 'no-quote-system',
-    label: 'No quote/request system',
-  },
-  {
-    value: 'slow-website',
-    label: 'Slow website',
-  },
-  {
-    value: 'poor-user-experience',
-    label: 'Poor user experience',
-  },
-  {
-    value: 'weak-online-presence',
-    label: 'Weak online presence',
-  },
-  {
-    value: 'broken-forms',
-    label: 'Broken contact forms',
-  },
-  {
-    value: 'poor-conversion',
-    label: 'Website not converting visitors',
-  },
-]
-
-const serviceOptions = [
-  'Website Development',
-  'Website Redesign',
-  'Web Application',
-  'SEO',
-  'Local SEO',
-  'Digital Marketing',
-  'Website Maintenance',
-  'Hosting',
-  'E-commerce',
-  'Booking System',
-  'Custom Software',
-]
 
 export default function NewLead() {
   const dispatch = useDispatch()
@@ -211,23 +146,6 @@ export default function NewLead() {
   }
 
   // =====================================================
-  // SERVICE TOGGLE
-  // =====================================================
-
-  const toggleService = (service) => {
-    setForm((previous) => {
-      const exists = previous.services.includes(service)
-
-      return {
-        ...previous,
-        services: exists
-          ? previous.services.filter((item) => item !== service)
-          : [...previous.services, service],
-      }
-    })
-  }
-
-  // =====================================================
   // TAGS
   // =====================================================
 
@@ -255,13 +173,13 @@ export default function NewLead() {
     const payload = {
       ...form,
 
+      email: form.email.trim() || NO_EMAIL,
+
       leadScore: Number(form.leadScore || 0),
-      budget: Number(form.budget || 0),
-      dealValue: Number(form.dealValue || 0),
-      probability: Number(form.probability || 0),
 
       problems: form.problems || [],
-      services: form.services || [],
+      // the first problem ticked is recorded as the primary one
+      primaryProblem: form.problems[0] || '',
       tags: form.tags || [],
 
       nextActionDate: form.nextActionDate || null,
@@ -461,20 +379,7 @@ export default function NewLead() {
               name="source"
               value={form.source}
               onChange={update}
-              options={[
-                ['google-maps', 'Google Maps'],
-                ['google-search', 'Google Search'],
-                ['facebook', 'Facebook'],
-                ['instagram', 'Instagram'],
-                ['linkedin', 'LinkedIn'],
-                ['referral', 'Referral'],
-                ['website', 'Website'],
-                ['cold-call', 'Cold Call'],
-                ['email', 'Email'],
-                ['advertisement', 'Advertisement'],
-                ['networking', 'Networking'],
-                ['other', 'Other'],
-              ]}
+              options={SOURCE_OPTIONS}
             />
 
             <Field label="Source details" icon={<FileText size={17} />}>
@@ -501,36 +406,11 @@ export default function NewLead() {
 
           <div className="lead-form-grid">
             <SelectField
-              label="Sales stage"
-              name="stage"
-              value={form.stage}
-              onChange={update}
-              options={[
-                ['new', 'New'],
-                ['contacted', 'Contacted'],
-                ['qualified', 'Qualified'],
-                ['discovery', 'Discovery'],
-                ['solution-presented', 'Solution Presented'],
-                ['proposal', 'Proposal'],
-                ['negotiation', 'Negotiation'],
-                ['won', 'Won'],
-                ['lost', 'Lost'],
-                ['nurture', 'Nurture'],
-              ]}
-            />
-
-            <SelectField
               label="Lead status"
               name="status"
               value={form.status}
               onChange={update}
-              options={[
-                ['new', 'New'],
-                ['contacted', 'Contacted'],
-                ['pending', 'Pending'],
-                ['approved', 'Approved'],
-                ['rejected', 'Rejected'],
-              ]}
+              options={LEAD_STATUSES.map((s) => [s.value, s.label])}
             />
 
             <SelectField
@@ -538,12 +418,7 @@ export default function NewLead() {
               name="priority"
               value={form.priority}
               onChange={update}
-              options={[
-                ['critical', 'Critical'],
-                ['high', 'High'],
-                ['medium', 'Medium'],
-                ['low', 'Low'],
-              ]}
+              options={PRIORITY_OPTIONS}
             />
 
             <Field label="Lead score" icon={<Target size={17} />}>
@@ -570,126 +445,7 @@ export default function NewLead() {
             description="Identify the problems your sales team discovered."
           />
 
-          <div className="problem-grid">
-            {problemOptions.map((problem) => (
-              <label
-                key={problem.value}
-                className={`problem-option ${
-                  form.problems.includes(problem.value) ? 'selected' : ''
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={form.problems.includes(problem.value)}
-                  onChange={() => toggleProblem(problem.value)}
-                />
-
-                <span className="problem-checkbox"></span>
-
-                <span>{problem.label}</span>
-              </label>
-            ))}
-          </div>
-
-          <div className="lead-form-grid problem-detail-grid">
-            <SelectField
-              label="Primary problem"
-              name="primaryProblem"
-              value={form.primaryProblem}
-              onChange={update}
-              options={[
-                ['', 'Select primary problem'],
-                ...problemOptions.map((problem) => [
-                  problem.value,
-                  problem.label,
-                ]),
-              ]}
-            />
-          </div>
-        </div>
-
-        {/* =================================================
-            SECTION 6 — DEAL
-        ================================================= */}
-
-        <div className="form-section">
-          <SectionTitle
-            icon={<DollarSign size={18} />}
-            title="Opportunity"
-            description="Estimate the potential value of the opportunity."
-          />
-
-          <div className="lead-form-grid">
-            <Field label="Budget" icon={<DollarSign size={17} />}>
-              <input
-                type="number"
-                min="0"
-                name="budget"
-                value={form.budget}
-                onChange={update}
-                placeholder="0"
-              />
-            </Field>
-
-            <Field label="Estimated deal value" icon={<DollarSign size={17} />}>
-              <input
-                type="number"
-                min="0"
-                name="dealValue"
-                value={form.dealValue}
-                onChange={update}
-                placeholder="0"
-              />
-            </Field>
-
-            <Field label="Probability (%)" icon={<Target size={17} />}>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                name="probability"
-                value={form.probability}
-                onChange={update}
-                placeholder="0"
-              />
-            </Field>
-
-            <Field label="Expected timeline" icon={<Clock size={17} />}>
-              <input
-                name="timeline"
-                value={form.timeline}
-                onChange={update}
-                placeholder="Example: 2-4 weeks"
-              />
-            </Field>
-          </div>
-
-          <div className="lead-field">
-            <label>Services of interest</label>
-
-            <div className="service-grid">
-              {serviceOptions.map((service) => (
-                <label
-                  key={service}
-                  className={`service-option ${
-                    form.services.includes(service) ? 'selected' : ''
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={form.services.includes(service)}
-                    onChange={() => toggleService(service)}
-                  />
-
-                  <span className="service-checkbox">
-                    {form.services.includes(service) ? '✓' : ''}
-                  </span>
-
-                  {service}
-                </label>
-              ))}
-            </div>
-          </div>
+          <ProblemPicker selected={form.problems} onToggle={toggleProblem} />
         </div>
 
         {/* =================================================
@@ -727,16 +483,7 @@ export default function NewLead() {
               name="preferredContactMethod"
               value={form.preferredContactMethod}
               onChange={update}
-              options={[
-                ['', 'Select method'],
-                ['phone', 'Phone'],
-                ['email', 'Email'],
-                ['sms', 'SMS'],
-                ['facebook', 'Facebook'],
-                ['instagram', 'Instagram'],
-                ['linkedin', 'LinkedIn'],
-                ['other', 'Other'],
-              ]}
+              options={[['', 'Select method'], ...CONTACT_METHODS]}
             />
           </div>
         </div>
@@ -808,88 +555,6 @@ export default function NewLead() {
           </div>
         </div>
       </form>
-    </div>
-  )
-}
-
-/* =====================================================
-   SECTION TITLE
-===================================================== */
-
-function SectionTitle({ icon, title, description }) {
-  return (
-    <div className="form-section-title">
-      <div className="section-title-icon">{icon}</div>
-
-      <div>
-        <h4>{title}</h4>
-        <p>{description}</p>
-      </div>
-    </div>
-  )
-}
-
-/* =====================================================
-   FIELD
-===================================================== */
-
-function Field({ label, required = false, icon, children }) {
-  return (
-    <div className="lead-field">
-      <label>
-        {label}
-
-        {required && <span>*</span>}
-      </label>
-
-      <div className="input-wrapper">
-        {icon}
-        {children}
-      </div>
-    </div>
-  )
-}
-
-/* =====================================================
-   SELECT FIELD
-===================================================== */
-
-function SelectField({ label, name, value, onChange, options }) {
-  return (
-    <div className="lead-field">
-      <label>{label}</label>
-
-      <div className="input-wrapper select-wrapper">
-        <select name={name} value={value} onChange={onChange}>
-          {options.map(([optionValue, optionLabel]) => (
-            <option key={optionValue} value={optionValue}>
-              {optionLabel}
-            </option>
-          ))}
-        </select>
-
-        <ChevronDown size={16} className="select-icon" />
-      </div>
-    </div>
-  )
-}
-
-/* =====================================================
-   TEXT AREA FIELD
-===================================================== */
-
-function TextAreaField({ label, name, value, onChange, placeholder }) {
-  return (
-    <div className="lead-field">
-      <label>{label}</label>
-
-      <textarea
-        name={name}
-        value={value}
-        onChange={onChange}
-        rows="5"
-        placeholder={placeholder}
-      />
     </div>
   )
 }

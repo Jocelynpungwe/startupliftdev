@@ -1,3 +1,4 @@
+import { escapeRegex } from '../utils/escapeRegex.js'
 import Income from '../models/Income.js'
 import Expense from '../models/Expense.js'
 import Subscription from '../models/Subscription.js'
@@ -177,14 +178,14 @@ export const listIncome = async (req, res) => {
       filter.$or = [
         {
           description: {
-            $regex: req.query.search,
+            $regex: escapeRegex(req.query.search),
             $options: 'i',
           },
         },
 
         {
           clientName: {
-            $regex: req.query.search,
+            $regex: escapeRegex(req.query.search),
             $options: 'i',
           },
         },
@@ -192,7 +193,7 @@ export const listIncome = async (req, res) => {
     }
 
     const income = await Income.find(filter)
-      .populate('createdBy', 'name email')
+      .populate('createdBy', 'firstName lastName email')
       .populate('subscription', 'name type billingCycle')
       .sort({
         paymentDate: -1,
@@ -337,14 +338,14 @@ export const listExpenses = async (req, res) => {
       filter.$or = [
         {
           description: {
-            $regex: req.query.search,
+            $regex: escapeRegex(req.query.search),
             $options: 'i',
           },
         },
 
         {
           vendor: {
-            $regex: req.query.search,
+            $regex: escapeRegex(req.query.search),
             $options: 'i',
           },
         },
@@ -352,7 +353,7 @@ export const listExpenses = async (req, res) => {
     }
 
     const expenses = await Expense.find(filter)
-      .populate('createdBy', 'name email')
+      .populate('createdBy', 'firstName lastName email')
       .populate('subscription', 'name type billingCycle')
       .sort({
         expenseDate: -1,
@@ -489,7 +490,7 @@ export const listSubscriptions = async (req, res) => {
     }
 
     const subscriptions = await Subscription.find(filter)
-      .populate('createdBy', 'name email')
+      .populate('createdBy', 'firstName lastName email')
       .sort({
         nextBillingDate: 1,
       })

@@ -1,3 +1,4 @@
+import '../crm/styles.js'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { login } from '../features/auth/authSlice.js'
@@ -11,9 +12,11 @@ import {
   ShieldCheck,
   Sparkles,
 } from 'lucide-react'
+import { useToast } from '../components/ui/UiProvider.jsx'
 
 export default function Login() {
   const dispatch = useDispatch()
+  const toast = useToast()
 
   const { user, loading, error } = useSelector((s) => s.auth)
 
@@ -182,9 +185,7 @@ export default function Login() {
                     type="button"
                     className="forgot-password"
                     onClick={() =>
-                      alert(
-                        'Please contact your administrator to reset your password.',
-                      )
+                      toast.info('Please contact your administrator to reset your password.')
                     }
                   >
                     Forgot password?

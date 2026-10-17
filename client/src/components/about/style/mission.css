@@ -76,51 +76,6 @@
    HEADER
 ========================================= */
 
-.mission-header {
-  position: relative;
-  z-index: 2;
-  max-width: 850px;
-  margin: 0 auto 80px;
-  text-align: left;
-}
-
-.mission-header .eyebrow {
-  margin-bottom: 20px;
-}
-
-.mission-header h2 {
-  margin: 0;
-  font-size: clamp(2.5rem, 5vw, 5rem);
-  line-height: 1.05;
-  letter-spacing: -0.04em;
-  font-weight: 700;
-}
-
-.mission-header h2 span {
-  font-family: 'Playfair Display', serif;
-
-  font-style: italic;
-
-  font-weight: 700;
-
-  background: linear-gradient(90deg, #22d3ee, #14b8a6);
-
-  -webkit-background-clip: text;
-
-  background-clip: text;
-
-  color: transparent;
-  margin-left: 12px;
-}
-
-.mission-intro {
-  max-width: 700px;
-  margin: 30px auto 0;
-  font-size: 1.1rem;
-  line-height: 1.8;
-  opacity: 0.7;
-}
-
 /* =========================================
    MISSION CARDS
 ========================================= */
@@ -297,19 +252,6 @@
 @media (max-width: 600px) {
   .mission-section {
     padding: 80px 0;
-  }
-
-  .mission-header {
-    margin-bottom: 50px;
-  }
-
-  .mission-header h2 {
-    font-size: 2.4rem;
-  }
-
-  .mission-intro {
-    font-size: 0.95rem;
-    line-height: 1.7;
   }
 
   .mission-card {

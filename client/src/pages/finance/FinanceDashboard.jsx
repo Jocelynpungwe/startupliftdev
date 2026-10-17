@@ -28,27 +28,13 @@ import {
   getIncome,
   getExpenses,
 } from '../../services/financeService'
+import { money, moneyWhole, formatDate } from '../../lib/format'
+import DateRange from '../../components/finance/DateRange'
+import { SkeletonCards, SkeletonRows } from '../../components/ui/Skeleton'
 
 // ============================================================
 // HELPERS
 // ============================================================
-
-const money = (value) =>
-  new Intl.NumberFormat('en-CA', {
-    style: 'currency',
-    currency: 'CAD',
-    maximumFractionDigits: 0,
-  }).format(Number(value) || 0)
-
-const formatDate = (date) => {
-  if (!date) return '-'
-
-  return new Date(date).toLocaleDateString('en-CA', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
-}
 
 // ============================================================
 // DASHBOARD
@@ -96,11 +82,7 @@ export default function FinanceDashboard() {
           getExpenses(params),
         ])
 
-      console.log('Finance summary:', summaryResponse)
 
-      console.log('Income response:', incomeResponse)
-
-      console.log('Expense response:', expenseResponse)
 
       setData(summaryResponse)
 
@@ -273,12 +255,18 @@ export default function FinanceDashboard() {
   if (loading && !data) {
     return (
       <div className="fin-page">
-        <div className="fin-card pad">
-          <div className="fin-empty">
-            <RefreshCw size={30} />
+        <div className="fin-heading">
+          <div>
+            <h1>Financial Overview</h1>
 
-            <p>Loading financial dashboard...</p>
+            <p>Revenue, costs, profit and recurring performance in one place.</p>
           </div>
+        </div>
+
+        <SkeletonCards count={4} />
+
+        <div className="fin-card pad">
+          <SkeletonRows rows={5} columns={3} />
         </div>
       </div>
     )
@@ -301,31 +289,7 @@ export default function FinanceDashboard() {
           <p>Revenue, costs, profit and recurring performance in one place.</p>
         </div>
 
-        <div className="fin-date-range">
-          <input
-            type="date"
-            value={range.startDate}
-            onChange={(e) =>
-              setRange({
-                ...range,
-                startDate: e.target.value,
-              })
-            }
-          />
-
-          <span>to</span>
-
-          <input
-            type="date"
-            value={range.endDate}
-            onChange={(e) =>
-              setRange({
-                ...range,
-                endDate: e.target.value,
-              })
-            }
-          />
-        </div>
+        <DateRange value={range} onChange={setRange} />
       </div>
 
       {/* ERROR */}
@@ -339,7 +303,7 @@ export default function FinanceDashboard() {
       <div className="fin-stats four">
         {/* REVENUE */}
 
-        <div style={{ color: 'green' }}>
+        <div className="is-positive">
           <DollarSign />
 
           <span>Revenue</span>
@@ -351,7 +315,7 @@ export default function FinanceDashboard() {
 
         {/* EXPENSES */}
 
-        <div style={{ color: 'red' }}>
+        <div className="is-negative">
           <TrendingDown />
 
           <span>Expenses</span>
@@ -363,7 +327,7 @@ export default function FinanceDashboard() {
 
         {/* NET PROFIT */}
 
-        <div>
+        <div className={netProfit >= 0 ? "is-positive" : "is-negative"}>
           <ChartNoAxesCombined />
 
           <span>Net Profit</span>
@@ -399,32 +363,63 @@ export default function FinanceDashboard() {
           <div className="fin-chart">
             {monthlyData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monthlyData}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                <LineChart
+                  data={monthlyData}
+                  margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+                >
+                  <CartesianGrid
+                    stroke="rgba(148, 163, 184, 0.14)"
+                    vertical={false}
+                  />
 
-                  <XAxis dataKey="month" />
+                  <XAxis
+                    dataKey="month"
+                    tick={{ fill: '#8b95a9', fontSize: 12 }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
 
-                  <YAxis />
+                  <YAxis
+                    tick={{ fill: '#8b95a9', fontSize: 12 }}
+                    axisLine={false}
+                    tickLine={false}
+                    width={64}
+                    tickFormatter={moneyWhole}
+                  />
 
-                  <Tooltip formatter={(value) => money(value)} />
+                  <Tooltip
+                    formatter={(value) => money(value)}
+                    contentStyle={{
+                      background: '#101727',
+                      border: '1px solid rgba(255,255,255,0.14)',
+                      borderRadius: 10,
+                      color: '#f1f5f9',
+                      fontSize: 13,
+                    }}
+                    labelStyle={{ color: '#b6c0d1', marginBottom: 4 }}
+                    cursor={{ stroke: 'rgba(255,255,255,0.12)' }}
+                  />
 
-                  <Legend />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: 13 }} />
 
                   <Line
                     type="monotone"
                     dataKey="revenue"
                     name="Revenue"
-                    stroke="currentColor"
-                    strokeWidth={2}
+                    stroke="#34d399"
+                    strokeWidth={2.5}
+                    dot={{ r: 3, fill: '#34d399', strokeWidth: 0 }}
+                    activeDot={{ r: 5 }}
                   />
 
                   <Line
                     type="monotone"
                     dataKey="expenses"
                     name="Expenses"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeDasharray="5 5"
+                    stroke="#f87171"
+                    strokeWidth={2.5}
+                    dot={{ r: 3, fill: '#f87171', strokeWidth: 0 }}
+                    activeDot={{ r: 5 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -495,17 +490,17 @@ export default function FinanceDashboard() {
         <div>
           <Wallet />
 
-          <span>Gross Profit</span>
+          <span>Active Subscriptions</span>
 
-          <strong>{money(grossProfit)}</strong>
+          <strong>{Number(summary.activeSubscriptions ?? 0)}</strong>
         </div>
 
         <div>
           <RefreshCw />
 
-          <span>MRR</span>
+          <span>Subscription Costs / mo.</span>
 
-          <strong>{money(mrr)}</strong>
+          <strong>{money(monthlySubscriptions)}</strong>
         </div>
       </div>
 

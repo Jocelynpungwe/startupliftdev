@@ -2,10 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 import HeroReuse from './usable/HeroReuse'
-import HeroVisual from './usable/HeroVisual'
 import HeroSecondVisual from './usable/HeroSecondVisual'
-import HeroTheeVisual from './usable/HeroTheeVisual'
-import HeroServiceVisual from './usable/HeroServiceVisual'
 
 export default function Hero() {
   return (
@@ -29,8 +26,6 @@ export default function Hero() {
       {/* HERO VISUAL */}
       {/* <HeroVisual /> */}
       <HeroSecondVisual />
-      {/* <HeroTheeVisual /> */}
-      {/* <HeroServiceVisual /> */}
     </section>
   )
 }

@@ -1,5 +1,18 @@
+import { escapeRegex } from '../utils/escapeRegex.js'
 import mongoose from 'mongoose'
 import Lead from '../models/Lead.js'
+
+// Lead statuses shown on the sales pipeline board, in column order.
+export const PIPELINE_STATUSES = [
+  'new',
+  'contacted',
+  'emailed',
+  'pending',
+  'approved',
+]
+
+// Every status a lead can be set to.
+const VALID_STATUSES = [...PIPELINE_STATUSES, 'rejected']
 
 /*
 |--------------------------------------------------------------------------
@@ -126,9 +139,10 @@ export const getMonthlyLeadStatistics = async (req, res, next) => {
 
 export const getSalesPipeline = async (req, res, next) => {
   try {
-    const { stage, priority, salesPerson, mine = 'false', search } = req.query
+    const { status, priority, salesPerson, mine = 'false', search } = req.query
 
-    const filter = {}
+    // The pipeline is driven by lead status. Only these statuses are shown.
+    const filter = { status: { $in: PIPELINE_STATUSES } }
 
     // ----------------------------------------------------
     // SALESPERSON ACCESS
@@ -160,11 +174,11 @@ export const getSalesPipeline = async (req, res, next) => {
     }
 
     // ----------------------------------------------------
-    // STAGE
+    // STATUS (optional: narrow to a single pipeline column)
     // ----------------------------------------------------
 
-    if (stage && stage !== 'all') {
-      filter.stage = stage
+    if (status && PIPELINE_STATUSES.includes(status)) {
+      filter.status = status
     }
 
     // ----------------------------------------------------
@@ -183,31 +197,31 @@ export const getSalesPipeline = async (req, res, next) => {
       filter.$or = [
         {
           companyName: {
-            $regex: search,
+            $regex: escapeRegex(search),
             $options: 'i',
           },
         },
         {
           contactName: {
-            $regex: search,
+            $regex: escapeRegex(search),
             $options: 'i',
           },
         },
         {
           email: {
-            $regex: search,
+            $regex: escapeRegex(search),
             $options: 'i',
           },
         },
         {
           phone: {
-            $regex: search,
+            $regex: escapeRegex(search),
             $options: 'i',
           },
         },
         {
           location: {
-            $regex: search,
+            $regex: escapeRegex(search),
             $options: 'i',
           },
         },
@@ -233,61 +247,13 @@ export const getSalesPipeline = async (req, res, next) => {
 
       new: 0,
       contacted: 0,
-      qualified: 0,
-      discovery: 0,
-      solutionPresented: 0,
-      proposal: 0,
-      negotiation: 0,
-      won: 0,
-      lost: 0,
-      nurture: 0,
+      emailed: 0,
+      pending: 0,
+      approved: 0,
     }
 
     leads.forEach((lead) => {
-      switch (lead.stage) {
-        case 'new':
-          summary.new++
-          break
-
-        case 'contacted':
-          summary.contacted++
-          break
-
-        case 'qualified':
-          summary.qualified++
-          break
-
-        case 'discovery':
-          summary.discovery++
-          break
-
-        case 'solution-presented':
-          summary.solutionPresented++
-          break
-
-        case 'proposal':
-          summary.proposal++
-          break
-
-        case 'negotiation':
-          summary.negotiation++
-          break
-
-        case 'won':
-          summary.won++
-          break
-
-        case 'lost':
-          summary.lost++
-          break
-
-        case 'nurture':
-          summary.nurture++
-          break
-
-        default:
-          break
-      }
+      if (summary[lead.status] !== undefined) summary[lead.status]++
     })
 
     res.json({
@@ -376,6 +342,81 @@ export const updateLeadStage = async (req, res, next) => {
     }
 
     await lead.save()
+
+    const populated = await lead.populate([
+      {
+        path: 'salesPerson',
+        select: 'firstName lastName email profilePicture',
+      },
+      {
+        path: 'assignedManager',
+        select: 'firstName lastName email profilePicture',
+      },
+    ])
+
+    res.json({
+      success: true,
+      lead: populated,
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+/*
+|--------------------------------------------------------------------------
+| UPDATE LEAD STATUS  (used by the sales pipeline board)
+|--------------------------------------------------------------------------
+*/
+
+export const updateLeadStatus = async (req, res, next) => {
+  try {
+    const { status } = req.body
+
+    if (!VALID_STATUSES.includes(status)) {
+      return res.status(400).json({
+        message: 'Invalid lead status',
+      })
+    }
+
+    const lead = await Lead.findById(req.params.id)
+
+    if (!lead) {
+      return res.status(404).json({
+        message: 'Lead not found',
+      })
+    }
+
+    // Salespeople can only move their own leads
+    if (
+      req.user.role === 'salesperson' &&
+      lead.salesPerson.toString() !== req.user._id.toString()
+    ) {
+      return res.status(403).json({
+        message: 'You can only update your own leads',
+      })
+    }
+
+    const previousStatus = lead.status
+
+    if (previousStatus !== status) {
+      lead.status = status
+
+      // Dashboard revenue is grouped by the month a deal was closed.
+      if (status === 'approved' && !lead.closedAt) {
+        lead.closedAt = new Date()
+      }
+
+      lead.activities.push({
+        type: 'stage-change',
+
+        description: `Status changed from ${previousStatus} to ${status}`,
+
+        createdBy: req.user._id,
+      })
+
+      await lead.save()
+    }
 
     const populated = await lead.populate([
       {

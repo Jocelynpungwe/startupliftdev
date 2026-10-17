@@ -16,12 +16,37 @@ import {
   Building2,
   RefreshCw,
   PhoneCall,
+  Mail,
+  CalendarDays,
 } from 'lucide-react'
 
 import { deleteLead, fetchLeads } from '../features/leads/leadsSlice.js'
+import { useConfirm, useToast } from '../components/ui/UiProvider.jsx'
+import { SkeletonRows } from '../components/ui/Skeleton.jsx'
+import { LEAD_STATUSES } from '../lib/leadOptions.js'
+import { moneyWhole } from '../lib/format'
+
+// Groups leads under the month they were created, newest month first.
+const monthKey = (date) => {
+  const d = new Date(date)
+  return Number.isNaN(d.getTime())
+    ? 'unknown'
+    : `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+}
+
+const monthLabel = (key) => {
+  if (key === 'unknown') return 'No date'
+  const [year, month] = key.split('-').map(Number)
+  return new Date(year, month - 1, 1).toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric',
+  })
+}
 
 export default function Leads() {
   const dispatch = useDispatch()
+  const confirm = useConfirm()
+  const toast = useToast()
 
   const { items, loading, error } = useSelector((s) => s.leads)
   const user = useSelector((s) => s.auth.user)
@@ -34,6 +59,7 @@ export default function Leads() {
   })
 
   const [showFilters, setShowFilters] = useState(false)
+  const [month, setMonth] = useState('all')
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -67,6 +93,7 @@ export default function Leads() {
       approved: items.filter((lead) => lead.status === 'approved').length,
       contacted: items.filter((lead) => lead.status === 'contacted').length,
 
+      emailed: items.filter((lead) => lead.status === 'emailed').length,
       pending: items.filter((lead) => lead.status === 'pending').length,
 
       rejected: items.filter((lead) => lead.status === 'rejected').length,
@@ -78,22 +105,58 @@ export default function Leads() {
   }, [items])
 
   /*
+   * GROUP BY MONTH CREATED
+   */
+  const monthGroups = useMemo(() => {
+    const groups = new Map()
+
+    items.forEach((lead) => {
+      const key = monthKey(lead.createdAt)
+      if (!groups.has(key)) groups.set(key, [])
+      groups.get(key).push(lead)
+    })
+
+    const ascending = filters.sort === 'oldest'
+
+    return [...groups.entries()]
+      .sort(([a], [b]) => (ascending ? a.localeCompare(b) : b.localeCompare(a)))
+      .map(([key, leads]) => ({ key, label: monthLabel(key), leads }))
+  }, [items, filters.sort])
+
+  // fall back to "all" if the chosen month no longer has any leads
+  const activeMonth = monthGroups.some((g) => g.key === month) ? month : 'all'
+
+  const visibleGroups =
+    activeMonth === 'all'
+      ? monthGroups
+      : monthGroups.filter((g) => g.key === activeMonth)
+
+  const visibleCount = visibleGroups.reduce((n, g) => n + g.leads.length, 0)
+
+  /*
    * DELETE LEAD
    */
   const remove = async (id) => {
-    const confirmed = window.confirm(
-      'Are you sure you want to delete this lead?',
-    )
+    const confirmed = await confirm({
+      title: 'Delete this lead?',
+      message: 'The lead will be permanently deleted. This cannot be undone.',
+      confirmLabel: 'Delete lead',
+      tone: 'danger',
+    })
 
     if (!confirmed) return
 
-    dispatch(deleteLead(id))
+    const result = await dispatch(deleteLead(id))
+
+    if (deleteLead.fulfilled.match(result)) toast.success('Lead deleted.')
+    else toast.error(result.payload || 'Could not delete the lead.')
   }
 
   /*
    * RESET FILTERS
    */
   const resetFilters = () => {
+    setMonth('all')
     setFilters({
       search: '',
       status: 'all',
@@ -174,8 +237,16 @@ export default function Leads() {
           icon={<PhoneCall size={19} />}
           label="Contacted"
           value={statistics.contacted}
-          description="Send Email"
+          description="Reached out"
           type="success"
+        />
+
+        <LeadStat
+          icon={<Mail size={19} />}
+          label="Emailed"
+          value={statistics.emailed}
+          description="Email sent"
+          type="warning"
         />
 
         <LeadStat
@@ -284,14 +355,11 @@ export default function Leads() {
             >
               <option value="all">All statuses</option>
 
-              <option value="new">New</option>
-
-              <option value="approved">Approved</option>
-              <option value="contacted">Contacted</option>
-
-              <option value="pending">Pending</option>
-
-              <option value="rejected">Rejected</option>
+              {LEAD_STATUSES.map((s) => (
+                <option key={s.value} value={s.value}>
+                  {s.label}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -343,6 +411,39 @@ export default function Leads() {
         </div>
 
         {/* =========================================
+            MONTH FILTER
+        ========================================== */}
+
+        {monthGroups.length > 0 && (
+          <div className="month-chips" role="group" aria-label="Filter by month created">
+            <CalendarDays size={16} aria-hidden="true" />
+
+            <button
+              type="button"
+              className={`month-chip ${activeMonth === 'all' ? 'active' : ''}`}
+              onClick={() => setMonth('all')}
+              aria-pressed={activeMonth === 'all'}
+            >
+              All months
+              <span>{items.length}</span>
+            </button>
+
+            {monthGroups.map((group) => (
+              <button
+                type="button"
+                key={group.key}
+                className={`month-chip ${activeMonth === group.key ? 'active' : ''}`}
+                onClick={() => setMonth(group.key)}
+                aria-pressed={activeMonth === group.key}
+              >
+                {group.label}
+                <span>{group.leads.length}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* =========================================
             ERROR
         ========================================== */}
 
@@ -353,11 +454,7 @@ export default function Leads() {
         ========================================== */}
 
         {loading && (
-          <div className="lead-loading">
-            <div className="loading-spinner"></div>
-
-            <span>Loading leads...</span>
-          </div>
+          <SkeletonRows rows={6} columns={5} />
         )}
 
         {/* =========================================
@@ -387,7 +484,19 @@ export default function Leads() {
             </thead>
 
             <tbody>
-              {items.map((lead) => (
+              {visibleGroups.map((group) => (
+                <React.Fragment key={group.key}>
+                  <tr className="month-row">
+                    <td colSpan={canEdit || canDelete ? 7 : 6}>
+                      <span className="month-row__label">{group.label}</span>
+                      <span className="month-row__count">
+                        {group.leads.length} lead
+                        {group.leads.length !== 1 ? 's' : ''}
+                      </span>
+                    </td>
+                  </tr>
+
+                  {group.leads.map((lead) => (
                 <tr key={lead._id}>
                   {/* COMPANY */}
 
@@ -449,7 +558,9 @@ export default function Leads() {
                   <td>
                     <div className="deal-value">
                       <strong>
-                        ${Number(lead.dealValue || 0).toLocaleString()}
+                        {Number(lead.dealValue) > 0
+                          ? moneyWhole(lead.dealValue)
+                          : '—'}
                       </strong>
 
                       {lead.status === 'approved' && <span>Closed</span>}
@@ -505,6 +616,8 @@ export default function Leads() {
                     </td>
                   )}
                 </tr>
+                  ))}
+                </React.Fragment>
               ))}
 
               {/* EMPTY STATE */}
@@ -541,7 +654,7 @@ export default function Leads() {
 
         <div className="leads-footer">
           <span>
-            Showing <strong>{items.length}</strong> leads
+            Showing <strong>{visibleCount}</strong> lead{visibleCount !== 1 ? 's' : ''}
           </span>
 
           <span>Updated just now</span>
@@ -593,8 +706,14 @@ function StatusBadge({ status }) {
 
     contacted: {
       label: 'Contacted',
-      className: 'approved',
+      className: 'contacted',
       icon: <PhoneCall size={13} />,
+    },
+
+    emailed: {
+      label: 'Emailed',
+      className: 'emailed',
+      icon: <Mail size={13} />,
     },
 
     rejected: {

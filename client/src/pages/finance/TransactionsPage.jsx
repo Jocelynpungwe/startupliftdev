@@ -3,10 +3,8 @@ import '../../styles/finance.css'
 import { Plus, Pencil, Trash2, Search } from 'lucide-react'
 import TransactionForm from '../../components/finance/TransactionForm'
 import * as api from '../../services/financeService'
-const money = (n) =>
-  new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(
-    n || 0,
-  )
+import { money } from '../../lib/format'
+import { useConfirm, useToast } from '../../components/ui/UiProvider.jsx'
 const nice = (s) =>
   s
     ? String(s)
@@ -23,6 +21,8 @@ const date = (d) =>
       })
     : '-'
 export default function TransactionsPage({ type }) {
+  const confirm = useConfirm()
+  const toast = useToast()
   const isIncome = type === 'income'
   const [items, setItems] = useState([]),
     [loading, setLoading] = useState(true),
@@ -82,9 +82,21 @@ export default function TransactionsPage({ type }) {
     await load()
   }
   const del = async (x) => {
-    if (!confirm(`Delete ${x.description}?`)) return
-    isIncome ? await api.deleteIncome(x._id) : await api.deleteExpense(x._id)
-    load()
+    const ok = await confirm({
+      title: `Delete "${x.description}"?`,
+      message: `This ${isIncome ? 'income' : 'expense'} record will be permanently deleted and your totals will change.`,
+      confirmLabel: 'Delete',
+      tone: 'danger',
+    })
+    if (!ok) return
+    try {
+      if (isIncome) await api.deleteIncome(x._id)
+      else await api.deleteExpense(x._id)
+      toast.success('Record deleted.')
+      load()
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not delete the record.')
+    }
   }
   const cats = isIncome
     ? [

@@ -1,350 +1,153 @@
 import React, { useEffect, useState } from 'react'
-import { Link, Links, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-
 import {
+  Activity,
+  AlertTriangle,
   ArrowLeft,
+  Briefcase,
   Building2,
-  User,
-  Phone,
-  Mail,
-  Globe,
-  MapPin,
-  BriefcaseBusiness,
-  Search,
-  Target,
+  Calendar,
+  Check,
   CircleAlert,
   DollarSign,
-  Calendar,
-  Clock,
-  MessageSquare,
-  Tag,
+  ExternalLink,
   FileText,
+  Globe,
+  Mail,
+  MapPin,
   Pencil,
-  Trash2,
+  Phone,
+  RotateCcw,
   Save,
+  Search,
+  Tag,
+  Target,
+  Trash2,
+  User,
   X,
-  ChevronDown,
-  Activity,
-  CheckCircle2,
+  XCircle,
 } from 'lucide-react'
 
 import {
-  fetchLeads,
-  updateLead,
   deleteLead,
+  fetchLead,
+  updateLead,
+  updateLeadStatus,
 } from '../features/leads/leadsSlice.js'
+import { useConfirm, useToast } from '../components/ui/UiProvider.jsx'
+import { Skeleton } from '../components/ui/Skeleton.jsx'
+import EmptyState from '../components/ui/EmptyState.jsx'
+import {
+  Field,
+  ProblemPicker,
+  SectionTitle,
+  SelectField,
+  TextAreaField,
+} from '../components/lead/LeadFormParts.jsx'
+import {
+  CONTACT_METHODS,
+  LEAD_STATUSES,
+  NO_EMAIL,
+  PIPELINE_COLUMNS,
+  PRIORITY_OPTIONS,
+  PROBLEM_OPTIONS,
+  SOURCE_OPTIONS,
+  labelFor,
+  problemLabel,
+  statusLabel,
+} from '../lib/leadOptions.js'
+import { formatDate, moneyWhole } from '../lib/format.js'
 
 import './css/leadDetails.css'
 
-/*
-|--------------------------------------------------------------------------
-| SALES STAGES
-|--------------------------------------------------------------------------
-*/
+/* ----------------------------------------------------------------------- */
+/* helpers                                                                 */
+/* ----------------------------------------------------------------------- */
 
-const stages = [
-  'new',
-  'contacted',
-  'qualified',
-  'discovery',
-  'solution-presented',
-  'proposal',
-  'negotiation',
-  'won',
-  'lost',
-  'nurture',
-]
-
-const stageLabels = {
-  new: 'New',
-  contacted: 'Contacted',
-  qualified: 'Qualified',
-  discovery: 'Discovery',
-  'solution-presented': 'Solution Presented',
-  proposal: 'Proposal',
-  negotiation: 'Negotiation',
-  won: 'Won',
-  lost: 'Lost',
-  nurture: 'Nurture',
+const toInputDate = (value) => {
+  if (!value) return ''
+  const d = new Date(value)
+  return Number.isNaN(d.getTime()) ? '' : d.toISOString().split('T')[0]
 }
 
-/*
-|--------------------------------------------------------------------------
-| PROBLEMS
-|--------------------------------------------------------------------------
-*/
+const toForm = (lead) => ({
+  companyName: lead.companyName || '',
+  contactName: lead.contactName || '',
+  phone: lead.phone || '',
+  email: lead.email || NO_EMAIL,
+  website: lead.website || '',
+  location: lead.location || '',
+  industry: lead.industry || '',
+  businessInfo: lead.businessInfo || '',
 
-const problemOptions = [
-  {
-    value: 'no-website',
-    label: 'No website',
-  },
-  {
-    value: 'outdated-website',
-    label: 'Outdated website',
-  },
-  {
-    value: 'broken-link',
-    label: 'Website link not working',
-  },
-  {
-    value: 'poor-mobile-experience',
-    label: 'Poor mobile experience',
-  },
-  {
-    value: 'poor-seo',
-    label: 'Poor SEO / difficult to find',
-  },
-  {
-    value: 'no-booking-system',
-    label: 'No booking system',
-  },
-  {
-    value: 'no-quote-system',
-    label: 'No quote/request system',
-  },
-  {
-    value: 'slow-website',
-    label: 'Slow website',
-  },
-  {
-    value: 'poor-user-experience',
-    label: 'Poor user experience',
-  },
-  {
-    value: 'weak-online-presence',
-    label: 'Weak online presence',
-  },
-  {
-    value: 'broken-forms',
-    label: 'Broken contact forms',
-  },
-  {
-    value: 'poor-conversion',
-    label: 'Website not converting visitors',
-  },
-]
+  source: lead.source || 'other',
+  sourceDetails: lead.sourceDetails || '',
 
-/*
-|--------------------------------------------------------------------------
-| SERVICES
-|--------------------------------------------------------------------------
-*/
+  status: lead.status || 'new',
+  priority: lead.priority || 'medium',
+  leadScore: lead.leadScore || 0,
+  dealValue: lead.dealValue || 0,
 
-const serviceOptions = [
-  'Website Development',
-  'Website Redesign',
-  'Web Application',
-  'SEO',
-  'Local SEO',
-  'Digital Marketing',
-  'Website Maintenance',
-  'Hosting',
-  'E-commerce',
-  'Booking System',
-  'Custom Software',
-]
+  problems: Array.isArray(lead.problems) ? lead.problems : [],
+  primaryProblem: lead.primaryProblem || '',
 
-/*
-|--------------------------------------------------------------------------
-| SOURCES
-|--------------------------------------------------------------------------
-*/
+  nextAction: lead.nextAction || '',
+  nextActionDate: toInputDate(lead.nextActionDate),
+  preferredContactMethod: lead.preferredContactMethod || '',
 
-const sourceOptions = [
-  ['google-maps', 'Google Maps'],
-  ['google-search', 'Google Search'],
-  ['facebook', 'Facebook'],
-  ['instagram', 'Instagram'],
-  ['linkedin', 'LinkedIn'],
-  ['referral', 'Referral'],
-  ['website', 'Website'],
-  ['cold-call', 'Cold Call'],
-  ['email', 'Email'],
-  ['advertisement', 'Advertisement'],
-  ['networking', 'Networking'],
-  ['other', 'Other'],
-]
+  tags: Array.isArray(lead.tags) ? lead.tags : [],
+  notes: lead.notes || '',
+})
 
-/*
-|--------------------------------------------------------------------------
-| STATUS
-|--------------------------------------------------------------------------
-*/
+const externalUrl = (site) =>
+  /^https?:\/\//i.test(site) ? site : `https://${site}`
 
-const statusOptions = [
-  ['new', 'New'],
-  ['contacted', 'Contacted'],
-  ['pending', 'Pending'],
-  ['approved', 'Approved'],
-  ['rejected', 'Rejected'],
-]
+const initials = (person) =>
+  `${person?.firstName?.[0] || ''}${person?.lastName?.[0] || ''}`.toUpperCase() ||
+  '?'
 
-/*
-|--------------------------------------------------------------------------
-| CONTACT METHODS
-|--------------------------------------------------------------------------
-*/
+const isOverdue = (lead) => {
+  if (!lead.nextActionDate) return false
+  if (['approved', 'rejected'].includes(lead.status)) return false
+  const due = new Date(lead.nextActionDate)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  return due < today
+}
 
-const contactMethods = [
-  ['', 'Select method'],
-  ['phone', 'Phone'],
-  ['email', 'Email'],
-  ['sms', 'SMS'],
-  ['facebook', 'Facebook'],
-  ['instagram', 'Instagram'],
-  ['linkedin', 'LinkedIn'],
-  ['other', 'Other'],
-]
+/* ----------------------------------------------------------------------- */
+/* page                                                                    */
+/* ----------------------------------------------------------------------- */
 
-/*
-|--------------------------------------------------------------------------
-| MAIN COMPONENT
-|--------------------------------------------------------------------------
-*/
-
-function LeadDetails() {
+export default function LeadDetails() {
   const { id } = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const confirm = useConfirm()
+  const toast = useToast()
 
-  const { items, loading, error } = useSelector((state) => state.leads)
-
+  const { items, error } = useSelector((state) => state.leads)
   const user = useSelector((state) => state.auth.user)
-
-  const [editing, setEditing] = useState(false)
-  const [saving, setSaving] = useState(false)
-
-  /*
-  |--------------------------------------------------------------------------
-  | FORM
-  |--------------------------------------------------------------------------
-  */
-
-  const [formData, setFormData] = useState({
-    companyName: '',
-    contactName: '',
-    phone: '',
-    email: '',
-    website: '',
-    location: '',
-    industry: '',
-    businessInfo: '',
-
-    source: 'other',
-    sourceDetails: '',
-
-    stage: 'new',
-    status: 'new',
-
-    priority: 'medium',
-    leadScore: 0,
-
-    primaryProblem: '',
-    problems: [],
-
-    needs: '',
-    goals: '',
-    targetAudience: '',
-    currentSolution: '',
-    painPoints: '',
-
-    budget: 0,
-    timeline: '',
-
-    service: '',
-    services: [],
-    dealValue: 0,
-    probability: 0,
-
-    nextAction: '',
-    nextActionDate: '',
-    preferredContactMethod: '',
-
-    tags: [],
-    notes: '',
-  })
-
-  /*
-  |--------------------------------------------------------------------------
-  | FIND LEAD
-  |--------------------------------------------------------------------------
-  */
 
   const lead = items.find((item) => item._id === id)
 
-  /*
-  |--------------------------------------------------------------------------
-  | LOAD LEAD
-  |--------------------------------------------------------------------------
-  */
+  const [loaded, setLoaded] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [movingTo, setMovingTo] = useState(null)
+  const [form, setForm] = useState(null)
 
+  // Always load this one lead (also brings the populated activity history).
   useEffect(() => {
-    if (!lead) {
-      dispatch(fetchLeads())
+    let alive = true
+    setLoaded(false)
+    setEditing(false) // never carry an open editor over to a different lead
+    dispatch(fetchLead(id)).then(() => alive && setLoaded(true))
+    return () => {
+      alive = false
     }
-  }, [dispatch, lead])
-
-  /*
-  |--------------------------------------------------------------------------
-  | LOAD LEAD INTO FORM
-  |--------------------------------------------------------------------------
-  */
-
-  useEffect(() => {
-    if (!lead) return
-
-    setFormData({
-      companyName: lead.companyName || '',
-      contactName: lead.contactName || '',
-      phone: lead.phone || '',
-      email: lead.email || '',
-      website: lead.website || '',
-      location: lead.location || '',
-      industry: lead.industry || '',
-      businessInfo: lead.businessInfo || '',
-
-      source: lead.source || 'other',
-      sourceDetails: lead.sourceDetails || '',
-
-      stage: lead.stage || 'new',
-      status: lead.status || 'new',
-
-      priority: lead.priority || 'medium',
-      leadScore: lead.leadScore || 0,
-
-      primaryProblem: lead.primaryProblem || '',
-      problems: Array.isArray(lead.problems) ? lead.problems : [],
-
-      needs: lead.needs || '',
-      goals: lead.goals || '',
-      targetAudience: lead.targetAudience || '',
-      currentSolution: lead.currentSolution || '',
-      painPoints: lead.painPoints || '',
-
-      budget: lead.budget || 0,
-      timeline: lead.timeline || '',
-
-      service: lead.service || '',
-      services: Array.isArray(lead.services) ? lead.services : [],
-      dealValue: lead.dealValue || 0,
-      probability: lead.probability || 0,
-
-      nextAction: lead.nextAction || '',
-      nextActionDate: formatDateForInput(lead.nextActionDate),
-      preferredContactMethod: lead.preferredContactMethod || '',
-
-      tags: Array.isArray(lead.tags) ? lead.tags : [],
-      notes: lead.notes || '',
-    })
-  }, [lead])
-
-  /*
-  |--------------------------------------------------------------------------
-  | PERMISSIONS
-  |--------------------------------------------------------------------------
-  */
+  }, [dispatch, id])
 
   const canEdit =
     user?.role === 'admin' ||
@@ -354,1240 +157,738 @@ function LeadDetails() {
   const canDelete =
     user?.role === 'admin' || user?.permissions?.includes('lead:delete')
 
-  /*
-  |--------------------------------------------------------------------------
-  | INPUT CHANGE
-  |--------------------------------------------------------------------------
-  */
+  /* ------------------------------ actions ------------------------------ */
 
-  const handleChange = (event) => {
+  const startEdit = () => {
+    setForm(toForm(lead))
+    setEditing(true)
+  }
+
+  const change = (event) => {
     const { name, value } = event.target
+    setForm((current) => ({ ...current, [name]: value }))
+  }
 
-    setFormData((current) => ({
+  const toggleProblem = (value) =>
+    setForm((current) => ({
       ...current,
-      [name]: value,
+      problems: current.problems.includes(value)
+        ? current.problems.filter((p) => p !== value)
+        : [...current.problems, value],
     }))
-  }
 
-  /*
-  |--------------------------------------------------------------------------
-  | PROBLEM TOGGLE
-  |--------------------------------------------------------------------------
-  */
-
-  const toggleProblem = (problem) => {
-    setFormData((current) => {
-      const exists = current.problems.includes(problem)
-
-      return {
-        ...current,
-        problems: exists
-          ? current.problems.filter((item) => item !== problem)
-          : [...current.problems, problem],
-      }
-    })
-  }
-
-  /*
-  |--------------------------------------------------------------------------
-  | SERVICE TOGGLE
-  |--------------------------------------------------------------------------
-  */
-
-  const toggleService = (service) => {
-    setFormData((current) => {
-      const exists = current.services.includes(service)
-
-      return {
-        ...current,
-        services: exists
-          ? current.services.filter((item) => item !== service)
-          : [...current.services, service],
-      }
-    })
-  }
-
-  /*
-  |--------------------------------------------------------------------------
-  | TAGS
-  |--------------------------------------------------------------------------
-  */
-
-  const updateTags = (event) => {
-    const value = event.target.value
-
-    const tags = value
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter(Boolean)
-
-    setFormData((current) => ({
+  const changeTags = (event) =>
+    setForm((current) => ({
       ...current,
-      tags,
+      tags: event.target.value
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter(Boolean),
     }))
+
+  const moveTo = async (status) => {
+    if (!lead || lead.status === status || movingTo) return
+
+    setMovingTo(status)
+
+    try {
+      await dispatch(updateLeadStatus({ id, status })).unwrap()
+      toast.success(`Status changed to ${statusLabel(status)}.`)
+      dispatch(fetchLead(id)) // refresh the activity history
+    } catch (err) {
+      toast.error(typeof err === 'string' ? err : 'Could not change the status.')
+    } finally {
+      setMovingTo(null)
+    }
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | SAVE
-  |--------------------------------------------------------------------------
-  */
-
-  const handleSave = async (event) => {
+  const save = async (event) => {
     event.preventDefault()
-
     setSaving(true)
 
+    const statusChanged = form.status !== lead.status
+
+    // Only the fields this screen edits. Status goes through its own endpoint
+    // so the change is logged and a closing date is set when approved.
+    const { status, ...rest } = form
+    const problems = form.problems || []
+
     const payload = {
-      ...formData,
-
-      leadScore: Number(formData.leadScore || 0),
-      budget: Number(formData.budget || 0),
-      dealValue: Number(formData.dealValue || 0),
-      probability: Number(formData.probability || 0),
-
-      problems: formData.problems || [],
-      services: formData.services || [],
-      tags: formData.tags || [],
-
-      nextActionDate: formData.nextActionDate || null,
+      ...rest,
+      email: form.email.trim() || NO_EMAIL,
+      leadScore: Number(form.leadScore || 0),
+      dealValue: Number(form.dealValue || 0),
+      problems,
+      primaryProblem: problems.includes(form.primaryProblem)
+        ? form.primaryProblem
+        : problems[0] || '',
+      nextActionDate: form.nextActionDate || null,
     }
 
-    const result = await dispatch(
-      updateLead({
-        id,
-        data: payload,
-      }),
-    )
+    const result = await dispatch(updateLead({ id, data: payload }))
 
+    if (!updateLead.fulfilled.match(result)) {
+      setSaving(false)
+      toast.error(result.payload || 'Could not save the lead.')
+      return
+    }
+
+    if (statusChanged) {
+      await dispatch(updateLeadStatus({ id, status }))
+    }
+
+    dispatch(fetchLead(id))
     setSaving(false)
-
-    if (updateLead.fulfilled.match(result)) {
-      setEditing(false)
-    }
+    setEditing(false)
+    toast.success('Lead saved.')
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | DELETE
-  |--------------------------------------------------------------------------
-  */
-
-  const handleDelete = async () => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete ${lead.companyName}? This cannot be undone.`,
-    )
+  const remove = async () => {
+    const confirmed = await confirm({
+      title: `Delete ${lead.companyName}?`,
+      message: 'The lead will be permanently deleted. This cannot be undone.',
+      confirmLabel: 'Delete lead',
+      tone: 'danger',
+    })
 
     if (!confirmed) return
 
     const result = await dispatch(deleteLead(id))
 
     if (deleteLead.fulfilled.match(result)) {
+      toast.success('Lead deleted.')
       navigate('/leads')
+    } else {
+      toast.error(result.payload || 'Could not delete the lead.')
     }
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | LOADING
-  |--------------------------------------------------------------------------
-  */
+  /* ------------------------------- states ------------------------------ */
 
-  if (loading && !lead) {
+  if (!lead && !loaded) {
     return (
-      <div className="lead-details-page">
-        <div className="lead-details-loading">
-          <div className="details-loading-spinner"></div>
-          <span>Loading lead...</span>
+      <div className="ld">
+        <Skeleton width={140} height={14} />
+        <div style={{ margin: '22px 0' }}>
+          <Skeleton width="38%" height={34} />
+        </div>
+        <Skeleton height={90} radius={16} />
+        <div style={{ marginTop: 16 }}>
+          <Skeleton height={320} radius={16} />
         </div>
       </div>
     )
   }
-
-  /*
-  |--------------------------------------------------------------------------
-  | NOT FOUND
-  |--------------------------------------------------------------------------
-  */
 
   if (!lead) {
     return (
-      <div className="lead-details-page">
-        <div className="lead-details-not-found">
-          <Building2 size={40} />
-
-          <h2>Lead not found</h2>
-
-          <p>
-            This lead may have been deleted or you may not have permission to
-            view it.
-          </p>
-
-          <Link to="/leads" className="primary-btn">
-            <ArrowLeft size={16} />
-            Back to Leads
-          </Link>
-        </div>
+      <div className="ld">
+        <EmptyState
+          tone="error"
+          icon={Building2}
+          title="Lead not found"
+          message={
+            error ||
+            'This lead may have been deleted, or you may not have permission to view it.'
+          }
+          action={
+            <Link to="/leads" className="ui-btn ui-btn--primary">
+              <ArrowLeft size={16} />
+              Back to leads
+            </Link>
+          }
+        />
       </div>
     )
   }
 
-  const currentStageIndex = stages.indexOf(lead.stage)
+  const isRejected = lead.status === 'rejected'
+  const currentStep = PIPELINE_COLUMNS.findIndex((c) => c.id === lead.status)
+  const hasEmail = lead.email && lead.email !== NO_EMAIL
+  const activities = [...(lead.activities || [])]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 8)
 
-  /*
-  |--------------------------------------------------------------------------
-  | PAGE
-  |--------------------------------------------------------------------------
-  */
+  /* -------------------------------- page ------------------------------- */
 
   return (
-    <div className="lead-details-page">
-      {/* =====================================================
-          HEADER
-      ===================================================== */}
+    <div className="ld">
+      {/* ---------------------------- header ---------------------------- */}
 
-      <div className="lead-details-header">
-        <div>
-          <Link to="/leads" className="back-to-leads">
-            <ArrowLeft size={16} />
-            Back to Leads
+      <header className="ld-header">
+        <div className="ld-header__main">
+          <Link to="/leads" className="ld-back">
+            <ArrowLeft size={15} />
+            All leads
           </Link>
 
-          <div className="lead-details-title">
-            <div className="lead-details-company-icon">
-              <Building2 size={25} />
+          <div className="ld-title">
+            <div className="ld-title__icon">
+              <Building2 size={24} />
             </div>
 
             <div>
-              <div className="eyebrow">
-                <span className="eyebrow-dot"></span>
-                SALES PIPELINE
-              </div>
-
               <h1>{lead.companyName}</h1>
 
               <p>
-                {lead.contactName ? `${lead.contactName} • ` : ''}
-                {lead.location || 'Location not provided'}
+                {lead.contactName ? `${lead.contactName} · ` : ''}
+                {lead.location || 'No location'}
               </p>
             </div>
+
+            <span className={`ld-badge ld-badge--${lead.status}`}>
+              {statusLabel(lead.status)}
+            </span>
           </div>
         </div>
 
-        <div className="lead-details-actions">
-          {canEdit && !editing && (
+        {!editing && (
+          <div className="ld-actions">
+            {canEdit && (
+              <button type="button" className="ui-btn ui-btn--ghost" onClick={startEdit}>
+                <Pencil size={15} />
+                Edit lead
+              </button>
+            )}
+
+            {canDelete && (
+              <button type="button" className="ui-btn ui-btn--danger" onClick={remove}>
+                <Trash2 size={15} />
+                Delete
+              </button>
+            )}
+          </div>
+        )}
+      </header>
+
+      {/* ------------------------ status tracker ------------------------ */}
+
+      <section className="ld-card ld-status" aria-label="Lead status">
+        <div className="ld-status__head">
+          <div>
+            <span className="ld-eyebrow">Status</span>
+            <h2>{statusLabel(lead.status)}</h2>
+          </div>
+
+          {canEdit && !editing && !isRejected && (
             <button
               type="button"
-              className="secondary-btn"
-              onClick={() => setEditing(true)}
+              className="ld-reject"
+              onClick={() => moveTo('rejected')}
+              disabled={Boolean(movingTo)}
             >
-              <Pencil size={16} />
-              Edit Lead
-            </button>
-          )}
-
-          {canDelete && (
-            <button type="button" className="danger-btn" onClick={handleDelete}>
-              <Trash2 size={16} />
-              Delete
+              <XCircle size={15} />
+              Mark as rejected
             </button>
           )}
         </div>
-      </div>
 
-      {/* =====================================================
-          QUICK STATS
-      ===================================================== */}
+        {isRejected ? (
+          <div className="ld-rejected" role="status">
+            <AlertTriangle size={18} />
 
-      <div className="lead-detail-stats">
-        <DetailStat
-          icon={<DollarSign size={18} />}
-          label="Deal Value"
-          value={`$${Number(lead.dealValue || 0).toLocaleString()}`}
-        />
+            <div>
+              <strong>This lead was rejected.</strong>
+              <span>It is hidden from the sales pipeline board.</span>
+            </div>
 
-        <DetailStat
-          icon={<Target size={18} />}
-          label="Lead Score"
-          value={`${Number(lead.leadScore || 0)} pts`}
-        />
-
-        <DetailStat
-          icon={<Activity size={18} />}
-          label="Probability"
-          value={`${Number(lead.probability || 0)}%`}
-        />
-
-        <DetailStat
-          icon={<CircleAlert size={18} />}
-          label="Priority"
-          value={capitalize(lead.priority)}
-        />
-
-        <DetailStat
-          icon={<CheckCircle2 size={18} />}
-          label="Status"
-          value={capitalize(lead.status)}
-        />
-      </div>
-
-      {/* =====================================================
-          SALES STAGE
-      ===================================================== */}
-
-      <section className="lead-stage-panel">
-        <div className="stage-panel-heading">
-          <div>
-            <span className="section-label">SALES STAGE</span>
-
-            <h2>{stageLabels[lead.stage] || 'New'}</h2>
-          </div>
-
-          <span className={`lead-status-badge ${lead.status}`}>
-            {capitalize(lead.status)}
-          </span>
-        </div>
-
-        <div className="stage-progress">
-          {stages.map((stage, index) => {
-            const completed =
-              currentStageIndex >= 0 && index <= currentStageIndex
-
-            return (
-              <div
-                key={stage}
-                className={`stage-step ${
-                  completed ? 'completed' : ''
-                } ${stage === lead.stage ? 'current' : ''}`}
+            {canEdit && !editing && (
+              <button
+                type="button"
+                className="ui-btn ui-btn--ghost"
+                onClick={() => moveTo('new')}
+                disabled={Boolean(movingTo)}
               >
-                <span></span>
+                <RotateCcw size={15} />
+                Reopen as New
+              </button>
+            )}
+          </div>
+        ) : (
+          <ol className="ld-steps">
+            {PIPELINE_COLUMNS.map((step, index) => {
+              const state =
+                index < currentStep
+                  ? 'done'
+                  : index === currentStep
+                    ? 'current'
+                    : 'todo'
 
-                <small>{stageLabels[stage]}</small>
-              </div>
-            )
-          })}
-        </div>
+              return (
+                <li key={step.id}>
+                  <button
+                    type="button"
+                    className={`ld-step ld-step--${state}`}
+                    onClick={() => moveTo(step.id)}
+                    disabled={!canEdit || editing || Boolean(movingTo)}
+                    aria-current={state === 'current' ? 'step' : undefined}
+                    title={canEdit ? `Set status to ${step.title}` : undefined}
+                  >
+                    <span className="ld-step__dot">
+                      {state === 'done' ? <Check size={13} strokeWidth={3} /> : index + 1}
+                    </span>
+
+                    <span className="ld-step__text">
+                      <strong>{step.title}</strong>
+                      <small>{step.description}</small>
+                    </span>
+                  </button>
+                </li>
+              )
+            })}
+          </ol>
+        )}
       </section>
 
-      {/* =====================================================
-          EDIT MODE
-      ===================================================== */}
+      {/* ---------------------------- edit mode ---------------------------- */}
 
-      {editing ? (
-        <form className="lead-details-edit-form" onSubmit={handleSave}>
-          {/* BUSINESS */}
+      {editing && form ? (
+        <form className="lead-form-card ld-form" onSubmit={save}>
+          <div className="form-section">
+            <SectionTitle
+              icon={<Building2 size={18} />}
+              title="Business information"
+              description="Basic information about the company and contact."
+            />
 
-          <DetailsSection
-            icon={<Building2 size={18} />}
-            title="Business information"
-            description="Update the company and contact information."
-          >
-            <div className="details-form-grid">
-              <InputField
-                label="Company name"
-                name="companyName"
-                value={formData.companyName}
-                onChange={handleChange}
-              />
+            <div className="lead-form-grid">
+              <Field label="Company name" required icon={<Building2 size={17} />}>
+                <input name="companyName" value={form.companyName} onChange={change} required />
+              </Field>
 
-              <InputField
-                label="Contact name"
-                name="contactName"
-                value={formData.contactName}
-                onChange={handleChange}
-              />
+              <Field label="Contact name" icon={<User size={17} />}>
+                <input name="contactName" value={form.contactName} onChange={change} />
+              </Field>
 
-              <InputField
-                label="Phone number"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-              />
+              <Field label="Phone number" required icon={<Phone size={17} />}>
+                <input name="phone" value={form.phone} onChange={change} required />
+              </Field>
 
-              <InputField
-                label="Email address"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-              />
+              <Field label="Email address" required icon={<Mail size={17} />}>
+                <input type="email" name="email" value={form.email} onChange={change} required />
+              </Field>
 
-              <InputField
-                label="Website"
-                name="website"
-                value={formData.website}
-                onChange={handleChange}
-              />
+              <Field label="Website" icon={<Globe size={17} />}>
+                <input name="website" value={form.website} onChange={change} placeholder="https://example.com" />
+              </Field>
 
-              <InputField
-                label="Location"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-              />
+              <Field label="Location" icon={<MapPin size={17} />}>
+                <input name="location" value={form.location} onChange={change} />
+              </Field>
 
-              <InputField
-                label="Industry"
-                name="industry"
-                value={formData.industry}
-                onChange={handleChange}
-              />
+              <Field label="Industry" icon={<Briefcase size={17} />}>
+                <input name="industry" value={form.industry} onChange={change} />
+              </Field>
             </div>
 
-            <TextArea
+            <TextAreaField
               label="Business information"
               name="businessInfo"
-              value={formData.businessInfo}
-              onChange={handleChange}
-              rows={5}
+              value={form.businessInfo}
+              onChange={change}
             />
-          </DetailsSection>
+          </div>
 
-          {/* SOURCE */}
+          <div className="form-section">
+            <SectionTitle
+              icon={<Search size={18} />}
+              title="Lead source"
+              description="Where the sales team discovered this business."
+            />
 
-          <DetailsSection
-            icon={<Search size={18} />}
-            title="Lead source"
-            description="Where did the sales team discover this business?"
-          >
-            <div className="details-form-grid">
+            <div className="lead-form-grid">
               <SelectField
-                label="Lead source"
+                label="Where did you find this business?"
                 name="source"
-                value={formData.source}
-                onChange={handleChange}
-                options={sourceOptions}
+                value={form.source}
+                onChange={change}
+                options={SOURCE_OPTIONS}
               />
 
-              <InputField
-                label="Source details"
-                name="sourceDetails"
-                value={formData.sourceDetails}
-                onChange={handleChange}
-              />
+              <Field label="Source details" icon={<FileText size={17} />}>
+                <input name="sourceDetails" value={form.sourceDetails} onChange={change} />
+              </Field>
             </div>
-          </DetailsSection>
+          </div>
 
-          {/* PIPELINE */}
+          <div className="form-section">
+            <SectionTitle
+              icon={<Target size={18} />}
+              title="Status & priority"
+              description="Where this lead stands right now."
+            />
 
-          <DetailsSection
-            icon={<Target size={18} />}
-            title="Sales pipeline"
-            description="Manage the current position of the opportunity."
-          >
-            <div className="details-form-grid">
-              <SelectField
-                label="Sales stage"
-                name="stage"
-                value={formData.stage}
-                onChange={handleChange}
-                options={stages.map((stage) => [stage, stageLabels[stage]])}
-              />
-
+            <div className="lead-form-grid">
               <SelectField
                 label="Lead status"
                 name="status"
-                value={formData.status}
-                onChange={handleChange}
-                options={statusOptions}
+                value={form.status}
+                onChange={change}
+                options={LEAD_STATUSES.map((s) => [s.value, s.label])}
               />
 
               <SelectField
                 label="Priority"
                 name="priority"
-                value={formData.priority}
-                onChange={handleChange}
-                options={[
-                  ['critical', 'Critical'],
-                  ['high', 'High'],
-                  ['medium', 'Medium'],
-                  ['low', 'Low'],
-                ]}
+                value={form.priority}
+                onChange={change}
+                options={PRIORITY_OPTIONS}
               />
 
-              <InputField
-                label="Lead score"
-                name="leadScore"
-                type="number"
-                value={formData.leadScore}
-                onChange={handleChange}
-              />
+              <Field label="Lead score" icon={<Target size={17} />}>
+                <input type="number" min="0" name="leadScore" value={form.leadScore} onChange={change} />
+              </Field>
+
+              <Field label="Deal value" icon={<DollarSign size={17} />}>
+                <input type="number" min="0" name="dealValue" value={form.dealValue} onChange={change} />
+              </Field>
             </div>
-          </DetailsSection>
+          </div>
 
-          {/* PROBLEMS */}
+          <div className="form-section">
+            <SectionTitle
+              icon={<CircleAlert size={18} />}
+              title="Business problems"
+              description="Identify the problems your sales team discovered."
+            />
 
-          <DetailsSection
-            icon={<CircleAlert size={18} />}
-            title="Business problems"
-            description="Problems identified during lead research or discovery."
-          >
-            <div className="problem-grid details-problem-grid">
-              {problemOptions.map((problem) => (
-                <label
-                  key={problem.value}
-                  className={`problem-option ${
-                    formData.problems.includes(problem.value) ? 'selected' : ''
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={formData.problems.includes(problem.value)}
-                    onChange={() => toggleProblem(problem.value)}
-                  />
+            <ProblemPicker selected={form.problems} onToggle={toggleProblem} />
 
-                  <span className="problem-checkbox"></span>
+            {form.problems.some(
+              (p) => !PROBLEM_OPTIONS.some((o) => o.value === p),
+            ) && (
+              <p className="ld-legacy-note">
+                This lead also has older problems recorded (
+                {form.problems
+                  .filter((p) => !PROBLEM_OPTIONS.some((o) => o.value === p))
+                  .map(problemLabel)
+                  .join(', ')}
+                ). They are kept as they are.
+              </p>
+            )}
+          </div>
 
-                  <span>{problem.label}</span>
-                </label>
-              ))}
-            </div>
+          <div className="form-section">
+            <SectionTitle
+              icon={<Calendar size={18} />}
+              title="Next action"
+              description="Make sure every lead has a clear next step."
+            />
 
-            <div className="details-form-grid">
-              <SelectField
-                label="Primary problem"
-                name="primaryProblem"
-                value={formData.primaryProblem}
-                onChange={handleChange}
-                options={[
-                  ['', 'Select primary problem'],
-                  ...problemOptions.map((problem) => [
-                    problem.value,
-                    problem.label,
-                  ]),
-                ]}
-              />
-            </div>
-          </DetailsSection>
+            <div className="lead-form-grid">
+              <Field label="Next action" icon={<Target size={17} />}>
+                <input name="nextAction" value={form.nextAction} onChange={change} />
+              </Field>
 
-          {/* OPPORTUNITY */}
-
-          <DetailsSection
-            icon={<DollarSign size={18} />}
-            title="Opportunity"
-            description="Financial information and services of interest."
-          >
-            <div className="details-form-grid">
-              <InputField
-                label="Budget"
-                name="budget"
-                type="number"
-                value={formData.budget}
-                onChange={handleChange}
-              />
-
-              <InputField
-                label="Estimated deal value"
-                name="dealValue"
-                type="number"
-                value={formData.dealValue}
-                onChange={handleChange}
-              />
-
-              <InputField
-                label="Probability (%)"
-                name="probability"
-                type="number"
-                value={formData.probability}
-                onChange={handleChange}
-              />
-
-              <InputField
-                label="Expected timeline"
-                name="timeline"
-                value={formData.timeline}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="details-subsection">
-              <label>Services of interest</label>
-
-              <div className="service-grid">
-                {serviceOptions.map((service) => (
-                  <label
-                    key={service}
-                    className={`service-option ${
-                      formData.services.includes(service) ? 'selected' : ''
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={formData.services.includes(service)}
-                      onChange={() => toggleService(service)}
-                    />
-
-                    <span className="service-checkbox">
-                      {formData.services.includes(service) ? '✓' : ''}
-                    </span>
-
-                    {service}
-                  </label>
-                ))}
-              </div>
-            </div>
-          </DetailsSection>
-
-          {/* FOLLOW UP */}
-
-          <DetailsSection
-            icon={<Calendar size={18} />}
-            title="Next action"
-            description="Make sure this opportunity has a clear next step."
-          >
-            <div className="details-form-grid">
-              <InputField
-                label="Next action"
-                name="nextAction"
-                value={formData.nextAction}
-                onChange={handleChange}
-              />
-
-              <InputField
-                label="Follow-up date"
-                name="nextActionDate"
-                type="date"
-                value={formData.nextActionDate}
-                onChange={handleChange}
-              />
+              <Field label="Follow-up date" icon={<Calendar size={17} />}>
+                <input type="date" name="nextActionDate" value={form.nextActionDate} onChange={change} />
+              </Field>
 
               <SelectField
                 label="Preferred contact method"
                 name="preferredContactMethod"
-                value={formData.preferredContactMethod}
-                onChange={handleChange}
-                options={contactMethods}
+                value={form.preferredContactMethod}
+                onChange={change}
+                options={[['', 'Select method'], ...CONTACT_METHODS]}
               />
             </div>
-          </DetailsSection>
+          </div>
 
-          {/* NOTES */}
-
-          <DetailsSection
-            icon={<FileText size={18} />}
-            title="Sales notes"
-            description="Important information for the sales team."
-          >
-            <TextArea
-              label="Notes"
-              name="notes"
-              value={formData.notes}
-              onChange={handleChange}
-              rows={7}
+          <div className="form-section">
+            <SectionTitle
+              icon={<FileText size={18} />}
+              title="Sales notes"
+              description="Add anything important for the sales team."
             />
 
-            <div className="details-field">
+            <TextAreaField label="Notes" name="notes" value={form.notes} onChange={change} rows={6} />
+
+            <div className="lead-field">
               <label>Tags</label>
 
-              <div className="details-input-wrapper">
+              <div className="input-wrapper">
                 <Tag size={17} />
-
                 <input
-                  value={formData.tags.join(', ')}
-                  onChange={updateTags}
+                  value={form.tags.join(', ')}
+                  onChange={changeTags}
                   placeholder="hot-lead, local-business, redesign"
                 />
               </div>
 
-              <small>Separate tags with commas.</small>
+              <small className="field-help">Separate tags with commas.</small>
             </div>
-          </DetailsSection>
+          </div>
 
-          {/* EDIT ACTIONS */}
+          <div className="lead-form-footer">
+            <div className="required-note">
+              <span>*</span> Required fields
+            </div>
 
-          <div className="lead-details-edit-actions">
-            <button
-              type="button"
-              className="secondary-btn"
-              onClick={() => setEditing(false)}
-              disabled={saving}
-            >
-              <X size={16} />
-              Cancel
-            </button>
+            <div className="lead-form-actions">
+              <button
+                type="button"
+                className="secondary-btn"
+                onClick={() => setEditing(false)}
+                disabled={saving}
+              >
+                <X size={16} />
+                Cancel
+              </button>
 
-            <button type="submit" className="primary-btn" disabled={saving}>
-              <Save size={16} />
-
-              {saving ? 'Saving...' : 'Save Changes'}
-            </button>
+              <button type="submit" className="primary-btn" disabled={saving}>
+                <Save size={16} />
+                {saving ? 'Saving…' : 'Save changes'}
+              </button>
+            </div>
           </div>
         </form>
       ) : (
         <>
-          {/* =====================================================
-              VIEW MODE
-          ===================================================== */}
+          {/* ------------------------- quick facts ------------------------- */}
 
-          <div className="lead-details-content">
-            <main className="lead-details-main">
-              {/* CONTACT */}
+          <div className="ld-facts">
+            <Fact label="Priority" value={labelFor(PRIORITY_OPTIONS, lead.priority)} tone={lead.priority} />
+            <Fact label="Lead score" value={`${Number(lead.leadScore || 0)} pts`} />
+            <Fact
+              label="Deal value"
+              value={Number(lead.dealValue) > 0 ? moneyWhole(lead.dealValue) : '—'}
+            />
+            <Fact
+              label="Follow-up"
+              value={formatDate(lead.nextActionDate, 'Not set')}
+              flag={isOverdue(lead) ? 'Overdue' : null}
+            />
+            <Fact label="Created" value={formatDate(lead.createdAt)} />
+          </div>
 
-              <DetailsSection
-                icon={<User size={18} />}
-                title="Contact information"
-                description="Primary business and contact details."
-              >
-                <div className="details-info-grid">
-                  <InfoItem
-                    icon={<User size={18} />}
-                    label="Contact"
-                    value={lead.contactName || 'Not provided'}
-                  />
+          <div className="ld-grid">
+            <div className="ld-col">
+              {/* contact */}
+              <section className="ld-card">
+                <h2 className="ld-card__title">
+                  <User size={17} /> Contact
+                </h2>
 
-                  <InfoItem
-                    icon={<Phone size={18} />}
-                    label="Phone"
-                    value={lead.phone || 'Not provided'}
-                  />
+                <dl className="ld-list">
+                  <Row icon={<User size={16} />} label="Contact">
+                    {lead.contactName || <Muted>Not provided</Muted>}
+                  </Row>
 
-                  <InfoItem
-                    icon={<Mail size={18} />}
-                    label="Email"
-                    value={lead.email || 'Not provided'}
-                  />
+                  <Row icon={<Phone size={16} />} label="Phone">
+                    {lead.phone ? (
+                      <a href={`tel:${lead.phone}`}>{lead.phone}</a>
+                    ) : (
+                      <Muted>Not provided</Muted>
+                    )}
+                  </Row>
 
-                  <Link to={lead.website} target="_">
-                    <InfoItem
-                      icon={<Globe size={18} />}
-                      label="Website"
-                      value={lead.website || 'No website'}
-                    />
-                  </Link>
+                  <Row icon={<Mail size={16} />} label="Email">
+                    {hasEmail ? (
+                      <a href={`mailto:${lead.email}`}>{lead.email}</a>
+                    ) : (
+                      <Muted>No email on file</Muted>
+                    )}
+                  </Row>
 
-                  <InfoItem
-                    icon={<MapPin size={18} />}
-                    label="Location"
-                    value={lead.location || 'Not provided'}
-                  />
+                  <Row icon={<Globe size={16} />} label="Website">
+                    {lead.website ? (
+                      <a href={externalUrl(lead.website)} target="_blank" rel="noopener noreferrer">
+                        {lead.website.replace(/^https?:\/\//i, '')}
+                        <ExternalLink size={13} />
+                      </a>
+                    ) : (
+                      <Muted>No website</Muted>
+                    )}
+                  </Row>
 
-                  <InfoItem
-                    icon={<BriefcaseBusiness size={18} />}
-                    label="Industry"
-                    value={lead.industry || 'Not provided'}
-                  />
-                </div>
+                  <Row icon={<MapPin size={16} />} label="Location">
+                    {lead.location || <Muted>Not provided</Muted>}
+                  </Row>
 
-                <DetailText
-                  label="Business information"
-                  value={lead.businessInfo}
-                  empty="No business information has been added."
-                />
-              </DetailsSection>
+                  <Row icon={<Briefcase size={16} />} label="Industry">
+                    {lead.industry || <Muted>Not provided</Muted>}
+                  </Row>
+                </dl>
 
-              {/* SOURCE */}
-
-              <DetailsSection
-                icon={<Search size={18} />}
-                title="Lead source"
-                description="How this business entered the sales pipeline."
-              >
-                <div className="details-info-grid">
-                  <InfoItem
-                    icon={<Search size={18} />}
-                    label="Source"
-                    value={formatSource(lead.source)}
-                  />
-
-                  <InfoItem
-                    icon={<FileText size={18} />}
-                    label="Source details"
-                    value={lead.sourceDetails || 'No details'}
-                  />
-                </div>
-              </DetailsSection>
-
-              {/* PROBLEMS */}
-
-              <DetailsSection
-                icon={<CircleAlert size={18} />}
-                title="Business problems"
-                description="Problems identified for this lead."
-              >
-                {lead.problems?.length > 0 ? (
-                  <div className="details-tag-list">
-                    {lead.problems.map((problem) => (
-                      <span key={problem} className="detail-problem-tag">
-                        {getProblemLabel(problem)}
-                      </span>
-                    ))}
+                {lead.businessInfo && (
+                  <div className="ld-text">
+                    <span>About the business</span>
+                    <p>{lead.businessInfo}</p>
                   </div>
+                )}
+              </section>
+
+              {/* problems */}
+              <section className="ld-card">
+                <h2 className="ld-card__title">
+                  <CircleAlert size={17} /> Business problems
+                </h2>
+
+                {lead.problems?.length > 0 ? (
+                  <ul className="ld-problems">
+                    {lead.problems.map((problem) => {
+                      const known = PROBLEM_OPTIONS.find((p) => p.value === problem)
+
+                      return (
+                        <li key={problem}>
+                          <strong>{problemLabel(problem)}</strong>
+                          {known && <small>{known.hint}</small>}
+                          {lead.problems.length > 1 && problem === lead.primaryProblem && (
+                            <span className="ld-primary">Primary</span>
+                          )}
+                        </li>
+                      )
+                    })}
+                  </ul>
                 ) : (
-                  <EmptyText text="No problems have been identified." />
+                  <p className="ld-empty">No problems recorded for this lead.</p>
+                )}
+              </section>
+
+              {/* notes */}
+              <section className="ld-card">
+                <h2 className="ld-card__title">
+                  <FileText size={17} /> Notes
+                </h2>
+
+                {lead.notes ? (
+                  <p className="ld-notes">{lead.notes}</p>
+                ) : (
+                  <p className="ld-empty">No notes have been added.</p>
                 )}
 
-                <div className="detail-highlight">
-                  <span>Primary problem</span>
+                {lead.tags?.length > 0 && (
+                  <ul className="ld-tags">
+                    {lead.tags.map((tag) => (
+                      <li key={tag}>
+                        <Tag size={12} />
+                        {tag}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+            </div>
 
-                  <strong>{getProblemLabel(lead.primaryProblem)}</strong>
-                </div>
-              </DetailsSection>
+            <aside className="ld-col">
+              {/* owner */}
+              <section className="ld-card">
+                <h2 className="ld-card__title">Sales owner</h2>
 
-              {/* OPPORTUNITY */}
-
-              <DetailsSection
-                icon={<DollarSign size={18} />}
-                title="Opportunity"
-                description="Financial details and services of interest."
-              >
-                <div className="details-info-grid">
-                  <InfoItem
-                    icon={<DollarSign size={18} />}
-                    label="Budget"
-                    value={formatMoney(lead.budget)}
-                  />
-
-                  <InfoItem
-                    icon={<DollarSign size={18} />}
-                    label="Deal value"
-                    value={formatMoney(lead.dealValue)}
-                  />
-
-                  <InfoItem
-                    icon={<Target size={18} />}
-                    label="Probability"
-                    value={`${Number(lead.probability || 0)}%`}
-                  />
-
-                  <InfoItem
-                    icon={<Clock size={18} />}
-                    label="Timeline"
-                    value={lead.timeline || 'Not provided'}
-                  />
-                </div>
-
-                <div className="details-subsection">
-                  <span className="detail-subsection-label">
-                    Services of interest
-                  </span>
-
-                  {lead.services?.length > 0 ? (
-                    <div className="details-tag-list">
-                      {lead.services.map((service) => (
-                        <span key={service} className="detail-service-tag">
-                          {service}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <EmptyText text="No services selected." />
-                  )}
-                </div>
-              </DetailsSection>
-
-              {/* NEXT ACTION */}
-
-              <DetailsSection
-                icon={<Calendar size={18} />}
-                title="Next action"
-                description="The next step required to move this opportunity forward."
-              >
-                <div className="details-info-grid">
-                  <InfoItem
-                    icon={<Target size={18} />}
-                    label="Next action"
-                    value={lead.nextAction || 'No next action'}
-                  />
-
-                  <InfoItem
-                    icon={<Calendar size={18} />}
-                    label="Follow-up date"
-                    value={formatDate(lead.nextActionDate)}
-                  />
-
-                  <InfoItem
-                    icon={<Phone size={18} />}
-                    label="Preferred contact"
-                    value={formatContactMethod(lead.preferredContactMethod)}
-                  />
-                </div>
-              </DetailsSection>
-
-              {/* NOTES */}
-
-              <DetailsSection
-                icon={<FileText size={18} />}
-                title="Sales notes"
-                description="Important information recorded by the sales team."
-              >
-                <DetailText
-                  label="Notes"
-                  value={lead.notes}
-                  empty="No sales notes have been added."
-                />
-
-                <div className="details-subsection">
-                  <span className="detail-subsection-label">Tags</span>
-
-                  {lead.tags?.length > 0 ? (
-                    <div className="details-tag-list">
-                      {lead.tags.map((tag) => (
-                        <span key={tag} className="detail-tag">
-                          <Tag size={13} />
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <EmptyText text="No tags added." />
-                  )}
-                </div>
-              </DetailsSection>
-            </main>
-
-            {/* =====================================================
-                SIDEBAR
-            ===================================================== */}
-
-            <aside className="lead-details-sidebar">
-              {/* SALES OWNER */}
-
-              <section className="lead-sidebar-card">
-                <span className="section-label">SALES OWNER</span>
-
-                <div className="sales-owner">
-                  <div className="sales-owner-avatar">
+                <div className="ld-owner">
+                  <div className="ld-owner__avatar">
                     {lead.salesPerson?.profilePicture ? (
                       <img src={lead.salesPerson.profilePicture} alt="" />
                     ) : (
-                      getInitials(lead.salesPerson)
+                      initials(lead.salesPerson)
                     )}
                   </div>
 
                   <div>
                     <strong>
-                      {lead.salesPerson?.firstName || ''}{' '}
-                      {lead.salesPerson?.lastName || ''}
+                      {lead.salesPerson?.firstName} {lead.salesPerson?.lastName}
                     </strong>
-
                     <span>{lead.salesPerson?.email || 'Sales team'}</span>
                   </div>
                 </div>
               </section>
 
-              {/* PIPELINE */}
+              {/* next action */}
+              <section className="ld-card">
+                <h2 className="ld-card__title">
+                  <Calendar size={17} /> Next action
+                </h2>
 
-              <section className="lead-sidebar-card">
-                <span className="section-label">PIPELINE INFORMATION</span>
+                {lead.nextAction ? (
+                  <>
+                    <p className="ld-next">{lead.nextAction}</p>
+                    <p className="ld-next__date">
+                      {formatDate(lead.nextActionDate, 'No date set')}
+                      {isOverdue(lead) && <span className="ld-overdue">Overdue</span>}
+                    </p>
+                  </>
+                ) : (
+                  <p className="ld-empty">No next action planned.</p>
+                )}
 
-                <div className="sidebar-details">
-                  <SidebarItem
-                    icon={<Target size={16} />}
-                    label="Stage"
-                    value={stageLabels[lead.stage] || 'New'}
-                  />
-
-                  <SidebarItem
-                    icon={<CircleAlert size={16} />}
-                    label="Priority"
-                    value={capitalize(lead.priority)}
-                  />
-
-                  <SidebarItem
-                    icon={<Activity size={16} />}
-                    label="Lead score"
-                    value={`${Number(lead.leadScore || 0)} pts`}
-                  />
-
-                  <SidebarItem
-                    icon={<CheckCircle2 size={16} />}
-                    label="Status"
-                    value={capitalize(lead.status)}
-                  />
-                </div>
+                <p className="ld-next__pref">
+                  Prefers: {labelFor(CONTACT_METHODS, lead.preferredContactMethod, 'no preference')}
+                </p>
               </section>
 
-              {/* DATES */}
+              {/* source */}
+              <section className="ld-card">
+                <h2 className="ld-card__title">
+                  <Search size={17} /> Lead source
+                </h2>
 
-              <section className="lead-sidebar-card">
-                <span className="section-label">LEAD INFORMATION</span>
-
-                <div className="sidebar-details">
-                  <SidebarItem
-                    icon={<Calendar size={16} />}
-                    label="Created"
-                    value={formatDate(lead.createdAt)}
-                  />
-
-                  <SidebarItem
-                    icon={<Calendar size={16} />}
-                    label="Last Updated"
-                    value={formatDate(lead.updatedAt)}
-                  />
-
-                  <SidebarItem
-                    icon={<Calendar size={16} />}
-                    label="Follow-up"
-                    value={formatDate(lead.nextActionDate)}
-                  />
-                </div>
+                <dl className="ld-list ld-list--tight">
+                  <Row label="Source">{labelFor(SOURCE_OPTIONS, lead.source, 'Other')}</Row>
+                  <Row label="Details">
+                    {lead.sourceDetails || <Muted>None</Muted>}
+                  </Row>
+                  <Row label="Updated">{formatDate(lead.updatedAt)}</Row>
+                </dl>
               </section>
+
+              {/* activity */}
+              {activities.length > 0 && (
+                <section className="ld-card">
+                  <h2 className="ld-card__title">
+                    <Activity size={17} /> Recent activity
+                  </h2>
+
+                  <ol className="ld-activity">
+                    {activities.map((item, index) => (
+                      <li key={item._id || index}>
+                        <p>{item.description || item.type}</p>
+                        <small>
+                          {item.createdBy?.firstName
+                            ? `${item.createdBy.firstName} · `
+                            : ''}
+                          {formatDate(item.createdAt)}
+                        </small>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              )}
             </aside>
           </div>
         </>
       )}
-
-      {error && <div className="lead-details-error">{error}</div>}
     </div>
   )
 }
 
-/*
-|--------------------------------------------------------------------------
-| DETAILS SECTION
-|--------------------------------------------------------------------------
-*/
+/* ----------------------------------------------------------------------- */
+/* small presentational pieces                                             */
+/* ----------------------------------------------------------------------- */
 
-function DetailsSection({ icon, title, description, children }) {
+function Fact({ label, value, flag, tone }) {
   return (
-    <section className="lead-info-card details-section">
-      <div className="details-section-header">
-        <div className="details-section-icon">{icon}</div>
-
-        <div>
-          <span className="section-label">LEAD DETAILS</span>
-
-          <h2>{title}</h2>
-
-          {description && <p>{description}</p>}
-        </div>
-      </div>
-
-      <div className="details-section-body">{children}</div>
-    </section>
-  )
-}
-
-/*
-|--------------------------------------------------------------------------
-| INPUT
-|--------------------------------------------------------------------------
-*/
-
-function InputField({ label, name, value, onChange, type = 'text' }) {
-  return (
-    <div className="details-field">
-      <label htmlFor={name}>{label}</label>
-
-      <div className="details-input-wrapper">
-        <input
-          id={name}
-          name={name}
-          type={type}
-          value={value}
-          onChange={onChange}
-        />
-      </div>
-    </div>
-  )
-}
-
-/*
-|--------------------------------------------------------------------------
-| SELECT
-|--------------------------------------------------------------------------
-*/
-
-function SelectField({ label, name, value, onChange, options }) {
-  return (
-    <div className="details-field">
-      <label htmlFor={name}>{label}</label>
-
-      <div className="details-input-wrapper details-select-wrapper">
-        <select id={name} name={name} value={value} onChange={onChange}>
-          {options.map(([optionValue, optionLabel]) => (
-            <option key={optionValue} value={optionValue}>
-              {optionLabel}
-            </option>
-          ))}
-        </select>
-
-        <ChevronDown size={16} />
-      </div>
-    </div>
-  )
-}
-
-/*
-|--------------------------------------------------------------------------
-| TEXT AREA
-|--------------------------------------------------------------------------
-*/
-
-function TextArea({ label, name, value, onChange, rows = 5 }) {
-  return (
-    <div className="details-field details-textarea-field">
-      <label htmlFor={name}>{label}</label>
-
-      <textarea
-        id={name}
-        name={name}
-        value={value}
-        onChange={onChange}
-        rows={rows}
-      />
-    </div>
-  )
-}
-
-/*
-|--------------------------------------------------------------------------
-| INFO ITEM
-|--------------------------------------------------------------------------
-*/
-
-function InfoItem({ icon, label, value }) {
-  return (
-    <div className="details-info-item">
-      <div className="details-info-icon">{icon}</div>
-
-      <div>
-        <span>{label}</span>
-
-        <strong>{value || 'Not provided'}</strong>
-      </div>
-    </div>
-  )
-}
-
-/*
-|--------------------------------------------------------------------------
-| DETAIL TEXT
-|--------------------------------------------------------------------------
-*/
-
-function DetailText({ label, value, empty = 'Not provided' }) {
-  return (
-    <div className="detail-text-block">
+    <div className="ld-fact">
       <span>{label}</span>
-
-      <p>{value || empty}</p>
+      <strong className={tone ? `ld-tone ld-tone--${tone}` : undefined}>
+        {value}
+      </strong>
+      {flag && <em className="ld-overdue">{flag}</em>}
     </div>
   )
 }
 
-/*
-|--------------------------------------------------------------------------
-| SIDEBAR ITEM
-|--------------------------------------------------------------------------
-*/
-
-function SidebarItem({ icon, label, value }) {
+function Row({ icon, label, children }) {
   return (
-    <div className="sidebar-item">
-      <div className="sidebar-item-icon">{icon}</div>
-
-      <div>
-        <span>{label}</span>
-
-        <strong>{value}</strong>
-      </div>
+    <div className="ld-row">
+      <dt>
+        {icon}
+        {label}
+      </dt>
+      <dd>{children}</dd>
     </div>
   )
 }
 
-/*
-|--------------------------------------------------------------------------
-| DETAIL STAT
-|--------------------------------------------------------------------------
-*/
-
-function DetailStat({ icon, label, value }) {
-  return (
-    <div className="lead-detail-stat">
-      <div className="lead-detail-stat-icon">{icon}</div>
-
-      <div>
-        <span>{label}</span>
-
-        <strong>{value}</strong>
-      </div>
-    </div>
-  )
+function Muted({ children }) {
+  return <span className="ld-muted">{children}</span>
 }
-
-/*
-|--------------------------------------------------------------------------
-| EMPTY
-|--------------------------------------------------------------------------
-*/
-
-function EmptyText({ text }) {
-  return <p className="details-empty-text">{text}</p>
-}
-
-/*
-|--------------------------------------------------------------------------
-| HELPERS
-|--------------------------------------------------------------------------
-*/
-
-function getInitials(person) {
-  if (!person) return '?'
-
-  const first = person.firstName?.[0] || ''
-
-  const last = person.lastName?.[0] || ''
-
-  return `${first}${last}`.toUpperCase() || '?'
-}
-
-function capitalize(value = '') {
-  if (!value) return 'Not provided'
-
-  return value.charAt(0).toUpperCase() + value.slice(1)
-}
-
-function formatMoney(value) {
-  return `$${Number(value || 0).toLocaleString()}`
-}
-
-function formatDate(date) {
-  if (!date) return 'Not available'
-
-  const parsed = new Date(date)
-
-  if (Number.isNaN(parsed.getTime())) {
-    return 'Not available'
-  }
-
-  return parsed.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
-}
-
-function formatDateForInput(date) {
-  if (!date) return ''
-
-  const parsed = new Date(date)
-
-  if (Number.isNaN(parsed.getTime())) {
-    return ''
-  }
-
-  return parsed.toISOString().split('T')[0]
-}
-
-function formatSource(source) {
-  const found = sourceOptions.find(([value]) => value === source)
-
-  return found ? found[1] : capitalize(source)
-}
-
-function formatContactMethod(method) {
-  const found = contactMethods.find(([value]) => value === method)
-
-  return found ? found[1] : capitalize(method)
-}
-
-function getProblemLabel(problem) {
-  if (!problem) return 'Not selected'
-
-  const found = problemOptions.find((item) => item.value === problem)
-
-  return found ? found.label : problem
-}
-
-export default LeadDetails

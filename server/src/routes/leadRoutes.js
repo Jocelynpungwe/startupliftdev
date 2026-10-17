@@ -1,3 +1,4 @@
+import { escapeRegex } from '../utils/escapeRegex.js'
 import { Router } from 'express'
 import Lead from '../models/Lead.js'
 
@@ -8,6 +9,7 @@ import {
   getMonthlyLeadStatistics,
   getSalesPipeline,
   updateLeadStage,
+  updateLeadStatus,
   addLeadActivity,
 } from '../controllers/leadController.js'
 
@@ -98,31 +100,31 @@ router.get('/', requirePermission('lead:read'), async (req, res, next) => {
       filter.$or = [
         {
           companyName: {
-            $regex: search,
+            $regex: escapeRegex(search),
             $options: 'i',
           },
         },
         {
           contactName: {
-            $regex: search,
+            $regex: escapeRegex(search),
             $options: 'i',
           },
         },
         {
           email: {
-            $regex: search,
+            $regex: escapeRegex(search),
             $options: 'i',
           },
         },
         {
           phone: {
-            $regex: search,
+            $regex: escapeRegex(search),
             $options: 'i',
           },
         },
         {
           location: {
-            $regex: search,
+            $regex: escapeRegex(search),
             $options: 'i',
           },
         },
@@ -323,6 +325,14 @@ router.post('/', requirePermission('lead:create'), async (req, res, next) => {
 */
 
 router.patch('/:id/stage', requirePermission('lead:update'), updateLeadStage)
+
+/*
+|--------------------------------------------------------------------------
+| UPDATE LEAD STATUS (sales pipeline board)
+|--------------------------------------------------------------------------
+*/
+
+router.patch('/:id/status', requirePermission('lead:update'), updateLeadStatus)
 
 /*
 |--------------------------------------------------------------------------

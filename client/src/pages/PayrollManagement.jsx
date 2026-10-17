@@ -47,6 +47,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    flexWrap: 'wrap',
     gap: '24px',
     marginBottom: '28px',
   },
