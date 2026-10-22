@@ -1,0 +1,313 @@
+/* =========================================================
+   PAYROLL EDITOR (shown inside the shared FinanceModal)
+   Uses the --ui-* tokens from crm/ui.css.
+========================================================= */
+
+.pe {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+
+  padding: 22px;
+
+  font-family: var(--ui-font);
+  color: var(--ui-text);
+}
+
+.pe-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pe-section h3 {
+  margin: 0;
+
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.pe-section__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pe-section__head p {
+  margin: 3px 0 0;
+
+  color: var(--ui-mute);
+  font-size: 12.5px;
+}
+
+.pe-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* ------------------------------------------------------------ fields */
+
+.pe-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.pe-field > span {
+  color: var(--ui-text-2);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.pe input,
+.pe select,
+.pe textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+
+  border: 1px solid var(--ui-line-2);
+  border-radius: var(--ui-r-sm);
+
+  background: var(--ui-bg);
+  color: var(--ui-text);
+  font: 400 14px var(--ui-font);
+
+  color-scheme: dark;
+}
+
+.pe textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.pe input::placeholder,
+.pe textarea::placeholder {
+  color: #64748b;
+}
+
+.pe input:focus,
+.pe select:focus,
+.pe textarea:focus {
+  outline: none;
+  border-color: var(--ui-accent);
+  box-shadow: 0 0 0 3px var(--ui-accent-soft);
+}
+
+.pe select option {
+  background: #101727;
+  color: var(--ui-text);
+}
+
+/* number input with a $ prefix */
+.pe-money {
+  position: relative;
+}
+
+.pe-money i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+
+  color: var(--ui-mute);
+  font-size: 14px;
+  font-style: normal;
+
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.pe-money input {
+  padding-left: 26px;
+}
+
+.pe-hint {
+  margin: 0;
+
+  color: var(--ui-mute);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pe-hint strong {
+  color: var(--ui-text);
+}
+
+/* -------------------------------------------------------- commissions */
+
+.pe-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 8px 12px;
+
+  border: 1px solid var(--ui-line-2);
+  border-radius: var(--ui-r-sm);
+
+  background: transparent;
+  color: var(--ui-text-2);
+  font: 600 13px var(--ui-font);
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.16s,
+    color 0.16s;
+}
+
+.pe-add:hover {
+  border-color: var(--ui-accent);
+  color: var(--ui-text);
+}
+
+.pe-empty {
+  padding: 18px;
+
+  border: 1px dashed var(--ui-line-2);
+  border-radius: var(--ui-r-md);
+
+  color: var(--ui-mute);
+  font-size: 13.5px;
+  text-align: center;
+}
+
+.pe-commissions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.pe-commissions li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px 38px;
+  gap: 10px;
+  align-items: center;
+}
+
+.pe-remove {
+  display: grid;
+  place-items: center;
+
+  width: 38px;
+  height: 38px;
+
+  border: 1px solid var(--ui-line-2);
+  border-radius: var(--ui-r-sm);
+
+  background: transparent;
+  color: var(--ui-mute);
+
+  cursor: pointer;
+
+  transition:
+    background 0.16s,
+    color 0.16s,
+    border-color 0.16s;
+}
+
+.pe-remove:hover {
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.1);
+  color: var(--ui-danger);
+}
+
+.pe-add:focus-visible,
+.pe-remove:focus-visible {
+  outline: 2px solid var(--ui-accent);
+  outline-offset: 2px;
+}
+
+/* ----------------------------------------------------------- summary */
+
+.pe-summary {
+  padding: 18px;
+
+  border: 1px solid var(--ui-line-2);
+  border-radius: var(--ui-r-md);
+
+  background: var(--ui-surface);
+}
+
+.pe-summary dl {
+  display: grid;
+  gap: 10px;
+
+  margin: 0 0 14px;
+  padding-bottom: 14px;
+
+  border-bottom: 1px solid var(--ui-line);
+}
+
+.pe-summary dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+
+  font-size: 14px;
+}
+
+.pe-summary dt {
+  color: var(--ui-text-2);
+}
+
+.pe-summary dd {
+  margin: 0;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.pe-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pe-total span {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pe-total strong {
+  color: var(--ui-success);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ----------------------------------------------------------- actions */
+
+.pe-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 560px) {
+  .pe {
+    padding: 18px;
+  }
+
+  .pe-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pe-commissions li {
+    grid-template-columns: minmax(0, 1fr) 110px 38px;
+  }
+
+  .pe-actions .ui-btn {
+    flex: 1;
+  }
+}

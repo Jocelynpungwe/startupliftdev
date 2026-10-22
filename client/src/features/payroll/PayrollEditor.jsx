@@ -1,85 +1,82 @@
-import React, { useEffect, useState } from 'react'
-
+import React, { useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { Plus, Trash2 } from 'lucide-react'
 
 import { updatePayroll } from './payrollSlice.js'
 import { useToast } from '../../components/ui/UiProvider.jsx'
+import FinanceModal from '../../components/finance/FinanceModal.jsx'
+import { money } from '../../lib/format.js'
+
+import './payrollEditor.css'
+
+const STATUSES = [
+  ['draft', 'Draft'],
+  ['pending', 'Pending'],
+  ['approved', 'Approved'],
+  ['paid', 'Paid'],
+]
+
+// Empty string while typing, otherwise a plain number.
+const num = (value) => (value === '' || value == null ? 0 : Number(value) || 0)
 
 export default function PayrollEditor({ employee, payroll, onClose }) {
   const dispatch = useDispatch()
   const toast = useToast()
 
-  const [meetingHours, setMeetingHours] = useState(payroll?.meetingHours || 0)
-
-  const [hourlyRate, setHourlyRate] = useState(payroll?.hourlyRate || 0)
-
-  const [bonus, setBonus] = useState(payroll?.bonus || 0)
-
+  // Kept as the raw input value so a field can be cleared and retyped.
+  const [meetingHours, setMeetingHours] = useState(payroll?.meetingHours ?? 0)
+  const [hourlyRate, setHourlyRate] = useState(payroll?.hourlyRate ?? 0)
+  const [bonus, setBonus] = useState(payroll?.bonus ?? 0)
   const [status, setStatus] = useState(payroll?.status || 'draft')
-
   const [notes, setNotes] = useState(payroll?.notes || '')
-
-  const [commissions, setCommissions] = useState(payroll?.commissions || [])
-
+  const [commissions, setCommissions] = useState(
+    (payroll?.commissions || []).map((c) => ({
+      description: c.description || '',
+      amount: c.amount ?? 0,
+    })),
+  )
   const [saving, setSaving] = useState(false)
 
-  // =====================================================
-  // ADD COMMISSION
-  // =====================================================
+  /* ---------------------------- commissions ---------------------------- */
 
-  const addCommission = () => {
-    setCommissions([
-      ...commissions,
+  const addCommission = () =>
+    setCommissions((list) => [...list, { description: '', amount: '' }])
 
-      {
-        description: '',
-        amount: 0,
-      },
-    ])
-  }
+  const updateCommission = (index, field, value) =>
+    setCommissions((list) =>
+      list.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
+    )
 
-  // =====================================================
-  // UPDATE COMMISSION
-  // =====================================================
+  const removeCommission = (index) =>
+    setCommissions((list) => list.filter((_, i) => i !== index))
 
-  const updateCommission = (index, field, value) => {
-    const updated = [...commissions]
+  /* ---------------------------- calculations --------------------------- */
 
-    updated[index] = {
-      ...updated[index],
-      [field]: value,
+  const { meetingPay, commissionTotal, finalSalary } = useMemo(() => {
+    const pay = num(meetingHours) * num(hourlyRate)
+    const commission = commissions.reduce((t, c) => t + num(c.amount), 0)
+
+    return {
+      meetingPay: pay,
+      commissionTotal: commission,
+      finalSalary: pay + commission + num(bonus),
+    }
+  }, [meetingHours, hourlyRate, commissions, bonus])
+
+  /* -------------------------------- save -------------------------------- */
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+
+    if (!payroll?._id) {
+      toast.error('This payroll record could not be found. Please refresh.')
+      return
     }
 
-    setCommissions(updated)
-  }
-
-  // =====================================================
-  // REMOVE COMMISSION
-  // =====================================================
-
-  const removeCommission = (index) => {
-    setCommissions(commissions.filter((_, i) => i !== index))
-  }
-
-  // =====================================================
-  // CALCULATIONS
-  // =====================================================
-
-  const meetingPay = Number(meetingHours || 0) * Number(hourlyRate || 0)
-
-  const commissionTotal = commissions.reduce(
-    (total, commission) => total + Number(commission.amount || 0),
-    0,
-  )
-
-  const finalSalary = meetingPay + commissionTotal + Number(bonus || 0)
-
-  // =====================================================
-  // SAVE
-  // =====================================================
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+    if (commissions.some((c) => num(c.amount) > 0 && !c.description.trim())) {
+      toast.error('Add a description for each commission that has an amount.')
+      return
+    }
 
     setSaving(true)
 
@@ -89,229 +86,234 @@ export default function PayrollEditor({ employee, payroll, onClose }) {
           id: payroll._id,
 
           data: {
-            meetingHours: Number(meetingHours),
+            meetingHours: num(meetingHours),
+            hourlyRate: num(hourlyRate),
 
-            hourlyRate: Number(hourlyRate),
+            // blank, zero-value rows are dropped instead of saved
+            commissions: commissions
+              .filter((c) => c.description.trim() || num(c.amount) > 0)
+              .map((c) => ({
+                description: c.description.trim(),
+                amount: num(c.amount),
+              })),
 
-            commissions: commissions.map((commission) => ({
-              description: commission.description,
-
-              amount: Number(commission.amount || 0),
-            })),
-
-            bonus: Number(bonus),
-
+            bonus: num(bonus),
             notes,
-
             status,
           },
         }),
       ).unwrap()
 
+      toast.success('Payroll saved.')
       onClose()
     } catch (error) {
-      console.error('Payroll update failed:', error)
-
-      toast.error(error || 'Failed to update payroll')
+      toast.error(
+        typeof error === 'string' ? error : 'Failed to update payroll.',
+      )
     } finally {
       setSaving(false)
     }
   }
 
+  const fullName = `${employee?.firstName || ''} ${employee?.lastName || ''}`.trim()
+
   return (
-    <div className="modal-overlay">
-      <div className="payroll-editor modal">
-        {/* ================================================= */}
-        {/* HEADER */}
-        {/* ================================================= */}
+    <FinanceModal
+      title="Edit payroll"
+      subtitle={fullName || 'Employee'}
+      onClose={onClose}
+    >
+      <form className="pe" onSubmit={handleSubmit}>
+        {/* ---------------------------- meeting pay ---------------------------- */}
 
-        <div className="modal-header">
-          <div>
-            <h2>Edit Payroll</h2>
+        <section className="pe-section">
+          <h3>Meeting pay</h3>
 
-            <p>
-              {employee?.firstName} {employee?.lastName}
-            </p>
-          </div>
+          <div className="pe-grid">
+            <label className="pe-field">
+              <span>Meeting hours</span>
+              <input
+                type="number"
+                inputMode="decimal"
+                min="0"
+                step="0.5"
+                value={meetingHours}
+                onChange={(e) => setMeetingHours(e.target.value)}
+              />
+            </label>
 
-          <button type="button" onClick={onClose}>
-            ×
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          {/* ================================================= */}
-          {/* MEETING HOURS */}
-          {/* ================================================= */}
-
-          <div className="form-group">
-            <label>Meeting Hours</label>
-
-            <input
-              type="number"
-              min="0"
-              step="0.5"
-              value={meetingHours}
-              onChange={(e) => setMeetingHours(e.target.value)}
-            />
-          </div>
-
-          {/* ================================================= */}
-          {/* HOURLY RATE */}
-          {/* ================================================= */}
-
-          <div className="form-group">
-            <label>Hourly Salary</label>
-
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={hourlyRate}
-              onChange={(e) => setHourlyRate(e.target.value)}
-            />
-          </div>
-
-          {/* ================================================= */}
-          {/* MEETING PAY */}
-          {/* ================================================= */}
-
-          <div className="calculation-row">
-            <span>Meeting Pay</span>
-
-            <strong>${meetingPay.toFixed(2)}</strong>
-          </div>
-
-          {/* ================================================= */}
-          {/* COMMISSIONS */}
-          {/* ================================================= */}
-
-          <div className="commission-editor">
-            <div className="section-header">
-              <div>
-                <h3>Commissions</h3>
-
-                <p>Add multiple commissions.</p>
-              </div>
-
-              <button type="button" onClick={addCommission}>
-                + Add Commission
-              </button>
-            </div>
-
-            {commissions.length === 0 && <p>No commissions added.</p>}
-
-            {commissions.map((commission, index) => (
-              <div
-                className="commission-editor-row"
-                key={commission._id || index}
-              >
-                <input
-                  type="text"
-                  placeholder="Description"
-                  value={commission.description || ''}
-                  onChange={(e) =>
-                    updateCommission(index, 'description', e.target.value)
-                  }
-                />
-
+            <label className="pe-field">
+              <span>Hourly rate</span>
+              <div className="pe-money">
+                <i>$</i>
                 <input
                   type="number"
+                  inputMode="decimal"
                   min="0"
                   step="0.01"
-                  placeholder="Amount"
-                  value={commission.amount || 0}
-                  onChange={(e) =>
-                    updateCommission(index, 'amount', e.target.value)
-                  }
+                  value={hourlyRate}
+                  onChange={(e) => setHourlyRate(e.target.value)}
                 />
-
-                <button type="button" onClick={() => removeCommission(index)}>
-                  Remove
-                </button>
               </div>
-            ))}
+            </label>
+          </div>
 
-            <div className="calculation-row">
-              <span>Commission Total</span>
+          <p className="pe-hint">
+            {num(meetingHours)} h × {money(num(hourlyRate))} ={' '}
+            <strong>{money(meetingPay)}</strong>
+          </p>
+        </section>
 
-              <strong>${commissionTotal.toFixed(2)}</strong>
+        {/* ----------------------------- commissions ----------------------------- */}
+
+        <section className="pe-section">
+          <div className="pe-section__head">
+            <div>
+              <h3>Commissions</h3>
+              <p>Add as many as you need.</p>
             </div>
+
+            <button type="button" className="pe-add" onClick={addCommission}>
+              <Plus size={15} />
+              Add commission
+            </button>
           </div>
 
-          {/* ================================================= */}
-          {/* BONUS */}
-          {/* ================================================= */}
+          {commissions.length === 0 ? (
+            <div className="pe-empty">No commissions added yet.</div>
+          ) : (
+            <ul className="pe-commissions">
+              {commissions.map((commission, index) => (
+                <li key={index}>
+                  <input
+                    type="text"
+                    placeholder="Description (e.g. Maple Roofing website)"
+                    aria-label={`Commission ${index + 1} description`}
+                    value={commission.description}
+                    onChange={(e) =>
+                      updateCommission(index, 'description', e.target.value)
+                    }
+                  />
 
-          <div className="form-group">
-            <label>Bonus</label>
+                  <div className="pe-money">
+                    <i>$</i>
+                    <input
+                      type="number"
+                      inputMode="decimal"
+                      min="0"
+                      step="0.01"
+                      placeholder="0.00"
+                      aria-label={`Commission ${index + 1} amount`}
+                      value={commission.amount}
+                      onChange={(e) =>
+                        updateCommission(index, 'amount', e.target.value)
+                      }
+                    />
+                  </div>
 
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={bonus}
-              onChange={(e) => setBonus(e.target.value)}
-            />
+                  <button
+                    type="button"
+                    className="pe-remove"
+                    onClick={() => removeCommission(index)}
+                    aria-label={`Remove commission ${index + 1}`}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <p className="pe-hint">
+            Commission total <strong>{money(commissionTotal)}</strong>
+          </p>
+        </section>
+
+        {/* ---------------------------- bonus + status ---------------------------- */}
+
+        <section className="pe-section">
+          <h3>Bonus & status</h3>
+
+          <div className="pe-grid">
+            <label className="pe-field">
+              <span>Bonus</span>
+              <div className="pe-money">
+                <i>$</i>
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  min="0"
+                  step="0.01"
+                  value={bonus}
+                  onChange={(e) => setBonus(e.target.value)}
+                />
+              </div>
+            </label>
+
+            <label className="pe-field">
+              <span>Status</span>
+              <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                {STATUSES.map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
 
-          {/* ================================================= */}
-          {/* STATUS */}
-          {/* ================================================= */}
-
-          <div className="form-group">
-            <label>Status</label>
-
-            <select value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="draft">Draft</option>
-
-              <option value="pending">Pending</option>
-
-              <option value="approved">Approved</option>
-
-              <option value="paid">Paid</option>
-            </select>
-          </div>
-
-          {/* ================================================= */}
-          {/* NOTES */}
-          {/* ================================================= */}
-
-          <div className="form-group">
-            <label>Notes</label>
-
+          <label className="pe-field">
+            <span>Notes</span>
             <textarea
-              rows="4"
+              rows="3"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
+              placeholder="Anything worth remembering about this pay period"
             />
+          </label>
+        </section>
+
+        {/* -------------------------------- summary -------------------------------- */}
+
+        <section className="pe-summary" aria-label="Pay summary">
+          <dl>
+            <div>
+              <dt>Meeting pay</dt>
+              <dd>{money(meetingPay)}</dd>
+            </div>
+            <div>
+              <dt>Commissions</dt>
+              <dd>{money(commissionTotal)}</dd>
+            </div>
+            <div>
+              <dt>Bonus</dt>
+              <dd>{money(num(bonus))}</dd>
+            </div>
+          </dl>
+
+          <div className="pe-total">
+            <span>Final salary</span>
+            <strong>{money(finalSalary)}</strong>
           </div>
+        </section>
 
-          {/* ================================================= */}
-          {/* FINAL SALARY */}
-          {/* ================================================= */}
+        {/* -------------------------------- actions -------------------------------- */}
 
-          <div className="final-salary-preview">
-            <span>Final Salary</span>
+        <footer className="pe-actions">
+          <button
+            type="button"
+            className="ui-btn ui-btn--ghost"
+            onClick={onClose}
+            disabled={saving}
+          >
+            Cancel
+          </button>
 
-            <strong>${finalSalary.toFixed(2)}</strong>
-          </div>
-
-          {/* ================================================= */}
-          {/* ACTIONS */}
-          {/* ================================================= */}
-
-          <div className="modal-actions">
-            <button type="button" onClick={onClose} disabled={saving}>
-              Cancel
-            </button>
-
-            <button type="submit" disabled={saving}>
-              {saving ? 'Saving...' : 'Save Payroll'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+          <button type="submit" className="ui-btn ui-btn--primary" disabled={saving}>
+            {saving ? 'Saving…' : 'Save payroll'}
+          </button>
+        </footer>
+      </form>
+    </FinanceModal>
   )
 }
