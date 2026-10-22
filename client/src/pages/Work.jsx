@@ -41,6 +41,56 @@ const projects = [
     className: 'portfolio-dark',
     link: 'https://royalmemoria.netlify.app/',
   },
+  {
+    title: 'Maison Amara',
+    category: 'Web Design',
+    image: '/maisonamara.webp',
+    description:
+      'A cinematic website for a luxury makeup atelier, pairing elegant typography with full-screen film and a simple booking flow.',
+    tags: ['Responsive', 'Booking', 'SEO'],
+    className: 'portfolio-purple',
+    link: 'https://ourbeautystudio.netlify.app/',
+  },
+  {
+    title: 'VitaGrace Cleaning Services',
+    category: 'Web Design',
+    image: '/vitagrace.webp',
+    description:
+      'A fresh, trustworthy website for a cleaning company, with a before-and-after story, service details and quick quote requests.',
+    tags: ['Responsive', 'Lead Generation', 'SEO'],
+    className: 'portfolio-blue',
+    link: 'https://ourcleaningdemo.netlify.app/',
+  },
+  {
+    title: 'Crown Atelier',
+    category: 'Web Design',
+    image: '/crownatelier.webp',
+    description:
+      'A warm, editorial website for a hair studio, showcasing services, client transformations and an easy path to booking.',
+    tags: ['Responsive', 'Booking', 'SEO'],
+    className: 'portfolio-dark',
+    link: 'https://ourhairstudio.netlify.app/',
+  },
+  {
+    title: 'IVP ASBL',
+    category: 'Web development',
+    image: '/ivp.webp',
+    description:
+      'A bilingual website for a non-profit caring for the most vulnerable, alongside its MF Médical beauty services, with appointment booking and donations.',
+    tags: ['Responsive', 'Donations', 'SEO'],
+    className: 'portfolio-purple',
+    link: 'https://ivp-asbl.netlify.app/',
+  },
+  {
+    title: 'Vanta Detail Studio',
+    category: 'Web Design',
+    image: '/vanta.webp',
+    description:
+      'A bold, cinematic website for a car detailing studio, featuring packages, results, a gallery and online booking.',
+    tags: ['Responsive', 'Booking', 'SEO'],
+    className: 'portfolio-blue',
+    link: 'https://ourcardetailing.netlify.app/',
+  },
   // {
   //   title: 'Growth Platform',
   //   category: 'Web Application',
@@ -50,6 +100,16 @@ const projects = [
   //   className: 'portfolio-dark',
   // },
 ]
+
+// Entries either name an optimised set ('work-eclat' -> -640/-1200 JPEGs)
+// or point straight at an image file ('/vanta.webp').
+const imageProps = (image = '') =>
+  /\.(webp|png|jpe?g|avif)$/i.test(image)
+    ? { src: image }
+    : {
+        src: `/${image}-1200.jpg`,
+        srcSet: `/${image}-640.jpg 640w, /${image}-1200.jpg 1200w`,
+      }
 
 export default function Work() {
   const [filter, setFilter] = useState('All')
@@ -120,8 +180,7 @@ export default function Work() {
                   <div className="portfolio-preview">
                     <img
                       className="portfolio-shot"
-                      src={`/${project.image}-1200.jpg`}
-                      srcSet={`/${project.image}-640.jpg 640w, /${project.image}-1200.jpg 1200w`}
+                      {...imageProps(project.image)}
                       sizes="(min-width: 900px) 50vw, 100vw"
                       alt={`${project.title} homepage preview`}
                       loading="lazy"
