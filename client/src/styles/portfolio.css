@@ -884,3 +884,64 @@
     transition: none;
   }
 }
+
+/* ---------- floating real sites over the phone video ---------- */
+.lux-floaters {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  perspective: 900px;
+  overflow: hidden;
+}
+
+.lux-floater {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 58vw;
+  margin: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(231, 196, 123, 0.38);
+  background: #0e0c0a;
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  opacity: clamp(0, calc((var(--p, 0) - var(--a)) * 12), 0.96);
+  transform:
+    translate3d(0, calc(var(--p, 0) * var(--d)), 0)
+    rotateY(var(--ry))
+    rotateZ(var(--rz))
+    scale(var(--s));
+  will-change: transform, opacity;
+}
+
+.lux-floater img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.lux-floater-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  background: rgba(20, 17, 14, 0.96);
+  border-bottom: 1px solid rgba(231, 196, 123, 0.2);
+}
+
+.lux-floater-bar i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(231, 196, 123, 0.55);
+}
+
+.lux-floater-bar span {
+  margin-left: 6px;
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  color: rgba(244, 238, 226, 0.7);
+  white-space: nowrap;
+}

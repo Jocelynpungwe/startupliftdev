@@ -1,14 +1,20 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import { projects } from '../../pages/Work.jsx'
+
 // The hero video is scrubbed by scroll position (see ScrollVideoHero below).
-// Put the encoded file in client/public (scripts/encode-hero.sh makes it):
-//   hero.mp4  wide 16:9, used on every screen. On a tall phone screen it is
-//             cropped to follow the person (see PERSON_X).
-// Until the file exists the static centre-stage hero shows.
-// bump VIDEO_VERSION when you replace the file, so phones fetch the new one
-const VIDEO_VERSION = '4'
+// Put the encoded files in client/public (scripts/encode-hero.sh makes them):
+//   hero.mp4         wide 16:9, used on tablets and desktops
+//   hero-mobile.mp4  tall 9:16, used on phones. It is a clean shot with no
+//                    screens in it: the floating websites are real screenshots
+//                    laid over it by FloatingSites, so every word is exact.
+// Until a file exists the static centre-stage hero shows.
+// bump VIDEO_VERSION when you replace the files, so phones fetch the new ones
+const VIDEO_VERSION = '5'
 const HERO_VIDEO = `/hero.mp4?v=${VIDEO_VERSION}`
+const HERO_VIDEO_MOBILE = `/hero-mobile.mp4?v=${VIDEO_VERSION}`
+const MOBILE_QUERY = '(max-width: 700px)'
 const HERO_POSTER = '/hero-portrait.webp'
 
 const PANELS = [
@@ -18,6 +24,23 @@ const PANELS = [
   { id: 'crown', src: '/crownatelier.webp', label: 'Crown Atelier' },
   { id: 'vita', src: '/vitagrace.webp', label: 'VitaGrace Cleaning' },
 ]
+
+// The real sites that float above the phone video, with where each one sits
+// (x/y: % of the screen, ry/rz: tilt in degrees, s: size, d: how far it drifts
+// as the visitor scrolls, a: scroll progress at which it fades in).
+const FLOATERS = [
+  { title: 'Vanta Detail Studio', x: -8, y: 7, ry: 22, rz: -5, s: 1, d: -50, a: 0.03 },
+  { title: 'Maison Amara', x: 38, y: 4.5, ry: -20, rz: 4, s: 0.88, d: -36, a: 0.07 },
+  { title: 'IVP ASBL', x: 14, y: 12.5, ry: 14, rz: -3, s: 1.04, d: -60, a: 0.11 },
+  { title: 'Crown Atelier', x: 44, y: 15.5, ry: -24, rz: 5, s: 0.82, d: -28, a: 0.15 },
+  { title: 'VitaGrace Cleaning Services', x: -5, y: 19.5, ry: 20, rz: -4, s: 0.76, d: -40, a: 0.19 },
+]
+const floaters = FLOATERS.map((spec) => ({
+  ...spec,
+  project: projects.find((project) => project.title === spec.title),
+})).filter((item) => item.project)
+
+const siteHost = (link = '') => link.replace(/^https?:\/\//, '').replace(/\/$/, '')
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value))
 
@@ -146,7 +169,43 @@ function Chips({ items }) {
    the video's currentTime and the chapter text follow the scroll progress.
 ========================================================= */
 
-function ScrollVideoHero({ src, onFail }) {
+/* =========================================================
+   FLOATING SITES (phones)
+   The real screenshots of the portfolio sites, in glass browser frames that
+   drift and tilt with the scroll (CSS reads --p, set on the hero section).
+========================================================= */
+
+function FloatingSites() {
+  return (
+    <div className="lux-floaters" aria-hidden="true">
+      {floaters.map(({ project, x, y, ry, rz, s, d, a }) => (
+        <figure
+          key={project.title}
+          className="lux-floater"
+          style={{
+            '--x': `${x}vw`,
+            '--y': `${y}%`,
+            '--ry': `${ry}deg`,
+            '--rz': `${rz}deg`,
+            '--s': s,
+            '--d': `${d}px`,
+            '--a': a,
+          }}
+        >
+          <div className="lux-floater-bar">
+            <i />
+            <i />
+            <i />
+            <span>{siteHost(project.link)}</span>
+          </div>
+          <img src={project.image} alt="" width="1340" height="632" decoding="async" />
+        </figure>
+      ))}
+    </div>
+  )
+}
+
+function ScrollVideoHero({ src, onFail, floating }) {
   const sectionRef = useRef(null)
   const videoRef = useRef(null)
   const chapterRefs = useRef([])
@@ -216,7 +275,8 @@ function ScrollVideoHero({ src, onFail }) {
     // the visible slice so it stays centred on the person.
     const keepPersonInView = (time) => {
       const { videoWidth, videoHeight } = video
-      if (!videoWidth) return
+      // only the wide video needs it; the tall one is already framed for phones
+      if (!videoWidth || videoWidth <= videoHeight) return
       const box = video.getBoundingClientRect()
       const shownWidth = videoWidth * Math.max(box.width / videoWidth, box.height / videoHeight)
       const hidden = shownWidth - box.width
@@ -349,6 +409,7 @@ function ScrollVideoHero({ src, onFail }) {
           aria-hidden="true"
         />
         <div className="lux-scrub-shade" aria-hidden="true" />
+        {floating && <FloatingSites />}
 
         <div className="lux-chapters">
           {CHAPTERS.map((chapter, index) => {
@@ -451,17 +512,31 @@ function StaticHero() {
   )
 }
 
-// The one wide video is used everywhere. If it is missing (the SPA serves HTML
-// for it) or cannot be played, the video's own `error` event falls back to the
-// still hero.
+// Files to try, best first: phones get the clean tall video (with the real
+// sites floating over it), then the wide one. If a file is missing (the SPA
+// serves HTML for it) or cannot be played, the video's own `error` event moves
+// on to the next, and finally to the still hero.
 function pickSources() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return []
-  return [HERO_VIDEO]
+  return window.matchMedia(MOBILE_QUERY).matches
+    ? [HERO_VIDEO_MOBILE, HERO_VIDEO]
+    : [HERO_VIDEO]
 }
 
 export default function PortfolioHero() {
-  const [sources] = useState(pickSources)
+  const [sources, setSources] = useState(pickSources)
   const [index, setIndex] = useState(0)
+
+  // switching between a phone-sized and a larger window picks the matching file
+  useEffect(() => {
+    const query = window.matchMedia(MOBILE_QUERY)
+    const onChange = () => {
+      setSources(pickSources())
+      setIndex(0)
+    }
+    query.addEventListener('change', onChange)
+    return () => query.removeEventListener('change', onChange)
+  }, [])
 
   const handleFail = useCallback(() => setIndex((i) => i + 1), [])
 
@@ -469,7 +544,12 @@ export default function PortfolioHero() {
 
   // key restarts the scrub effect whenever the file changes
   return src ? (
-    <ScrollVideoHero key={src} src={src} onFail={handleFail} />
+    <ScrollVideoHero
+      key={src}
+      src={src}
+      onFail={handleFail}
+      floating={src === HERO_VIDEO_MOBILE}
+    />
   ) : (
     <StaticHero />
   )
