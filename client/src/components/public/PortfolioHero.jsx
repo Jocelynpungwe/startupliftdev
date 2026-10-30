@@ -2,15 +2,13 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // The hero video is scrubbed by scroll position (see ScrollVideoHero below).
-// Put the encoded files in client/public (scripts/encode-hero.sh makes them):
-//   hero.mp4         wide 16:9, used on tablets and desktops
-//   hero-mobile.mp4  tall 9:16, used on phones (falls back to hero.mp4)
-// Until a file exists the static centre-stage hero shows.
-// bump VIDEO_VERSION when you replace the files, so phones fetch the new ones
-const VIDEO_VERSION = '3'
+// Put the encoded file in client/public (scripts/encode-hero.sh makes it):
+//   hero.mp4  wide 16:9, used on every screen. On a tall phone screen it is
+//             cropped to follow the person (see PERSON_X).
+// Until the file exists the static centre-stage hero shows.
+// bump VIDEO_VERSION when you replace the file, so phones fetch the new one
+const VIDEO_VERSION = '4'
 const HERO_VIDEO = `/hero.mp4?v=${VIDEO_VERSION}`
-const HERO_VIDEO_MOBILE = `/hero-mobile.mp4?v=${VIDEO_VERSION}`
-const MOBILE_QUERY = '(max-width: 700px)'
 const HERO_POSTER = '/hero-portrait.webp'
 
 const PANELS = [
@@ -22,6 +20,34 @@ const PANELS = [
 ]
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value))
+
+// Where the person is across the width of the wide video, by video time
+// (seconds -> 0 is the left edge, 1 the right). A tall screen only shows a
+// narrow slice of the 16:9 frame, so the slice slides to keep them in view.
+const PERSON_X = [
+  [0, 0.47],
+  [2, 0.49],
+  [3, 0.54],
+  [4, 0.51],
+  [6, 0.5],
+  [7, 0.56],
+  [8, 0.58],
+  [9, 0.56],
+  [10, 0.53],
+  [11, 0.5],
+  [13, 0.5],
+]
+
+const personAt = (time) => {
+  for (let i = 1; i < PERSON_X.length; i += 1) {
+    const [t1, x1] = PERSON_X[i]
+    if (time <= t1) {
+      const [t0, x0] = PERSON_X[i - 1]
+      return x0 + ((x1 - x0) * (time - t0)) / (t1 - t0)
+    }
+  }
+  return PERSON_X[PERSON_X.length - 1][1]
+}
 
 /* =========================================================
    CHAPTERS
@@ -186,6 +212,22 @@ function ScrollVideoHero({ src, onFail }) {
       if (Math.abs(video.currentTime - time) > 0.01) video.currentTime = time
     }
 
+    // object-fit: cover trims the sides of the wide video on a tall screen. Slide
+    // the visible slice so it stays centred on the person.
+    const keepPersonInView = (time) => {
+      const { videoWidth, videoHeight } = video
+      if (!videoWidth) return
+      const box = video.getBoundingClientRect()
+      const shownWidth = videoWidth * Math.max(box.width / videoWidth, box.height / videoHeight)
+      const hidden = shownWidth - box.width
+      if (hidden < 1) {
+        video.style.objectPosition = ''
+        return
+      }
+      const left = clamp(personAt(time) * shownWidth - box.width / 2, 0, hidden)
+      video.style.objectPosition = `${((left / hidden) * 100).toFixed(2)}% 50%`
+    }
+
     // Ease towards the scroll position by elapsed time (not per frame), so the
     // video catches up in about half a second even on a slow device.
     let lastFrame = 0
@@ -199,7 +241,11 @@ function ScrollVideoHero({ src, onFail }) {
       section.style.setProperty('--p', current.toFixed(4))
       paintChapters()
 
-      if (video.duration) seekTo(current * (video.duration - 0.05))
+      if (video.duration) {
+        const time = current * (video.duration - 0.05)
+        seekTo(time)
+        keepPersonInView(time)
+      }
 
       if (current !== target) frame = requestAnimationFrame(render)
       else lastFrame = 0
@@ -405,30 +451,17 @@ function StaticHero() {
   )
 }
 
-// Files to try, best first: phones get the tall video, then the wide one.
-// If a file is missing (the SPA serves HTML for it) or cannot be played, the
-// video's own `error` event moves on to the next, and finally to the still hero.
+// The one wide video is used everywhere. If it is missing (the SPA serves HTML
+// for it) or cannot be played, the video's own `error` event falls back to the
+// still hero.
 function pickSources() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return []
-  return window.matchMedia(MOBILE_QUERY).matches
-    ? [HERO_VIDEO_MOBILE, HERO_VIDEO]
-    : [HERO_VIDEO]
+  return [HERO_VIDEO]
 }
 
 export default function PortfolioHero() {
-  const [sources, setSources] = useState(pickSources)
+  const [sources] = useState(pickSources)
   const [index, setIndex] = useState(0)
-
-  // switching between a phone-sized and a larger window picks the matching file
-  useEffect(() => {
-    const query = window.matchMedia(MOBILE_QUERY)
-    const onChange = () => {
-      setSources(pickSources())
-      setIndex(0)
-    }
-    query.addEventListener('change', onChange)
-    return () => query.removeEventListener('change', onChange)
-  }, [])
 
   const handleFail = useCallback(() => setIndex((i) => i + 1), [])
 
