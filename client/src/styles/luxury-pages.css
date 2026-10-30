@@ -1021,3 +1021,137 @@
     transition: none;
   }
 }
+
+/* =========================================================
+   THEME SWEEP — no blue, cyan or teal left on the public site
+   Old cyan accents come from the variables below and from hard-coded
+   colours in the mobile menu; both are re-pointed to the gold palette.
+   (Scoped to .lux-theme so the CRM keeps its own colours.)
+========================================================= */
+
+.lux-theme {
+  --blue: #c9a96a;
+  --blue-dark: #b8955a;
+  --blue-light: #e3c88f;
+  --blue-soft: #8a7040;
+
+  --purple: #e3c88f;
+  --purple-dark: #c9a96a;
+  --purple-light: #f0dcb0;
+  --purple-soft: #8a7040;
+
+  --accent: #c9a96a;
+  --accent-hover: #e3c88f;
+  --teal: #b8955a;
+
+  --border: rgba(201, 169, 106, 0.2);
+}
+
+/* the logo artwork is blue; tint it to the gold palette */
+.lux-theme .public-navbar .brand-text img,
+.lux-theme .mobile-sidebar-brand img {
+  filter: sepia(1) saturate(2.4) hue-rotate(-8deg) brightness(1.15);
+}
+
+/* mobile menu */
+.lux-theme .mobile-menu-button {
+  border-color: var(--lux-gold-soft);
+  background: var(--lux-bg-2);
+  color: var(--lux-ivory);
+}
+
+.lux-theme .mobile-menu-button:hover {
+  border-color: var(--lux-gold);
+  background: var(--lux-bg);
+  color: var(--lux-gold);
+}
+
+.lux-theme .mobile-sidebar {
+  background:
+    radial-gradient(circle at 80% 0%, rgba(201, 169, 106, 0.14), transparent 35%),
+    var(--lux-bg);
+  border-left: 1px solid var(--lux-gold-soft);
+}
+
+.lux-theme .mobile-sidebar-close {
+  background: var(--lux-bg-2);
+  color: var(--lux-ivory);
+}
+
+.lux-theme .mobile-sidebar-close:hover {
+  border-color: rgba(201, 169, 106, 0.5);
+  background: rgba(201, 169, 106, 0.1);
+  color: var(--lux-gold);
+}
+
+.lux-theme .mobile-sidebar-brand span {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: var(--lux-ivory);
+}
+
+.lux-theme .mobile-sidebar-brand strong {
+  color: var(--lux-gold);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.lux-theme .mobile-sidebar-nav a {
+  color: var(--lux-muted);
+  border-bottom-color: var(--lux-gold-soft);
+}
+
+.lux-theme .mobile-sidebar-nav a span {
+  color: rgba(201, 169, 106, 0.45);
+}
+
+.lux-theme .mobile-sidebar-nav a:hover,
+.lux-theme .mobile-sidebar-nav a:hover span {
+  color: var(--lux-gold);
+}
+
+.lux-theme .mobile-sidebar-bottom {
+  border-top-color: var(--lux-gold-soft);
+}
+
+.lux-theme .mobile-sidebar-bottom p {
+  color: var(--lux-muted);
+}
+
+.lux-theme .mobile-sidebar-login {
+  background: linear-gradient(135deg, #e3c88f, #b8955a);
+  color: #1a140b;
+  box-shadow: 0 10px 30px rgba(201, 169, 106, 0.2);
+}
+
+.lux-theme .mobile-sidebar-login:hover {
+  box-shadow: 0 15px 40px rgba(201, 169, 106, 0.32);
+}
+
+.lux-theme .public-navbar .nav-login {
+  color: #1a140b;
+}
+
+.lux-theme .public-nav a {
+  color: var(--lux-muted);
+}
+
+.lux-theme ::selection {
+  background: rgba(201, 169, 106, 0.35);
+  color: var(--lux-ivory);
+}
+
+/* the Login button is also an <a> inside the menu nav, so it needs to
+   out-rank the link colour above; and the panel should fill the screen */
+.lux-theme .mobile-sidebar-nav a.mobile-sidebar-login {
+  color: #1a140b;
+  border-bottom: 0;
+}
+
+.lux-theme .mobile-sidebar {
+  height: 100vh;
+  height: 100dvh;
+}
+
+.lux-theme .public-navbar .brand-text {
+  color: var(--lux-ivory);
+}

@@ -1,9 +1,10 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 import { imageProps, projects } from '../../pages/Work.jsx'
 
 export default function PortfolioShowcase() {
-  const featured = projects.filter((project) => project.image)
+  const featured = projects.filter((project) => project.image).slice(0, 6)
 
   return (
     <section className="lux-showcase" aria-labelledby="lux-showcase-title">
@@ -48,6 +49,12 @@ export default function PortfolioShowcase() {
             </div>
           </a>
         ))}
+      </div>
+
+      <div className="lux-section-cta">
+        <Link to="/work" className="lux-btn lux-btn-ghost">
+          View all {projects.length} projects
+        </Link>
       </div>
     </section>
   )

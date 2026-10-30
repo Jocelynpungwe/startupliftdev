@@ -3,15 +3,45 @@ import { Link } from 'react-router-dom'
 
 import PortfolioHero from '../components/public/PortfolioHero.jsx'
 import PortfolioShowcase from '../components/public/PortfolioShowcase.jsx'
+import {
+  Belief,
+  Capabilities,
+  Faq,
+  Intro,
+  Numbers,
+  ProcessSteps,
+  Ticker,
+} from '../components/public/lux/HomeSections.jsx'
 
 export default function Home() {
   return (
     <div className="home-page">
-      {/* ================= CENTRE-STAGE HERO ================= */}
+      {/* ================= SCROLL-STORY HERO ================= */}
       <PortfolioHero />
+
+      {/* ================= BRANDS TICKER ================= */}
+      <Ticker />
+
+      {/* ================= INTRO ================= */}
+      <Intro />
+
+      {/* ================= WHAT I BUILD ================= */}
+      <Capabilities />
 
       {/* ================= SELECTED WORK ================= */}
       <PortfolioShowcase />
+
+      {/* ================= NUMBERS ================= */}
+      <Numbers />
+
+      {/* ================= PROCESS ================= */}
+      <ProcessSteps />
+
+      {/* ================= BELIEF ================= */}
+      <Belief />
+
+      {/* ================= FAQ ================= */}
+      <Faq />
 
       {/* ================= CLOSING CTA ================= */}
       <section className="lux-closing">
