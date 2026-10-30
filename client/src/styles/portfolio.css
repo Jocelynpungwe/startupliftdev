@@ -350,6 +350,114 @@
 }
 
 /* =========================================================
+   SCROLL-DRIVEN VIDEO HERO
+   --p (0..1) is set from JS as the scroll progress through the section.
+========================================================= */
+
+.lux-hero--scrub {
+  height: 420vh;
+  min-height: 0;
+  padding: 0;
+  overflow: visible;
+}
+
+.lux-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.lux-scrub-video {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--lux-bg);
+}
+
+.lux-scrub-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(10, 9, 8, calc(0.15 + var(--p) * -0.1)),
+      rgba(10, 9, 8, 0.65)
+    ),
+    linear-gradient(to bottom, rgba(10, 9, 8, 0.55), transparent 30%);
+}
+
+.lux-scrub-copy {
+  padding: 0 24px;
+  opacity: clamp(0, calc(1 - var(--p) * 5), 1);
+  translate: 0 calc(var(--p) * -60px);
+  pointer-events: none;
+}
+
+.lux-scrub-end {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12svh;
+  opacity: clamp(0, calc((var(--p) - 0.82) * 6), 1);
+  translate: 0 calc((1 - var(--p)) * 30px);
+  pointer-events: none;
+}
+
+.lux-scrub-end .lux-cta {
+  margin-top: 0;
+}
+
+.lux-scrub-end .lux-btn {
+  pointer-events: auto;
+}
+
+.lux-scrub-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  translate: -50% 0;
+  margin: 0;
+  opacity: clamp(0, calc(1 - var(--p) * 12), 1);
+}
+
+.lux-scrub-progress {
+  position: absolute;
+  right: 28px;
+  top: 50%;
+  translate: 0 -50%;
+  width: 2px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.lux-scrub-progress i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--lux-gold);
+  transform-origin: top;
+  transform: scaleY(var(--p));
+}
+
+@media (max-width: 600px) {
+  .lux-hero--scrub {
+    height: 360vh;
+  }
+
+  .lux-scrub-progress {
+    right: 14px;
+    height: 80px;
+  }
+}
+
+/* =========================================================
    SELECTED WORK
 ========================================================= */
 
@@ -498,6 +606,11 @@
 
 .public-site:has(.lux-hero) .ambient {
   display: none;
+}
+
+/* overflow: hidden would break the sticky scroll hero; clip still clips. */
+.public-site:has(.lux-hero) {
+  overflow: clip;
 }
 
 .public-site:has(.lux-hero) .public-navbar {
