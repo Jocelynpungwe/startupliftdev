@@ -8,6 +8,28 @@ import Reveal from '../components/public/lux/Reveal.jsx'
 
 export const projects = [
   {
+    title: 'IVP ASBL',
+    category: 'Web development',
+    image: '/ivp.webp',
+    description:
+      'A French-language website for a non-profit caring for people in need, alongside its MF Médical beauty services, with appointment and donation buttons.',
+    tags: ['Responsive', 'Donations', 'Case study'],
+    className: 'portfolio-purple',
+    link: 'https://ivp-asbl.netlify.app/',
+    caseStudy: 'ivp-asbl',
+  },
+  {
+    title: 'Vanta Detail Studio',
+    category: 'Web Design',
+    image: '/vanta.webp',
+    description:
+      'A bold, cinematic website for a car detailing studio, with craft, results, packages and a gallery, and a clear Book now button.',
+    tags: ['Responsive', 'Cinematic', 'Case study'],
+    className: 'portfolio-blue',
+    link: 'https://ourcardetailing.netlify.app/',
+    caseStudy: 'vanta-detail-studio',
+  },
+  {
     title: 'YVNG Saints',
     category: 'Web development',
     image: 'work-yvng',
@@ -73,26 +95,6 @@ export const projects = [
     tags: ['Responsive', 'Booking', 'SEO'],
     className: 'portfolio-dark',
     link: 'https://ourhairstudio.netlify.app/',
-  },
-  {
-    title: 'IVP ASBL',
-    category: 'Web development',
-    image: '/ivp.webp',
-    description:
-      'A bilingual website for a non-profit caring for the most vulnerable, alongside its MF Médical beauty services, with appointment booking and donations.',
-    tags: ['Responsive', 'Donations', 'SEO'],
-    className: 'portfolio-purple',
-    link: 'https://ivp-asbl.netlify.app/',
-  },
-  {
-    title: 'Vanta Detail Studio',
-    category: 'Web Design',
-    image: '/vanta.webp',
-    description:
-      'A bold, cinematic website for a car detailing studio, featuring packages, results, a gallery and online booking.',
-    tags: ['Responsive', 'Booking', 'SEO'],
-    className: 'portfolio-blue',
-    link: 'https://ourcardetailing.netlify.app/',
   },
   // {
   //   title: 'Growth Platform',
@@ -168,14 +170,21 @@ export default function Work() {
           </div>
 
           <div className="lux-work-grid">
-            {filteredProjects.map((project, index) => (
+            {filteredProjects.map((project, index) => {
+              const card = project.caseStudy
+                ? { as: Link, to: `/work/${project.caseStudy}` }
+                : {
+                    as: 'a',
+                    href: project.link,
+                    target: '_blank',
+                    rel: 'noopener noreferrer',
+                  }
+
+              return (
               <Reveal
                 key={project.title}
                 delay={(index % 2) * 120}
-                as="a"
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
+                {...card}
                 className="lux-work-card"
               >
                 <div className="lux-card-media">
@@ -186,6 +195,9 @@ export default function Work() {
                     loading="lazy"
                     decoding="async"
                   />
+                  {project.caseStudy && (
+                    <span className="lux-case-badge">Case study</span>
+                  )}
                 </div>
 
                 <div className="lux-work-body">
@@ -204,7 +216,8 @@ export default function Work() {
                   </ul>
                 </div>
               </Reveal>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>

@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { projects } from '../../pages/Work.jsx'
-
 // The hero video is scrubbed by scroll position (see ScrollVideoHero below).
 // Put the encoded files in client/public (scripts/encode-hero.sh makes them):
 //   hero.mp4         wide 16:9, used on tablets and desktops
@@ -21,23 +19,6 @@ const PANELS = [
   { id: 'vita', src: '/vitagrace.webp', label: 'VitaGrace Cleaning' },
 ]
 
-const NUMBER_WORDS = [
-  'Zero',
-  'One',
-  'Two',
-  'Three',
-  'Four',
-  'Five',
-  'Six',
-  'Seven',
-  'Eight',
-  'Nine',
-  'Ten',
-  'Eleven',
-  'Twelve',
-]
-const projectCount = NUMBER_WORDS[projects.length] ?? String(projects.length)
-
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value))
 
 /* =========================================================
@@ -49,34 +30,21 @@ const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value))
 const CHAPTERS = [
   {
     id: 'intro',
-    range: [0, 0.2],
-    eyebrow: 'Full-stack web developer',
+    range: [0, 0.27],
+    eyebrow: 'Web developer',
     title: (
       <>
-        Websites crafted
+        Hi, I'm <em>Jocelyn,</em>
         <br />
-        with <em>uncommon</em> precision.
+        a web developer.
       </>
     ),
-    text: 'I design and build websites, web applications and dashboards for brands that expect more than a template.',
-  },
-  {
-    id: 'work',
-    range: [0.27, 0.48],
-    eyebrow: 'The portfolio',
-    title: (
-      <>
-        {projectCount} brands.
-        <br />
-        Every one with its <em>own voice.</em>
-      </>
-    ),
-    text: 'Streetwear, cleaning, heritage, beauty, hair, a healthcare charity and car detailing — each site is shaped around the business behind it, its customers and the way it wants to be seen.',
-    chips: projects.map((project) => project.title),
+    text: 'I design, build and look after websites, web applications and dashboards for entrepreneurs and growing businesses, crafted with uncommon precision, from the first sketch to launch day and the support after.',
+    chips: ['Websites', 'Web apps', 'Dashboards', 'SEO', 'Ongoing care'],
   },
   {
     id: 'craft',
-    range: [0.55, 0.76],
+    range: [0.37, 0.63],
     eyebrow: 'Front to back',
     title: (
       <>
@@ -90,7 +58,7 @@ const CHAPTERS = [
   },
   {
     id: 'next',
-    range: [0.84, 1],
+    range: [0.73, 1],
     eyebrow: 'Your project',
     title: (
       <>
@@ -392,6 +360,8 @@ function StaticHero() {
         <h1 id="lux-hero-title">{intro.title}</h1>
 
         <p className="lux-lead">{intro.text}</p>
+
+        {intro.chips && <Chips items={intro.chips} />}
       </div>
 
       <div className="lux-stage">

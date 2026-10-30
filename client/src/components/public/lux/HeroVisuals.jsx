@@ -25,6 +25,8 @@ export function AboutVisual() {
       <figure className="lux-mini lux-mini-right">
         <img src="/maisonamara.webp" alt="" loading="lazy" />
       </figure>
+
+      <p className="lux-visual-caption">Jocelyn · Web developer</p>
     </div>
   )
 }

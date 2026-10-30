@@ -2,10 +2,14 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ArrowUpRight,
+  Clock,
   Code2,
+  Globe,
+  Layers,
   LifeBuoy,
   Search,
   ShoppingBag,
+  Tag,
 } from 'lucide-react'
 
 import { projects } from '../../../pages/Work.jsx'
@@ -119,7 +123,7 @@ export function Capabilities() {
 }
 
 /* =========================================================
-   NUMBERS — count up the first time they scroll into view
+   NUMBERS — each card counts up the first time it scrolls into view
 ========================================================= */
 
 // "$250" -> prefix "$", 250, suffix ""   "30+" -> "", 30, "+"   "24h" -> "", 24, "h"
@@ -130,21 +134,24 @@ function parseStat(value) {
     : { prefix: '', end: 0, suffix: String(value) }
 }
 
-function CountUp({ value, duration = 1800 }) {
-  const { prefix, end, suffix } = parseStat(value)
-  const ref = useRef(null)
+function StatCard({ stat, delay }) {
+  const { prefix, end, suffix } = parseStat(stat.value)
+  const Icon = stat.icon
+  const cardRef = useRef(null)
   const [shown, setShown] = useState(0)
 
   useEffect(() => {
-    const node = ref.current
-    if (!node) return undefined
+    const card = cardRef.current
+    if (!card) return undefined
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduced || typeof IntersectionObserver === 'undefined') {
       setShown(end)
+      card.style.setProperty('--c', '1')
       return undefined
     }
 
+    const duration = 2000
     let frame = 0
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -156,28 +163,43 @@ function CountUp({ value, duration = 1800 }) {
           const t = Math.min(1, (now - startedAt) / duration)
           const eased = 1 - (1 - t) ** 3 // ease-out
           setShown(Math.round(end * eased))
+          card.style.setProperty('--c', eased.toFixed(3))
           if (t < 1) frame = requestAnimationFrame(tick)
         }
         frame = requestAnimationFrame(tick)
       },
-      { threshold: 0.6 },
+      { threshold: 0.5 },
     )
-    observer.observe(node)
+    observer.observe(card)
 
     return () => {
       observer.disconnect()
       if (frame) cancelAnimationFrame(frame)
     }
-  }, [end, duration])
+  }, [end])
 
   return (
-    <span ref={ref} aria-label={String(value)}>
-      <span aria-hidden="true">
-        {prefix}
-        {shown}
-        {suffix}
-      </span>
-    </span>
+    <Reveal as="article" delay={delay} className="lux-stat">
+      <div ref={cardRef} className="lux-stat-inner">
+        <span className="lux-stat-icon">
+          <Icon size={22} strokeWidth={1.4} />
+        </span>
+
+        <strong aria-label={stat.value}>
+          <span aria-hidden="true">
+            {prefix}
+            {shown}
+            {suffix}
+          </span>
+        </strong>
+
+        <span className="lux-stat-label">{stat.label}</span>
+
+        <i className="lux-stat-bar" aria-hidden="true">
+          <b />
+        </i>
+      </div>
+    </Reveal>
   )
 }
 
@@ -185,23 +207,27 @@ export function Numbers() {
   const cheapest = packages[0].price.split('–')[0].trim()
 
   const stats = [
-    { value: String(projects.length), label: 'Websites in the portfolio' },
-    { value: '30+', label: 'Industries served' },
-    { value: cheapest, label: 'Where packages start' },
-    { value: '24h', label: 'Usual reply time' },
+    { value: String(projects.length), label: 'Websites in the portfolio', icon: Layers },
+    { value: '30+', label: 'Industries served', icon: Globe },
+    { value: cheapest, label: 'Where packages start', icon: Tag },
+    { value: '24h', label: 'Usual reply time', icon: Clock },
   ]
 
   return (
     <section className="lux-section lux-numbers-section">
       <div className="lux-wrap">
+        <Reveal className="lux-section-head">
+          <p className="lux-eyebrow">
+            <span /> At a glance <span />
+          </p>
+          <h2>
+            The work, <em>by the numbers.</em>
+          </h2>
+        </Reveal>
+
         <div className="lux-numbers">
           {stats.map((stat, index) => (
-            <Reveal key={stat.label} delay={index * 100} className="lux-number">
-              <strong>
-                <CountUp value={stat.value} />
-              </strong>
-              <span>{stat.label}</span>
-            </Reveal>
+            <StatCard key={stat.label} stat={stat} delay={index * 110} />
           ))}
         </div>
       </div>

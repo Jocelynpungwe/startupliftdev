@@ -12,6 +12,7 @@ import './styles/management.css'
 import './styles/portfolio.css'
 import './styles/luxury-pages.css'
 import './styles/luxury-home.css'
+import './styles/luxury-case.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

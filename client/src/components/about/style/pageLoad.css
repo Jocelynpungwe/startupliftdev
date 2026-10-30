@@ -1,5 +1,5 @@
 /* =========================================
-   PAGE LOADER
+   PAGE LOADER — dark and gold, like the site
 ========================================= */
 
 .page-loader {
@@ -12,10 +12,15 @@
   justify-content: center;
 
   background:
-    radial-gradient(circle at center, rgba(30, 90, 255, 0.12), transparent 45%),
-    #05070b;
+    radial-gradient(
+      ellipse 55% 45% at 50% 48%,
+      rgba(201, 169, 106, 0.14),
+      transparent 70%
+    ),
+    #0a0908;
 
-  color: white;
+  color: #f4efe6;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
 .page-loader-content {
@@ -27,99 +32,129 @@
   text-align: center;
 }
 
-.page-loader-logo {
-  width: 64px;
-  height: 64px;
+/* ---------- logo with a slowly turning gold ring ---------- */
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 18px;
-
-  background: linear-gradient(90deg, #22d3ee, #14b8a6);
-
-  margin-bottom: 20px;
-
-  animation: loaderFloat 2s ease-in-out infinite;
+.page-loader-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  margin-bottom: 30px;
 }
+
+.page-loader-mark img {
+  position: relative;
+  width: 44px;
+  height: auto;
+  /* the logo artwork is blue; tint it to the gold palette */
+  filter: sepia(1) saturate(2.4) hue-rotate(-8deg) brightness(1.15);
+}
+
+.page-loader-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 169, 106, 0.22);
+}
+
+.page-loader-ring::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  /* a short bright arc that travels around the ring */
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 72%,
+    rgba(227, 200, 143, 0.15) 80%,
+    #e3c88f 100%
+  );
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 1px)
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 1px)
+  );
+  animation: loaderSpin 1.6s linear infinite;
+}
+
+/* ---------- name ---------- */
 
 .page-loader-brand {
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-
-  font-size: 25px;
-  letter-spacing: 0.08em;
+  margin: 0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #f4efe6;
 }
 
-.page-loader-brand span {
-  font-weight: 400;
+.page-loader-brand em {
+  font-style: italic;
+  color: #c9a96a;
 }
 
-.page-loader-brand strong {
-  font-weight: 800;
-}
+/* ---------- thin gold progress line ---------- */
 
 .page-loader-line {
-  width: 180px;
-  height: 2px;
-
-  margin-top: 24px;
-
-  background: linear-gradient(90deg, #22d3ee, #14b8a6);
-
+  width: 170px;
+  height: 1px;
+  margin-top: 26px;
   overflow: hidden;
-  border-radius: 10px;
+  background: rgba(201, 169, 106, 0.2);
 }
 
 .page-loader-line span {
   display: block;
-
   width: 45%;
   height: 100%;
-
-  background: currentColor;
-
-  animation: loaderProgress 1s ease-in-out infinite;
+  background: linear-gradient(90deg, transparent, #e3c88f, transparent);
+  animation: loaderProgress 1.4s ease-in-out infinite;
 }
 
-.page-loader p {
-  margin-top: 18px;
-
-  font-size: 13px;
-  letter-spacing: 0.04em;
-
-  opacity: 0.55;
+.page-loader-note {
+  margin: 20px 0 0;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #a39a8a;
 }
 
 /* =========================================
    ANIMATIONS
 ========================================= */
 
+@keyframes loaderSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes loaderProgress {
   0% {
     transform: translateX(-120%);
   }
 
-  50% {
-    transform: translateX(180%);
-  }
-
+  60%,
   100% {
-    transform: translateX(180%);
+    transform: translateX(260%);
   }
 }
 
-@keyframes loaderFloat {
-  0%,
-  100% {
-    transform: translateY(0);
+@media (prefers-reduced-motion: reduce) {
+  .page-loader-ring::after,
+  .page-loader-line span {
+    animation: none;
   }
 
-  50% {
-    transform: translateY(-6px);
+  .page-loader-line span {
+    width: 100%;
   }
 }
 
@@ -128,20 +163,26 @@
 ========================================= */
 
 @media (max-width: 600px) {
-  .page-loader-logo {
-    width: 56px;
-    height: 56px;
+  .page-loader-mark {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 24px;
+  }
+
+  .page-loader-mark img {
+    width: 38px;
   }
 
   .page-loader-brand {
-    font-size: 21px;
+    font-size: 24px;
   }
 
   .page-loader-line {
-    width: 150px;
+    width: 140px;
   }
 
-  .page-loader p {
-    font-size: 12px;
+  .page-loader-note {
+    font-size: 9px;
+    letter-spacing: 0.24em;
   }
 }

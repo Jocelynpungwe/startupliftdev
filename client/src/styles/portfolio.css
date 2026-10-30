@@ -385,15 +385,16 @@
   position: absolute;
   inset: 0;
   z-index: -1;
+  /* a soft glow behind the centred text; the rest of the frame stays clear */
   background:
-    linear-gradient(
-      to top,
-      rgba(10, 9, 8, 0.96),
-      rgba(10, 9, 8, 0.55) 58%,
-      transparent
+    radial-gradient(
+      ellipse 74% 56% at 50% 50%,
+      rgba(10, 9, 8, 0.6),
+      rgba(10, 9, 8, 0.36) 52%,
+      transparent 84%
     ),
-    radial-gradient(ellipse at center, transparent 40%, rgba(10, 9, 8, 0.55)),
-    linear-gradient(to bottom, rgba(10, 9, 8, 0.5), transparent 25%);
+    linear-gradient(to bottom, rgba(10, 9, 8, 0.3), transparent 16%),
+    linear-gradient(to top, rgba(10, 9, 8, 0.3), transparent 24%);
 }
 
 /* chapters share one grid cell, so they sit on top of each other and are
@@ -402,91 +403,110 @@
   position: absolute;
   inset: 0;
   display: grid;
-  align-items: end;
+  align-items: center;
   justify-items: center;
-  padding: 0 24px 6svh;
+  padding: 0 24px;
   pointer-events: none;
 }
 
+/* a compact caption: no box, so the video stays visible around it */
 .lux-chapter {
   grid-area: 1 / 1;
   width: 100%;
-  max-width: 860px;
-  padding: 36px 44px 40px;
-
-  border: 1px solid rgba(201, 169, 106, 0.32);
-  border-radius: 28px;
-  /* dark enough that light type stays readable even over a bright frame */
-  background: rgba(10, 9, 8, 0.72);
-  -webkit-backdrop-filter: blur(16px) saturate(0.85);
-  backdrop-filter: blur(16px) saturate(0.85);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-
+  max-width: 880px;
   text-align: center;
   will-change: opacity, transform;
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.9),
+    0 0 14px rgba(0, 0, 0, 0.8),
+    0 0 36px rgba(0, 0, 0, 0.65);
 }
 
 .lux-chapter .lux-eyebrow {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
   font-weight: 700;
-  color: #e3c88f;
+  color: #ecd29b;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 1),
+    0 0 8px rgba(0, 0, 0, 0.95),
+    0 0 20px rgba(0, 0, 0, 0.85),
+    0 0 44px rgba(0, 0, 0, 0.7);
 }
 
 .lux-chapter-title {
   margin: 0;
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 500;
-  font-size: clamp(32px, 4.4vw, 60px);
+  font-size: clamp(28px, 3.7vw, 54px);
   line-height: 1.06;
   letter-spacing: -0.02em;
-  color: #f8f4ec;
+  color: #ffffff;
   text-wrap: balance;
+  text-shadow:
+    0 2px 3px rgba(0, 0, 0, 0.95),
+    0 4px 22px rgba(0, 0, 0, 0.9),
+    0 0 48px rgba(0, 0, 0, 0.75),
+    0 0 90px rgba(0, 0, 0, 0.5);
 }
 
 .lux-chapter-title em {
-  color: #e3c88f;
+  color: #ecd29b;
 }
 
 .lux-chapter .lux-lead {
-  max-width: 660px;
-  margin: 18px auto 0;
-  font-size: clamp(16px, 1.35vw, 19px);
-  line-height: 1.7;
-  color: rgba(248, 244, 236, 0.94);
+  max-width: 640px;
+  margin: 14px auto 0;
+  font-size: clamp(15px, 1.25vw, 19px);
+  font-weight: 600;
+  line-height: 1.6;
+  color: #ffffff;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 1),
+    0 0 10px rgba(0, 0, 0, 0.95),
+    0 0 26px rgba(0, 0, 0, 0.85),
+    0 0 52px rgba(0, 0, 0, 0.65);
 }
 
 .lux-chips {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px;
-  max-width: 760px;
-  margin: 26px auto 0;
+  gap: 6px;
+  max-width: 720px;
+  margin: 18px auto 0;
   padding: 0;
   list-style: none;
 }
 
 .lux-chips li {
-  padding: 8px 16px;
-  border: 1px solid rgba(201, 169, 106, 0.35);
+  padding: 6px 12px;
+  border: 1px solid rgba(236, 210, 155, 0.45);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  font-size: 11px;
+  background: rgba(10, 9, 8, 0.4);
+  font-size: 10px;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #f8f4ec;
+  color: #fbf8f2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
 }
 
 .lux-chapter .lux-cta {
-  margin-top: 34px;
+  margin-top: 22px;
 }
 
 .lux-chapter .lux-btn {
+  min-height: 48px;
   pointer-events: auto;
 }
 
 .lux-chapter .lux-btn-ghost {
-  color: #f8f4ec;
+  background: rgba(10, 9, 8, 0.45);
+  border-color: rgba(236, 210, 155, 0.55);
+  color: #fbf8f2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.5);
 }
 
 .lux-scrub-hint {
@@ -534,12 +554,29 @@
   }
 
   .lux-chapters {
-    padding: 0 14px 6svh;
+    padding: 0 18px;
   }
 
-  .lux-chapter {
-    padding: 26px 20px 28px;
-    border-radius: 22px;
+  /* a small screen has less room to spare, so the glow is wider and stronger */
+  .lux-scrub-shade {
+    background:
+      radial-gradient(
+        ellipse 130% 52% at 50% 50%,
+        rgba(10, 9, 8, 0.74),
+        rgba(10, 9, 8, 0.46) 55%,
+        transparent 90%
+      ),
+      linear-gradient(to bottom, rgba(10, 9, 8, 0.3), transparent 16%),
+      linear-gradient(to top, rgba(10, 9, 8, 0.3), transparent 24%);
+  }
+
+  .lux-chapter .lux-eyebrow {
+    margin-bottom: 10px;
+  }
+
+  .lux-chapter .lux-lead {
+    margin-top: 10px;
+    line-height: 1.5;
   }
 
   .lux-chapter .lux-btn {
@@ -547,12 +584,18 @@
   }
 
   .lux-chips {
-    gap: 6px;
+    gap: 5px;
+    margin-top: 14px;
   }
 
   .lux-chips li {
-    padding: 6px 12px;
-    font-size: 10px;
+    padding: 5px 10px;
+    font-size: 9px;
+  }
+
+  /* keep the caption short on a small screen */
+  .lux-chips li:nth-child(n + 5) {
+    display: none;
   }
 
   .lux-scrub-progress {
