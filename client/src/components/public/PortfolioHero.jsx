@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import { projects } from '../../pages/Work.jsx'
+
 // The hero video is scrubbed by scroll position (see ScrollVideoHero below).
 // Put the encoded files in client/public (scripts/encode-hero.sh makes them):
 //   hero.mp4         wide 16:9, used on tablets and desktops
@@ -19,27 +21,104 @@ const PANELS = [
   { id: 'vita', src: '/vitagrace.webp', label: 'VitaGrace Cleaning' },
 ]
 
+const NUMBER_WORDS = [
+  'Zero',
+  'One',
+  'Two',
+  'Three',
+  'Four',
+  'Five',
+  'Six',
+  'Seven',
+  'Eight',
+  'Nine',
+  'Ten',
+  'Eleven',
+  'Twelve',
+]
+const projectCount = NUMBER_WORDS[projects.length] ?? String(projects.length)
+
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value))
 
-function HeroCopy() {
-  return (
-    <div className="lux-hero-copy">
-      <p className="lux-eyebrow">
-        <span /> Full-stack web developer <span />
-      </p>
+/* =========================================================
+   CHAPTERS
+   The text that appears, one block at a time, as the visitor scrolls.
+   `range` is the slice of scroll progress (0..1) where it is fully visible.
+========================================================= */
 
-      <h1 id="lux-hero-title">
+const CHAPTERS = [
+  {
+    id: 'intro',
+    range: [0, 0.2],
+    eyebrow: 'Full-stack web developer',
+    title: (
+      <>
         Websites crafted
         <br />
         with <em>uncommon</em> precision.
-      </h1>
+      </>
+    ),
+    text: 'I design and build websites, web applications and dashboards for brands that expect more than a template.',
+  },
+  {
+    id: 'work',
+    range: [0.27, 0.48],
+    eyebrow: 'The portfolio',
+    title: (
+      <>
+        {projectCount} brands.
+        <br />
+        Every one with its <em>own voice.</em>
+      </>
+    ),
+    text: 'Streetwear, cleaning, heritage, beauty, hair, a healthcare charity and car detailing — each site is shaped around the business behind it, its customers and the way it wants to be seen.',
+    chips: projects.map((project) => project.title),
+  },
+  {
+    id: 'craft',
+    range: [0.55, 0.76],
+    eyebrow: 'Front to back',
+    title: (
+      <>
+        Design, code and <em>growth,</em>
+        <br />
+        under one roof.
+      </>
+    ),
+    text: 'Responsive layouts, SEO foundations, booking and contact flows, dashboards and web applications — designed, built, launched and looked after by the same person.',
+    chips: ['React', 'Responsive design', 'SEO', 'Web apps & dashboards', 'Ongoing care'],
+  },
+  {
+    id: 'next',
+    range: [0.84, 1],
+    eyebrow: 'Your project',
+    title: (
+      <>
+        Your brand could
+        <br />
+        be <em>next.</em>
+      </>
+    ),
+    text: 'Packages start from $250, with ongoing support after launch. Tell me what you are building and I usually reply within 24 hours.',
+    actions: true,
+  },
+]
 
-      <p className="lux-lead">
-        I design and build websites, web applications and dashboards for brands
-        that expect more than a template.
-      </p>
-    </div>
-  )
+const FADE = 0.05
+
+// 0..1 opacity of a chapter at scroll progress p, and which way it is travelling
+function chapterState(range, p) {
+  const [start, end] = range
+  if (p < start - FADE || p > end + FADE) return { opacity: 0, shift: 0 }
+  if (p < start) {
+    const opacity = (p - (start - FADE)) / FADE
+    return { opacity, shift: (1 - opacity) * 28 }
+  }
+  if (p > end) {
+    const opacity = 1 - (p - end) / FADE
+    return { opacity, shift: -(1 - opacity) * 28 }
+  }
+  return { opacity: 1, shift: 0 }
 }
 
 function HeroActions() {
@@ -55,15 +134,27 @@ function HeroActions() {
   )
 }
 
+function Chips({ items }) {
+  return (
+    <ul className="lux-chips">
+      {items.map((item) => (
+        <li key={item}>{item}</li>
+      ))}
+    </ul>
+  )
+}
+
 /* =========================================================
    SCROLL-DRIVEN VIDEO HERO
    The section is several screens tall; its sticky child stays pinned while
-   the video's currentTime follows the scroll progress through the section.
+   the video's currentTime and the chapter text follow the scroll progress.
 ========================================================= */
 
 function ScrollVideoHero({ src }) {
   const sectionRef = useRef(null)
   const videoRef = useRef(null)
+  const chapterRefs = useRef([])
+  const counterRef = useRef(null)
 
   useEffect(() => {
     const section = sectionRef.current
@@ -80,12 +171,38 @@ function ScrollVideoHero({ src }) {
       target = scrollable > 0 ? clamp(-rect.top / scrollable) : 0
     }
 
+    const paintChapters = () => {
+      let strongest = 0
+      let strongestOpacity = -1
+
+      CHAPTERS.forEach((chapter, index) => {
+        const node = chapterRefs.current[index]
+        if (!node) return
+        const { opacity, shift } = chapterState(chapter.range, current)
+
+        node.style.opacity = opacity.toFixed(3)
+        node.style.transform = `translateY(${shift.toFixed(1)}px)`
+        node.style.visibility = opacity > 0.01 ? 'visible' : 'hidden'
+        node.style.pointerEvents = opacity > 0.6 ? 'auto' : 'none'
+
+        if (opacity > strongestOpacity) {
+          strongestOpacity = opacity
+          strongest = index
+        }
+      })
+
+      if (counterRef.current) {
+        counterRef.current.textContent = `0${strongest + 1} / 0${CHAPTERS.length}`
+      }
+    }
+
     const render = () => {
       frame = 0
       current += (target - current) * 0.14
       if (Math.abs(target - current) < 0.0004) current = target
 
       section.style.setProperty('--p', current.toFixed(4))
+      paintChapters()
 
       if (video.duration) {
         const time = current * (video.duration - 0.05)
@@ -110,6 +227,7 @@ function ScrollVideoHero({ src }) {
     video.addEventListener('loadedmetadata', unlock, { once: true })
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
+    paintChapters()
     onScroll()
 
     return () => {
@@ -140,17 +258,44 @@ function ScrollVideoHero({ src }) {
         />
         <div className="lux-scrub-shade" aria-hidden="true" />
 
-        <div className="lux-scrub-copy">
-          <HeroCopy />
-        </div>
+        <div className="lux-chapters">
+          {CHAPTERS.map((chapter, index) => {
+            const Title = index === 0 ? 'h1' : 'h2'
+            return (
+              <article
+                key={chapter.id}
+                ref={(node) => {
+                  chapterRefs.current[index] = node
+                }}
+                className="lux-chapter"
+              >
+                <p className="lux-eyebrow">
+                  <span /> {chapter.eyebrow} <span />
+                </p>
 
-        <div className="lux-scrub-end">
-          <HeroActions />
+                <Title
+                  className="lux-chapter-title"
+                  id={index === 0 ? 'lux-hero-title' : undefined}
+                >
+                  {chapter.title}
+                </Title>
+
+                <p className="lux-lead">{chapter.text}</p>
+
+                {chapter.chips && <Chips items={chapter.chips} />}
+                {chapter.actions && <HeroActions />}
+              </article>
+            )
+          })}
         </div>
 
         <div className="lux-scrub-progress" aria-hidden="true">
           <i />
         </div>
+
+        <p ref={counterRef} className="lux-scrub-counter" aria-hidden="true">
+          01 / 0{CHAPTERS.length}
+        </p>
 
         <div className="lux-scroll lux-scrub-hint" aria-hidden="true">
           <span>Scroll</span>
@@ -166,11 +311,21 @@ function ScrollVideoHero({ src }) {
 ========================================================= */
 
 function StaticHero() {
+  const [intro] = CHAPTERS
+
   return (
     <section className="lux-hero" aria-labelledby="lux-hero-title">
       <div className="lux-hero-glow" aria-hidden="true" />
 
-      <HeroCopy />
+      <div className="lux-hero-copy">
+        <p className="lux-eyebrow">
+          <span /> {intro.eyebrow} <span />
+        </p>
+
+        <h1 id="lux-hero-title">{intro.title}</h1>
+
+        <p className="lux-lead">{intro.text}</p>
+      </div>
 
       <div className="lux-stage">
         <div className="lux-spotlight" aria-hidden="true" />

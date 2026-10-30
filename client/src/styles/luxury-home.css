@@ -1,0 +1,317 @@
+/* =========================================================
+   LUXURY HOME — sections below the hero
+   Builds on portfolio.css + luxury-pages.css
+========================================================= */
+
+/* the home page uses the shared page typography without a .lux-page wrapper */
+.home-page h2,
+.home-page h3,
+.home-page blockquote {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.home-page em {
+  color: var(--lux-gold);
+  font-style: italic;
+}
+
+.home-page .lux-section {
+  color: var(--lux-ivory);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.lux-section-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 56px;
+}
+
+.lux-showcase .lux-section-cta {
+  margin-top: 56px;
+}
+
+/* ---------- ticker ---------- */
+
+.lux-ticker {
+  overflow: hidden;
+  padding: 30px 0;
+  border-top: 1px solid var(--lux-gold-soft);
+  border-bottom: 1px solid var(--lux-gold-soft);
+  background: var(--lux-bg);
+}
+
+.lux-ticker-track {
+  display: flex;
+  width: max-content;
+  animation: lux-ticker 48s linear infinite;
+}
+
+.lux-ticker:hover .lux-ticker-track {
+  animation-play-state: paused;
+}
+
+.lux-ticker-track span {
+  display: inline-flex;
+  align-items: center;
+  gap: 36px;
+  padding-right: 36px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(22px, 2.6vw, 34px);
+  font-style: italic;
+  color: var(--lux-ivory);
+  white-space: nowrap;
+}
+
+.lux-ticker-track i {
+  font-size: 14px;
+  font-style: normal;
+  color: var(--lux-gold);
+}
+
+@keyframes lux-ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- intro ---------- */
+
+.lux-intro {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.lux-intro h2 {
+  margin: 0;
+  font-size: clamp(34px, 4.4vw, 62px);
+  line-height: 1.08;
+}
+
+.lux-intro-copy p {
+  margin: 0 0 22px;
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--lux-muted);
+}
+
+.lux-intro-copy .lux-prose-lead {
+  font-size: 19px;
+  line-height: 1.7;
+  color: var(--lux-ivory);
+}
+
+.lux-intro-copy .lux-link {
+  margin-top: 10px;
+}
+
+/* ---------- capabilities ---------- */
+
+.lux-capabilities {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+  margin-top: 64px;
+}
+
+.lux-capability {
+  padding: 36px 30px;
+  border: 1px solid var(--lux-gold-soft);
+  border-radius: 22px;
+  background: var(--lux-bg);
+  transition:
+    border-color 0.35s ease,
+    transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms),
+    opacity 0.9s ease var(--d, 0ms);
+}
+
+.lux-capability:hover {
+  border-color: var(--lux-gold);
+}
+
+.lux-capability h3 {
+  margin: 0 0 12px;
+  font-size: 23px;
+  line-height: 1.2;
+}
+
+.lux-capability p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--lux-muted);
+}
+
+/* ---------- numbers ---------- */
+
+.lux-numbers-section {
+  padding: 90px 24px;
+}
+
+.lux-numbers {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.lux-number {
+  padding: 8px 32px;
+  text-align: center;
+  border-left: 1px solid var(--lux-gold-soft);
+}
+
+.lux-number:first-child {
+  border-left: 0;
+}
+
+.lux-number strong {
+  display: block;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(44px, 5.4vw, 76px);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--lux-gold);
+}
+
+.lux-number span {
+  display: block;
+  margin-top: 16px;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--lux-muted);
+}
+
+/* ---------- belief ---------- */
+
+.lux-belief {
+  padding: 130px 24px;
+  text-align: center;
+  background:
+    radial-gradient(
+      ellipse 55% 70% at 50% 50%,
+      rgba(201, 169, 106, 0.1),
+      transparent 70%
+    ),
+    var(--lux-bg);
+}
+
+.lux-belief .lux-wrap {
+  max-width: 980px;
+}
+
+.lux-belief blockquote {
+  margin: 0;
+  font-size: clamp(32px, 4.6vw, 64px);
+  line-height: 1.14;
+}
+
+/* ---------- faq ---------- */
+
+.lux-faq-wrap {
+  max-width: 860px;
+}
+
+.lux-faq {
+  margin-top: 56px;
+  border-top: 1px solid var(--lux-gold-soft);
+}
+
+.lux-faq details {
+  border-bottom: 1px solid var(--lux-gold-soft);
+}
+
+.lux-faq summary {
+  position: relative;
+  padding: 28px 56px 28px 0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(20px, 2.2vw, 26px);
+  list-style: none;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.lux-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.lux-faq summary::after {
+  content: '+';
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  translate: 0 -50%;
+  font-family: Inter, sans-serif;
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--lux-gold);
+  transition: rotate 0.3s ease;
+}
+
+.lux-faq details[open] summary::after {
+  rotate: 45deg;
+}
+
+.lux-faq summary:hover {
+  color: var(--lux-gold);
+}
+
+.lux-faq details p {
+  margin: 0;
+  padding: 0 56px 30px 0;
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--lux-muted);
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 1000px) {
+  .lux-intro {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .lux-capabilities {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .lux-numbers {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 48px;
+  }
+
+  .lux-number:nth-child(odd) {
+    border-left: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .lux-capabilities {
+    grid-template-columns: 1fr;
+  }
+
+  .lux-belief {
+    padding: 90px 18px;
+  }
+
+  .lux-number {
+    padding: 8px 12px;
+  }
+
+  .lux-faq details p {
+    padding-right: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lux-ticker-track {
+    animation: none;
+    flex-wrap: wrap;
+    width: auto;
+    justify-content: center;
+  }
+}
