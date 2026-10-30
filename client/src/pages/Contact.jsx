@@ -1,8 +1,9 @@
 import React from 'react'
-import { Clock, Facebook, Globe, Instagram, Mail } from 'lucide-react'
+import { Facebook, Instagram, Mail } from 'lucide-react'
 
 import Form from '../components/Form.jsx'
 import LuxPageHero from '../components/public/lux/LuxPageHero.jsx'
+import { ContactVisual } from '../components/public/lux/HeroVisuals.jsx'
 import Reveal from '../components/public/lux/Reveal.jsx'
 
 const details = [
@@ -11,16 +12,6 @@ const details = [
     label: 'Email',
     value: 'contact@startupliftdev.com',
     href: 'mailto:contact@startupliftdev.com',
-  },
-  {
-    icon: Clock,
-    label: 'Response time',
-    value: 'Usually within 24 hours',
-  },
-  {
-    icon: Globe,
-    label: 'Services',
-    value: 'Web • SEO • Digital growth',
   },
   {
     icon: Instagram,
@@ -40,6 +31,7 @@ export default function Contact() {
   return (
     <main className="lux-page lux-contact">
       <LuxPageHero
+        visual={<ContactVisual />}
         eyebrow="Contact"
         title={
           <>

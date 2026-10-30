@@ -10,7 +10,6 @@ import {
   Intro,
   Numbers,
   ProcessSteps,
-  Ticker,
 } from '../components/public/lux/HomeSections.jsx'
 
 export default function Home() {
@@ -18,9 +17,6 @@ export default function Home() {
     <div className="home-page">
       {/* ================= SCROLL-STORY HERO ================= */}
       <PortfolioHero />
-
-      {/* ================= BRANDS TICKER ================= */}
-      <Ticker />
 
       {/* ================= INTRO ================= */}
       <Intro />

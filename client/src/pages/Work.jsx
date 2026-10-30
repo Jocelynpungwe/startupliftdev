@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowUpRight } from 'lucide-react'
 
 import LuxPageHero from '../components/public/lux/LuxPageHero.jsx'
+import { WorkVisual } from '../components/public/lux/HeroVisuals.jsx'
 import Reveal from '../components/public/lux/Reveal.jsx'
 
 export const projects = [
@@ -130,6 +131,7 @@ export default function Work() {
   return (
     <main className="lux-page">
       <LuxPageHero
+        visual={<WorkVisual />}
         eyebrow="Our portfolio"
         title={
           <>

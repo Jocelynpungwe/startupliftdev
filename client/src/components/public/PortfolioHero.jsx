@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { projects } from '../../pages/Work.jsx'
@@ -150,7 +150,7 @@ function Chips({ items }) {
    the video's currentTime and the chapter text follow the scroll progress.
 ========================================================= */
 
-function ScrollVideoHero({ src }) {
+function ScrollVideoHero({ src, onFail }) {
   const sectionRef = useRef(null)
   const videoRef = useRef(null)
   const chapterRefs = useRef([])
@@ -164,6 +164,8 @@ function ScrollVideoHero({ src }) {
     let frame = 0
     let target = 0 // 0..1 scroll progress
     let current = 0 // eased progress that drives the video
+    let pendingTime = null // latest wanted time while a seek is still running
+    let unlocking = false
 
     const readProgress = () => {
       const rect = section.getBoundingClientRect()
@@ -196,47 +198,112 @@ function ScrollVideoHero({ src }) {
       }
     }
 
-    const render = () => {
+    // Browsers drop or stall seeks that are issued while another one is still
+    // running. Keep only the newest wanted time and apply it when the current
+    // seek finishes, so the video always lands on the latest scroll position.
+    const seekTo = (time) => {
+      if (video.seeking) {
+        pendingTime = time
+        return
+      }
+      if (Math.abs(video.currentTime - time) > 0.01) video.currentTime = time
+    }
+
+    const onSeeked = () => {
+      if (pendingTime === null) return
+      const time = pendingTime
+      pendingTime = null
+      if (Math.abs(video.currentTime - time) > 0.01) video.currentTime = time
+    }
+
+    // Ease towards the scroll position by elapsed time (not per frame), so the
+    // video catches up in about half a second even on a slow device.
+    let lastFrame = 0
+    const render = (now = performance.now()) => {
       frame = 0
-      current += (target - current) * 0.14
+      const elapsed = lastFrame ? Math.min(100, now - lastFrame) : 16
+      lastFrame = now
+      current += (target - current) * (1 - Math.exp(-elapsed / 90))
       if (Math.abs(target - current) < 0.0004) current = target
 
       section.style.setProperty('--p', current.toFixed(4))
       paintChapters()
 
-      if (video.duration) {
-        const time = current * (video.duration - 0.05)
-        if (Math.abs(video.currentTime - time) > 0.01) video.currentTime = time
-      }
+      if (video.duration) seekTo(current * (video.duration - 0.05))
 
       if (current !== target) frame = requestAnimationFrame(render)
+      else lastFrame = 0
     }
 
     const onScroll = () => {
       readProgress()
-      if (!frame) frame = requestAnimationFrame(render)
+      if (!frame) {
+        lastFrame = 0
+        frame = requestAnimationFrame(render)
+      }
     }
 
-    // Some mobile browsers only allow seeking after the video has been played once.
+    // Coming back to the tab, or to the page from the back button, can leave the
+    // video on a stale frame: jump straight to where the scroll position is.
+    const resync = () => {
+      readProgress()
+      current = target
+      pendingTime = null
+      if (frame) cancelAnimationFrame(frame)
+      render()
+    }
+
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') resync()
+    }
+
+    // Some mobile browsers only allow seeking after the video has been played
+    // once. The video must never keep playing on its own, though.
     const unlock = () => {
+      unlocking = true
+      const finish = () => {
+        unlocking = false
+        video.pause()
+        resync()
+      }
       const attempt = video.play()
-      if (attempt && attempt.then) attempt.then(() => video.pause()).catch(() => {})
-      else video.pause()
+      if (attempt && attempt.then) attempt.then(finish).catch(finish)
+      else finish()
     }
 
-    video.addEventListener('loadedmetadata', unlock, { once: true })
+    const onPlay = () => {
+      if (!unlocking) video.pause()
+    }
+
+    const onError = () => onFail?.()
+
+    video.addEventListener('seeked', onSeeked)
+    video.addEventListener('play', onPlay)
+    video.addEventListener('error', onError)
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
+    window.addEventListener('pageshow', resync)
+    document.addEventListener('visibilitychange', onVisible)
+
+    // The metadata may already be here (cached file) before this effect runs
+    if (video.readyState >= 1) unlock()
+    else video.addEventListener('loadedmetadata', unlock, { once: true })
+
     paintChapters()
     onScroll()
 
     return () => {
       if (frame) cancelAnimationFrame(frame)
+      video.removeEventListener('seeked', onSeeked)
+      video.removeEventListener('play', onPlay)
+      video.removeEventListener('error', onError)
       video.removeEventListener('loadedmetadata', unlock)
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
+      window.removeEventListener('pageshow', resync)
+      document.removeEventListener('visibilitychange', onVisible)
     }
-  }, [])
+  }, [onFail])
 
   return (
     <section
@@ -403,5 +470,11 @@ export default function PortfolioHero() {
   }, [])
 
   // key restarts the scrub effect when the phone/desktop source changes
-  return source ? <ScrollVideoHero key={source} src={source} /> : <StaticHero />
+  const handleFail = useCallback(() => setSource(null), [])
+
+  return source ? (
+    <ScrollVideoHero key={source} src={source} onFail={handleFail} />
+  ) : (
+    <StaticHero />
+  )
 }

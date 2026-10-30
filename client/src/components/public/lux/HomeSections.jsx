@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ArrowUpRight,
@@ -11,29 +11,6 @@ import {
 import { projects } from '../../../pages/Work.jsx'
 import { packages, process } from './servicesData.js'
 import Reveal from './Reveal.jsx'
-
-/* =========================================================
-   TICKER — the brands in the portfolio, slowly scrolling
-========================================================= */
-
-export function Ticker() {
-  const names = projects.map((project) => project.title)
-  // the list is rendered twice so the loop can restart seamlessly
-  const loop = [...names, ...names]
-
-  return (
-    <section className="lux-ticker" aria-label="Brands in the portfolio">
-      <div className="lux-ticker-track">
-        {loop.map((name, index) => (
-          <span key={`${name}-${index}`} aria-hidden={index >= names.length}>
-            {name}
-            <i aria-hidden="true">✦</i>
-          </span>
-        ))}
-      </div>
-    </section>
-  )
-}
 
 /* =========================================================
    INTRO — who is behind the work
@@ -142,15 +119,74 @@ export function Capabilities() {
 }
 
 /* =========================================================
-   NUMBERS — facts taken straight from the site's own content
+   NUMBERS — count up the first time they scroll into view
 ========================================================= */
+
+// "$250" -> prefix "$", 250, suffix ""   "30+" -> "", 30, "+"   "24h" -> "", 24, "h"
+function parseStat(value) {
+  const match = String(value).match(/^(\D*)(\d+)(.*)$/)
+  return match
+    ? { prefix: match[1], end: Number(match[2]), suffix: match[3] }
+    : { prefix: '', end: 0, suffix: String(value) }
+}
+
+function CountUp({ value, duration = 1800 }) {
+  const { prefix, end, suffix } = parseStat(value)
+  const ref = useRef(null)
+  const [shown, setShown] = useState(0)
+
+  useEffect(() => {
+    const node = ref.current
+    if (!node) return undefined
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduced || typeof IntersectionObserver === 'undefined') {
+      setShown(end)
+      return undefined
+    }
+
+    let frame = 0
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        observer.disconnect()
+
+        const startedAt = performance.now()
+        const tick = (now) => {
+          const t = Math.min(1, (now - startedAt) / duration)
+          const eased = 1 - (1 - t) ** 3 // ease-out
+          setShown(Math.round(end * eased))
+          if (t < 1) frame = requestAnimationFrame(tick)
+        }
+        frame = requestAnimationFrame(tick)
+      },
+      { threshold: 0.6 },
+    )
+    observer.observe(node)
+
+    return () => {
+      observer.disconnect()
+      if (frame) cancelAnimationFrame(frame)
+    }
+  }, [end, duration])
+
+  return (
+    <span ref={ref} aria-label={String(value)}>
+      <span aria-hidden="true">
+        {prefix}
+        {shown}
+        {suffix}
+      </span>
+    </span>
+  )
+}
 
 export function Numbers() {
   const cheapest = packages[0].price.split('–')[0].trim()
 
   const stats = [
     { value: String(projects.length), label: 'Websites in the portfolio' },
-    { value: '7', label: 'Industries, one standard' },
+    { value: '30+', label: 'Industries served' },
     { value: cheapest, label: 'Where packages start' },
     { value: '24h', label: 'Usual reply time' },
   ]
@@ -161,7 +197,9 @@ export function Numbers() {
         <div className="lux-numbers">
           {stats.map((stat, index) => (
             <Reveal key={stat.label} delay={index * 100} className="lux-number">
-              <strong>{stat.value}</strong>
+              <strong>
+                <CountUp value={stat.value} />
+              </strong>
               <span>{stat.label}</span>
             </Reveal>
           ))}

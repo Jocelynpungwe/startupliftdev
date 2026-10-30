@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowUpRight, Check } from 'lucide-react'
 
 import LuxPageHero from '../components/public/lux/LuxPageHero.jsx'
+import { ServicesVisual } from '../components/public/lux/HeroVisuals.jsx'
 import Reveal from '../components/public/lux/Reveal.jsx'
 import {
   packages,
@@ -14,6 +15,7 @@ export default function Services() {
   return (
     <main className="lux-page">
       <LuxPageHero
+        visual={<ServicesVisual />}
         eyebrow="Our services"
         title={
           <>
