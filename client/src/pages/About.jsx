@@ -11,10 +11,7 @@ import {
 import LuxPageHero from '../components/public/lux/LuxPageHero.jsx'
 import { AboutVisual } from '../components/public/lux/HeroVisuals.jsx'
 import Reveal from '../components/public/lux/Reveal.jsx'
-import {
-  ClientTestimonials,
-  InMyWords,
-} from '../components/public/lux/Testimonials.jsx'
+import { ClientTestimonials } from '../components/public/lux/Testimonials.jsx'
 
 const principles = [
   {
@@ -141,16 +138,6 @@ export default function About() {
           </Reveal>
         </div>
       </section>
-
-      {/* ===== IN MY WORDS ===== */}
-      <InMyWords
-        eyebrow="In my words"
-        title={
-          <>
-            What I <em>believe.</em>
-          </>
-        }
-      />
 
       {/* real client quotes, shown only once some are added in src/data/testimonials.js */}
       <ClientTestimonials />

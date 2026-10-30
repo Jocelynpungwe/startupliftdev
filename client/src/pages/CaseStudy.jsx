@@ -4,7 +4,7 @@ import { ArrowUpRight } from 'lucide-react'
 
 import LuxPageHero from '../components/public/lux/LuxPageHero.jsx'
 import Reveal from '../components/public/lux/Reveal.jsx'
-import { InMyWords } from '../components/public/lux/Testimonials.jsx'
+import { ClientTestimonials } from '../components/public/lux/Testimonials.jsx'
 import { caseStudies, findCaseStudy } from '../data/caseStudies.js'
 
 function BrowserShot({ study }) {
@@ -148,15 +148,8 @@ export default function CaseStudy() {
         </div>
       </section>
 
-      {/* ===== IN MY WORDS ===== */}
-      <InMyWords
-        eyebrow="In my words"
-        title={
-          <>
-            How I think about <em>every project.</em>
-          </>
-        }
-      />
+      {/* ===== CLIENT QUOTE (only when a real one exists for this project) ===== */}
+      <ClientTestimonials study={study} />
 
       {/* ===== NEXT ===== */}
       {next && (

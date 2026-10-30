@@ -3,10 +3,7 @@ import { Link } from 'react-router-dom'
 
 import PortfolioHero from '../components/public/PortfolioHero.jsx'
 import PortfolioShowcase from '../components/public/PortfolioShowcase.jsx'
-import {
-  ClientTestimonials,
-  InMyWords,
-} from '../components/public/lux/Testimonials.jsx'
+import { ClientTestimonials } from '../components/public/lux/Testimonials.jsx'
 import {
   Belief,
   Capabilities,
@@ -40,15 +37,7 @@ export default function Home() {
       {/* ================= BELIEF ================= */}
       <Belief />
 
-      {/* ================= IN MY WORDS (+ client quotes once added) ================= */}
-      <InMyWords
-        eyebrow="In my words"
-        title={
-          <>
-            A few words on <em>how I work.</em>
-          </>
-        }
-      />
+      {/* ================= CLIENT TESTIMONIALS (appear once real ones are added) ================= */}
       <ClientTestimonials />
 
       {/* ================= FAQ ================= */}
