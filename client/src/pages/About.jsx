@@ -11,6 +11,10 @@ import {
 import LuxPageHero from '../components/public/lux/LuxPageHero.jsx'
 import { AboutVisual } from '../components/public/lux/HeroVisuals.jsx'
 import Reveal from '../components/public/lux/Reveal.jsx'
+import {
+  ClientTestimonials,
+  InMyWords,
+} from '../components/public/lux/Testimonials.jsx'
 
 const principles = [
   {
@@ -41,12 +45,12 @@ const journey = [
   {
     number: '01',
     title: 'Start with an idea',
-    text: 'Every business begins somewhere. We help turn your idea into something real.',
+    text: 'Every business begins somewhere. I help turn your idea into something real.',
   },
   {
     number: '02',
     title: 'Build the foundation',
-    text: 'We create the technology, brand and digital presence your business needs to move forward.',
+    text: 'I create the technology, brand and digital presence your business needs to move forward.',
   },
   {
     number: '03',
@@ -59,22 +63,22 @@ const reasons = [
   {
     icon: Target,
     title: 'Built around your business',
-    text: "We don't believe in one-size-fits-all solutions. Your website and digital tools are built around your goals, customers and business.",
+    text: "I don't believe in one-size-fits-all solutions. Your website and digital tools are built around your goals, customers and business.",
   },
   {
     icon: TrendingUp,
     title: 'Designed for growth',
-    text: 'We think beyond launch day. Your digital presence is built with SEO, scalability, performance and future growth in mind.',
+    text: 'I think beyond launch day. Your digital presence is built with SEO, scalability, performance and future growth in mind.',
   },
   {
     icon: Layers3,
     title: 'Technology + strategy',
-    text: 'A great website is only part of the equation. We combine development, design, SEO and strategy to turn your digital presence into a business asset.',
+    text: 'A great website is only part of the equation. I combine development, design, SEO and strategy to turn your digital presence into a business asset.',
   },
   {
     icon: Rocket,
     title: 'Your success matters',
-    text: "Our goal isn't simply to deliver a website and walk away. We want to help you build something that creates real opportunities.",
+    text: "My goal isn't simply to deliver a website and walk away. I want to help you build something that creates real opportunities.",
   },
 ]
 
@@ -83,21 +87,19 @@ export default function About() {
     <main className="lux-page">
       <LuxPageHero
         visual={<AboutVisual />}
-        eyebrow="About us"
+        eyebrow="About me"
         title={
           <>
-            Your growth
-            <br />
-            starts <em>here.</em>
+            Hi, I'm <em>Jocelyn.</em>
           </>
         }
-        lead="StartupLift Dev exists to help entrepreneurs and businesses turn ideas into real digital businesses. From websites and web applications to SEO and growth strategy, we combine technology and strategy to help you build something that can grow with you."
+        lead="I'm a web developer who helps entrepreneurs and businesses turn ideas into real digital businesses: websites, web applications and dashboards, built to grow with you."
       >
         <Link to="/contact" className="lux-btn lux-btn-solid">
           Start a project
         </Link>
-        <Link to="/services" className="lux-btn lux-btn-ghost">
-          Explore services
+        <Link to="/work" className="lux-btn lux-btn-ghost">
+          See my work
         </Link>
       </LuxPageHero>
 
@@ -106,27 +108,32 @@ export default function About() {
         <div className="lux-wrap lux-manifesto">
           <Reveal>
             <p className="lux-eyebrow lux-eyebrow--left">
-              <span /> Our story
+              <span /> My story
             </p>
             <blockquote>
-              People should have the tools and opportunity to build something
-              of <em>their own.</em>
+              Build something you believe in. Grow it with purpose.{' '}
+              <em>Own your future.</em>
             </blockquote>
           </Reveal>
 
           <Reveal delay={120} className="lux-prose">
             <p className="lux-prose-lead">
+              I'm Jocelyn, a web developer. Through StartupLift Dev I design,
+              build and look after websites, web applications and dashboards,
+              from the first sketch to launch day and the support after.
+            </p>
+            <p>
               Starting a business can feel overwhelming. You need a brand, a
               website, customers, technology and a way to grow — often before
               you've even made your first sale.
             </p>
             <p>
-              That's where StartupLift comes in. We help entrepreneurs and
-              businesses turn ideas into real digital foundations that they can
-              build on, grow with and ultimately own.
+              That's where I come in. I help entrepreneurs and businesses turn
+              ideas into real digital foundations that they can build on, grow
+              with and ultimately own.
             </p>
             <p>
-              We don't believe your website should simply sit online. It should
+              I don't believe your website should simply sit online. It should
               become an asset that works for your business, helps people
               discover you and gives you the foundation to create something
               bigger.
@@ -135,12 +142,25 @@ export default function About() {
         </div>
       </section>
 
+      {/* ===== IN MY WORDS ===== */}
+      <InMyWords
+        eyebrow="In my words"
+        title={
+          <>
+            What I <em>believe.</em>
+          </>
+        }
+      />
+
+      {/* real client quotes, shown only once some are added in src/data/testimonials.js */}
+      <ClientTestimonials />
+
       {/* ===== BUILD / GROW / OWN ===== */}
-      <section className="lux-section">
+      <section className="lux-section lux-section--alt">
         <div className="lux-wrap">
           <Reveal className="lux-section-head">
             <p className="lux-eyebrow">
-              <span /> Our mission <span />
+              <span /> My mission <span />
             </p>
             <h2>
               Build. Grow. <em>Own.</em>
@@ -171,14 +191,14 @@ export default function About() {
       </section>
 
       {/* ===== JOURNEY ===== */}
-      <section className="lux-section lux-section--alt">
+      <section className="lux-section">
         <div className="lux-wrap">
           <Reveal className="lux-section-head">
             <p className="lux-eyebrow">
-              <span /> How we think <span />
+              <span /> How I think <span />
             </p>
             <h2>
-              We're building more than <em>websites.</em>
+              I'm building more than <em>websites.</em>
             </h2>
           </Reveal>
 
@@ -194,18 +214,18 @@ export default function About() {
         </div>
       </section>
 
-      {/* ===== WHY US ===== */}
-      <section className="lux-section">
+      {/* ===== WHY ME ===== */}
+      <section className="lux-section lux-section--alt">
         <div className="lux-wrap">
           <Reveal className="lux-section-head">
             <p className="lux-eyebrow">
-              <span /> Why StartupLift <span />
+              <span /> Why work with me <span />
             </p>
             <h2>
               You're not just building <em>a website.</em>
             </h2>
             <p className="lux-lead">
-              You're building something that can grow with you. That's why we
+              You're building something that can grow with you. That's why I
               combine technology, design and strategy to create digital
               foundations built for the long term.
             </p>

@@ -13,6 +13,7 @@ import About from './pages/About.jsx'
 import Services from './pages/Services.jsx'
 import Contact from './pages/Contact.jsx'
 import Work from './pages/Work.jsx'
+import CaseStudy from './pages/CaseStudy.jsx'
 import ProjectFormModal from './components/ProjectFormModel.jsx'
 import ScrollToTop from './components/ScrollToTop.jsx'
 import PageLoader from './components/PageLoader.jsx'
@@ -104,6 +105,7 @@ export default function App() {
             <Route path="/about" element={<About />} />
             <Route path="/services" element={<Services />} />
             <Route path="/work" element={<Work />} />
+            <Route path="/work/:slug" element={<CaseStudy />} />
             <Route path="/contact" element={<Contact />} />
           </Route>
 

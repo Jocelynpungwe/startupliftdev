@@ -26,6 +26,18 @@
   </url>
 
   <url>
+    <loc>https://startupliftdev.com/work/ivp-asbl</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://startupliftdev.com/work/vanta-detail-studio</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
     <loc>https://startupliftdev.com/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
