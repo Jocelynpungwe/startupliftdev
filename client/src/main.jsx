@@ -9,6 +9,8 @@ import './styles.css'
 import './home.css'
 import './styles/business.css'
 import './styles/management.css'
+import './styles/portfolio.css'
+import './styles/luxury-pages.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import HeroPortVisual from '../components/public/usable/HeroPortVisual'
-import HeroReuse from '../components/public/usable/HeroReuse'
+import { ArrowUpRight } from 'lucide-react'
 
-const projects = [
+import LuxPageHero from '../components/public/lux/LuxPageHero.jsx'
+import Reveal from '../components/public/lux/Reveal.jsx'
+
+export const projects = [
   {
     title: 'YVNG Saints',
     category: 'Web development',
@@ -103,7 +105,7 @@ const projects = [
 
 // Entries either name an optimised set ('work-eclat' -> -640/-1200 JPEGs)
 // or point straight at an image file ('/vanta.webp').
-const imageProps = (image = '') =>
+export const imageProps = (image = '') =>
   /\.(webp|png|jpe?g|avif)$/i.test(image)
     ? { src: image }
     : {
@@ -114,12 +116,10 @@ const imageProps = (image = '') =>
 export default function Work() {
   const [filter, setFilter] = useState('All')
 
+  // Only offer filters that actually have projects behind them.
   const categories = [
     'All',
-    'Web Design',
-    'Web Application',
-    'Brand & Web',
-    'Web development',
+    ...new Set(projects.map((project) => project.category)),
   ]
 
   const filteredProjects =
@@ -128,37 +128,36 @@ export default function Work() {
       : projects.filter((project) => project.category === filter)
 
   return (
-    <main className="business-page">
-      {/* HERO */}
+    <main className="lux-page">
+      <LuxPageHero
+        eyebrow="Our portfolio"
+        title={
+          <>
+            Stand out.
+            <br />
+            Built to <em>grow.</em>
+          </>
+        }
+        lead="Explore the websites and digital experiences we've built for businesses looking to stand out, connect with their audience and grow online. Every project combines modern design, thoughtful functionality and a clear focus on business goals."
+      >
+        <Link to="/contact" className="lux-btn lux-btn-solid">
+          Start a project
+        </Link>
+        <Link to="/services" className="lux-btn lux-btn-ghost">
+          Explore services
+        </Link>
+      </LuxPageHero>
 
-      <section className=" hero-section">
-        <HeroReuse
-          eyebrow="OUR PORTFOLIO"
-          h1_Start="Stand Out."
-          h1_span="Built to Grow."
-          h1_end=""
-          par="Explore the websites and digital experiences we've built for businesses looking to stand out, connect with their audience, and grow online. Every project combines modern design, thoughtful functionality, and a clear focus on business goals—from powerful websites to complete digital solutions."
-          first_btn="Start a Project"
-          second_btn="Explore Services"
-          more_one="Built with purpose"
-          more_two="Designed to perform."
-          link_1="/contact"
-          link_2="/services"
-        />
-        
-        <HeroPortVisual />
-      </section>
-      {/* FILTER */}
-
-      <section className="business-section portfolio-section">
-        <div className="business-container">
-          <div className="portfolio-filter">
+      <section className="lux-section lux-section--alt">
+        <div className="lux-wrap">
+          <div className="lux-filter" role="tablist" aria-label="Filter projects">
             {categories.map((category) => (
               <button
                 key={category}
-                className={
-                  filter === category ? 'filter-button active' : 'filter-button'
-                }
+                type="button"
+                role="tab"
+                aria-selected={filter === category}
+                className={filter === category ? 'is-active' : ''}
                 onClick={() => setFilter(category)}
               >
                 {category}
@@ -166,88 +165,62 @@ export default function Work() {
             ))}
           </div>
 
-          {/* PROJECTS */}
-
-          <div className="portfolio-grid_one">
+          <div className="lux-work-grid">
             {filteredProjects.map((project, index) => (
-              <Link
-                to={project.link}
+              <Reveal
+                key={project.title}
+                delay={(index % 2) * 120}
+                as="a"
+                href={project.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                key={project.title}
+                className="lux-work-card"
               >
-                <article className={`portfolio-card ${project.className}`}>
-                  <div className="portfolio-preview">
-                    <img
-                      className="portfolio-shot"
-                      {...imageProps(project.image)}
-                      sizes="(min-width: 900px) 50vw, 100vw"
-                      alt={`${project.title} homepage preview`}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    {/* <div className="browser-bar">
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </div> */}
+                <div className="lux-card-media">
+                  <img
+                    {...imageProps(project.image)}
+                    sizes="(min-width: 1000px) 50vw, 100vw"
+                    alt={`${project.title} homepage preview`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
 
-                    <div className="preview-content">
-                      <div className="preview-line"></div>
-
-                      {/* <div className="preview-title">{project.title}</div> */}
-                      {/* 
-                      <div className="preview-blocks">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </div> */}
-                    </div>
+                <div className="lux-work-body">
+                  <div className="lux-work-meta">
+                    <span>{project.category}</span>
+                    <ArrowUpRight size={20} strokeWidth={1.5} />
                   </div>
 
-                  <div className="portfolio-info">
-                    <div>
-                      <span className="portfolio-category">
-                        {project.category}
-                      </span>
+                  <h3>{project.title}</h3>
+                  <p>{project.description}</p>
 
-                      <h3>{project.title}</h3>
-
-                      <p>{project.description}</p>
-                    </div>
-
-                    <div className="portfolio-tags">
-                      {project.tags.map((tag) => (
-                        <span key={tag}>{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-                </article>
-              </Link>
+                  <ul className="lux-tags">
+                    {project.tags.map((tag) => (
+                      <li key={tag}>{tag}</li>
+                    ))}
+                  </ul>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* STATS */}
-
-      {/* CTA */}
-
-      <section className="business-cta">
-        <div className="business-container">
-          <div className="cta-box">
-            <p className="eyebrow">YOUR PROJECT COULD BE NEXT</p>
-
-            <h2>
-              Have something in
-              <span> mind?</span>
-            </h2>
-
-            <Link to="/contact" className="primary-button">
-              Start Your Project <span style={{ marginLeft: '16px' }}> →</span>
+      <section className="lux-closing">
+        <Reveal>
+          <p className="lux-eyebrow">
+            <span /> Your project could be next <span />
+          </p>
+          <h2>
+            Have something in <em>mind?</em>
+          </h2>
+          <div className="lux-cta">
+            <Link to="/contact" className="lux-btn lux-btn-solid">
+              Start your project
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
     </main>
   )

@@ -4,7 +4,7 @@ import PublicNavbar from '../components/PublicNavbar.jsx'
 
 export default function PublicLayout() {
   return (
-    <div className="public-site">
+    <div className="public-site lux-theme">
       <div className="ambient ambient-one"></div>
       <div className="ambient ambient-two"></div>
 
