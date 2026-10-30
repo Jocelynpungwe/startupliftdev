@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 
 import LuxPageHero from '../components/public/lux/LuxPageHero.jsx'
+import { AboutVisual } from '../components/public/lux/HeroVisuals.jsx'
 import Reveal from '../components/public/lux/Reveal.jsx'
 
 const principles = [
@@ -81,6 +82,7 @@ export default function About() {
   return (
     <main className="lux-page">
       <LuxPageHero
+        visual={<AboutVisual />}
         eyebrow="About us"
         title={
           <>

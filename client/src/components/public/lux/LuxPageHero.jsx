@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function LuxPageHero({ eyebrow, title, lead, children }) {
+export default function LuxPageHero({ eyebrow, title, lead, children, visual }) {
   return (
     <section className="lux-page-hero">
       <div className="lux-page-hero-glow" aria-hidden="true" />
@@ -14,6 +14,8 @@ export default function LuxPageHero({ eyebrow, title, lead, children }) {
       {lead && <p className="lux-lead">{lead}</p>}
 
       {children && <div className="lux-cta">{children}</div>}
+
+      {visual}
     </section>
   )
 }

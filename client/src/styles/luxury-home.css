@@ -33,50 +33,6 @@
   margin-top: 56px;
 }
 
-/* ---------- ticker ---------- */
-
-.lux-ticker {
-  overflow: hidden;
-  padding: 30px 0;
-  border-top: 1px solid var(--lux-gold-soft);
-  border-bottom: 1px solid var(--lux-gold-soft);
-  background: var(--lux-bg);
-}
-
-.lux-ticker-track {
-  display: flex;
-  width: max-content;
-  animation: lux-ticker 48s linear infinite;
-}
-
-.lux-ticker:hover .lux-ticker-track {
-  animation-play-state: paused;
-}
-
-.lux-ticker-track span {
-  display: inline-flex;
-  align-items: center;
-  gap: 36px;
-  padding-right: 36px;
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(22px, 2.6vw, 34px);
-  font-style: italic;
-  color: var(--lux-ivory);
-  white-space: nowrap;
-}
-
-.lux-ticker-track i {
-  font-size: 14px;
-  font-style: normal;
-  color: var(--lux-gold);
-}
-
-@keyframes lux-ticker {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
 /* ---------- intro ---------- */
 
 .lux-intro {
@@ -169,6 +125,7 @@
 
 .lux-number strong {
   display: block;
+  font-variant-numeric: tabular-nums;
   font-family: 'Playfair Display', Georgia, serif;
   font-size: clamp(44px, 5.4vw, 76px);
   font-weight: 500;
@@ -304,14 +261,5 @@
 
   .lux-faq details p {
     padding-right: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .lux-ticker-track {
-    animation: none;
-    flex-wrap: wrap;
-    width: auto;
-    justify-content: center;
   }
 }
