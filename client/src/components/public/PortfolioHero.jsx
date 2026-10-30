@@ -27,13 +27,14 @@ const PANELS = [
 
 // The real sites that float above the phone video, with where each one sits
 // (x/y: % of the screen, ry/rz: tilt in degrees, s: size, d: how far it drifts
-// as the visitor scrolls, a: scroll progress at which it fades in).
+// as the visitor scrolls, a: scroll progress at which it fades in, o: where it
+// has floated away again — the camera pushes in and his face takes the top).
 const FLOATERS = [
-  { title: 'Vanta Detail Studio', x: -8, y: 7, ry: 22, rz: -5, s: 1, d: -50, a: 0.03 },
-  { title: 'Maison Amara', x: 38, y: 4.5, ry: -20, rz: 4, s: 0.88, d: -36, a: 0.07 },
-  { title: 'IVP ASBL', x: 14, y: 12.5, ry: 14, rz: -3, s: 1.04, d: -60, a: 0.11 },
-  { title: 'Crown Atelier', x: 44, y: 15.5, ry: -24, rz: 5, s: 0.82, d: -28, a: 0.15 },
-  { title: 'VitaGrace Cleaning Services', x: -5, y: 19.5, ry: 20, rz: -4, s: 0.76, d: -40, a: 0.19 },
+  { title: 'Vanta Detail Studio', x: -8, y: 7, ry: 22, rz: -5, s: 1, d: -150, a: 0.02, o: 0.3 },
+  { title: 'Maison Amara', x: 38, y: 4.5, ry: -20, rz: 4, s: 0.88, d: -120, a: 0.05, o: 0.32 },
+  { title: 'IVP ASBL', x: 14, y: 12.5, ry: 14, rz: -3, s: 1.04, d: -170, a: 0.08, o: 0.34 },
+  { title: 'Crown Atelier', x: 44, y: 15.5, ry: -24, rz: 5, s: 0.82, d: -110, a: 0.11, o: 0.36 },
+  { title: 'VitaGrace Cleaning Services', x: -5, y: 19.5, ry: 20, rz: -4, s: 0.76, d: -130, a: 0.14, o: 0.38 },
 ]
 const floaters = FLOATERS.map((spec) => ({
   ...spec,
@@ -178,7 +179,7 @@ function Chips({ items }) {
 function FloatingSites() {
   return (
     <div className="lux-floaters" aria-hidden="true">
-      {floaters.map(({ project, x, y, ry, rz, s, d, a }) => (
+      {floaters.map(({ project, x, y, ry, rz, s, d, a, o }) => (
         <figure
           key={project.title}
           className="lux-floater"
@@ -190,6 +191,7 @@ function FloatingSites() {
             '--s': s,
             '--d': `${d}px`,
             '--a': a,
+            '--o': o,
           }}
         >
           <div className="lux-floater-bar">
