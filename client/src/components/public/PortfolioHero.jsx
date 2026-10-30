@@ -2,9 +2,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // The hero video is scrubbed by scroll position (see ScrollVideoHero below).
-// Put the encoded file at client/public/hero.mp4 (scripts/encode-hero.sh makes
-// a scroll-friendly one). Until it exists the static centre-stage hero shows.
+// Put the encoded files in client/public (scripts/encode-hero.sh makes them):
+//   hero.mp4         wide 16:9, used on tablets and desktops
+//   hero-mobile.mp4  tall 9:16, used on phones (falls back to hero.mp4)
+// Until a file exists the static centre-stage hero shows.
 const HERO_VIDEO = '/hero.mp4'
+const HERO_VIDEO_MOBILE = '/hero-mobile.mp4'
+const MOBILE_QUERY = '(max-width: 700px)'
 const HERO_POSTER = '/hero-portrait.webp'
 
 const PANELS = [
@@ -57,7 +61,7 @@ function HeroActions() {
    the video's currentTime follows the scroll progress through the section.
 ========================================================= */
 
-function ScrollVideoHero() {
+function ScrollVideoHero({ src }) {
   const sectionRef = useRef(null)
   const videoRef = useRef(null)
 
@@ -127,7 +131,7 @@ function ScrollVideoHero() {
         <video
           ref={videoRef}
           className="lux-scrub-video"
-          src={HERO_VIDEO}
+          src={src}
           poster={HERO_POSTER}
           muted
           playsInline
@@ -198,28 +202,51 @@ function StaticHero() {
   )
 }
 
+// Resolves to the first source that is a playable video, or null.
+// A missing file is served as HTML by the SPA redirect, which makes the probe
+// fire `error`, so a 404 and a corrupt file both fall through.
+function probeVideo(src) {
+  return new Promise((resolve) => {
+    const probe = document.createElement('video')
+    probe.preload = 'metadata'
+    probe.muted = true
+    probe.onloadedmetadata = () => resolve(src)
+    probe.onerror = () => resolve(null)
+    probe.src = src
+  })
+}
+
 export default function PortfolioHero() {
-  // 'checking' renders the static hero; we only switch once the file is
-  // confirmed to be a playable video (a missing file is served as HTML by the
-  // SPA redirect, which makes the probe fire `error`).
-  const [mode, setMode] = useState('static')
+  const [source, setSource] = useState(null)
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
 
-    const probe = document.createElement('video')
-    probe.preload = 'metadata'
-    probe.muted = true
-    probe.onloadedmetadata = () => setMode('scrub')
-    probe.onerror = () => setMode('static')
-    probe.src = HERO_VIDEO
+    const query = window.matchMedia(MOBILE_QUERY)
+    let cancelled = false
+
+    const resolveSource = async () => {
+      const candidates = query.matches
+        ? [HERO_VIDEO_MOBILE, HERO_VIDEO]
+        : [HERO_VIDEO]
+
+      let found = null
+      for (const candidate of candidates) {
+        found = await probeVideo(candidate)
+        if (found) break
+      }
+      if (!cancelled) setSource(found)
+    }
+
+    resolveSource()
+    query.addEventListener('change', resolveSource)
 
     return () => {
-      probe.onloadedmetadata = null
-      probe.onerror = null
-      probe.removeAttribute('src')
+      cancelled = true
+      query.removeEventListener('change', resolveSource)
     }
   }, [])
 
-  return mode === 'scrub' ? <ScrollVideoHero /> : <StaticHero />
+  // key restarts the scrub effect when the phone/desktop source changes
+  return source ? <ScrollVideoHero key={source} src={source} /> : <StaticHero />
 }
