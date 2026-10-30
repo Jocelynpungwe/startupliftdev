@@ -30,11 +30,11 @@ const PANELS = [
 // as the visitor scrolls, a: scroll progress at which it fades in, o: where it
 // has floated away again — the camera pushes in and his face takes the top).
 const FLOATERS = [
-  { title: 'Vanta Detail Studio', x: -8, y: 7, ry: 22, rz: -5, s: 1, d: -150, a: 0.02, o: 0.3 },
-  { title: 'Maison Amara', x: 38, y: 4.5, ry: -20, rz: 4, s: 0.88, d: -120, a: 0.05, o: 0.32 },
-  { title: 'IVP ASBL', x: 14, y: 12.5, ry: 14, rz: -3, s: 1.04, d: -170, a: 0.08, o: 0.34 },
-  { title: 'Crown Atelier', x: 44, y: 15.5, ry: -24, rz: 5, s: 0.82, d: -110, a: 0.11, o: 0.36 },
-  { title: 'VitaGrace Cleaning Services', x: -5, y: 19.5, ry: 20, rz: -4, s: 0.76, d: -130, a: 0.14, o: 0.38 },
+  { title: 'Vanta Detail Studio', x: -6, y: 4, ry: 18, rz: -4, s: 1, d: -120, a: 0.02, o: 0.2 },
+  { title: 'Maison Amara', x: 54, y: 8, ry: -18, rz: 4, s: 0.94, d: -110, a: 0.05, o: 0.23 },
+  { title: 'IVP ASBL', x: -3, y: 13.5, ry: 14, rz: -3, s: 1.02, d: -130, a: 0.08, o: 0.26 },
+  { title: 'Crown Atelier', x: 56, y: 17.5, ry: -20, rz: 4, s: 0.9, d: -100, a: 0.12, o: 0.3 },
+  { title: 'VitaGrace Cleaning Services', x: -5, y: 4.5, ry: 18, rz: -4, s: 0.92, d: -110, a: 0.2, o: 0.34 },
 ]
 const floaters = FLOATERS.map((spec) => ({
   ...spec,

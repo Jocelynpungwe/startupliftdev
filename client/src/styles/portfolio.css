@@ -898,7 +898,7 @@
   position: absolute;
   left: var(--x);
   top: var(--y);
-  width: 58vw;
+  width: 50vw;
   margin: 0;
   border-radius: 8px;
   overflow: hidden;
