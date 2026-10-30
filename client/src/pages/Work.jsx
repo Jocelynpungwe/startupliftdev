@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import HeroPortVisual from '../components/public/usable/HeroPortVisual'
 import HeroReuse from '../components/public/usable/HeroReuse'
 
-const projects = [
+export const projects = [
   {
     title: 'YVNG Saints',
     category: 'Web development',
@@ -103,7 +103,7 @@ const projects = [
 
 // Entries either name an optimised set ('work-eclat' -> -640/-1200 JPEGs)
 // or point straight at an image file ('/vanta.webp').
-const imageProps = (image = '') =>
+export const imageProps = (image = '') =>
   /\.(webp|png|jpe?g|avif)$/i.test(image)
     ? { src: image }
     : {

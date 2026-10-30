@@ -1,0 +1,621 @@
+/* =========================================================
+   LUXURY PORTFOLIO — centre-stage hero + selected work
+========================================================= */
+
+.lux-hero,
+.lux-showcase,
+.lux-closing {
+  --lux-bg: #0a0908;
+  --lux-bg-2: #110f0c;
+  --lux-gold: #c9a96a;
+  --lux-gold-soft: rgba(201, 169, 106, 0.22);
+  --lux-ivory: #f4efe6;
+  --lux-muted: #a39a8a;
+
+  color: var(--lux-ivory);
+  background: var(--lux-bg);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.lux-hero h1,
+.lux-showcase h2,
+.lux-closing h2,
+.lux-card h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.lux-hero em,
+.lux-showcase em,
+.lux-closing em {
+  color: var(--lux-gold);
+  font-style: italic;
+}
+
+/* ---------- eyebrow ---------- */
+
+.lux-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 22px;
+
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--lux-gold);
+}
+
+.lux-eyebrow span {
+  width: 44px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--lux-gold));
+}
+
+.lux-eyebrow span:last-child {
+  transform: scaleX(-1);
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.lux-hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  min-height: calc(100svh - 104px);
+  padding: 36px 24px 48px;
+  text-align: center;
+}
+
+.lux-hero-glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(
+      ellipse 60% 45% at 50% 62%,
+      rgba(201, 169, 106, 0.16),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 80% 50% at 50% 0%,
+      rgba(255, 255, 255, 0.05),
+      transparent 70%
+    );
+}
+
+.lux-hero-copy {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.lux-hero h1 {
+  margin: 0;
+  font-size: clamp(36px, 5.2vw, 76px);
+  line-height: 1.04;
+}
+
+.lux-lead {
+  max-width: 560px;
+  margin: 20px auto 0;
+
+  font-size: clamp(15px, 1.3vw, 17px);
+  line-height: 1.7;
+  color: var(--lux-muted);
+}
+
+/* ---------- stage ---------- */
+
+.lux-stage {
+  position: relative;
+  max-width: 1280px;
+  height: clamp(420px, 44vw, 600px);
+  margin: 36px auto 0;
+
+  perspective: 1600px;
+  transform-style: preserve-3d;
+}
+
+.lux-spotlight {
+  position: absolute;
+  left: 50%;
+  bottom: -6%;
+  width: 70%;
+  height: 40%;
+  translate: -50% 0;
+
+  background: radial-gradient(
+    ellipse at center,
+    rgba(201, 169, 106, 0.28),
+    transparent 68%
+  );
+  filter: blur(30px);
+}
+
+.lux-portrait {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  translate: -50% 0;
+  aspect-ratio: 3 / 4;
+  height: 100%;
+  max-width: 100%;
+
+  overflow: hidden;
+  border: 1px solid var(--lux-gold-soft);
+  border-radius: 999px 999px 28px 28px;
+
+  background: #15120e url('/hero-portrait.webp') center / cover no-repeat;
+  box-shadow:
+    0 50px 120px rgba(0, 0, 0, 0.6),
+    0 0 0 8px rgba(255, 255, 255, 0.02);
+}
+
+.lux-portrait::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 9, 8, 0.55),
+    transparent 40%
+  );
+  pointer-events: none;
+}
+
+.lux-portrait-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- floating website panels ---------- */
+
+.lux-panels {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.lux-panel {
+  position: absolute;
+  margin: 0;
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  background: #14110d;
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  animation: lux-float 9s ease-in-out infinite;
+}
+
+.lux-panel-bar {
+  display: flex;
+  gap: 5px;
+  padding: 7px 10px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.lux-panel-bar i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.lux-panel img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.lux-panel figcaption {
+  padding: 8px 12px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-align: left;
+  color: var(--lux-muted);
+}
+
+.lux-panel-vanta {
+  left: 1%;
+  top: 4%;
+  width: 24%;
+  transform: translateZ(-40px) rotateY(26deg) rotateZ(-3deg);
+}
+
+.lux-panel-maison {
+  left: 12%;
+  top: 50%;
+  width: 22%;
+  transform: translateZ(70px) rotateY(20deg) rotateZ(2deg);
+  animation-delay: -3s;
+}
+
+.lux-panel-ivp {
+  right: 1%;
+  top: 2%;
+  width: 24%;
+  transform: translateZ(-40px) rotateY(-26deg) rotateZ(3deg);
+  animation-delay: -5s;
+}
+
+.lux-panel-crown {
+  right: 12%;
+  top: 48%;
+  width: 22%;
+  transform: translateZ(80px) rotateY(-20deg) rotateZ(-2deg);
+  animation-delay: -7s;
+}
+
+.lux-panel-vita {
+  z-index: 1;
+  left: 50%;
+  bottom: 2%;
+  width: 18%;
+  opacity: 0.7;
+  transform: translateX(-50%) translateZ(-160px);
+  animation-delay: -2s;
+}
+
+@keyframes lux-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -12px;
+  }
+}
+
+/* ---------- calls to action ---------- */
+
+.lux-cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 40px;
+}
+
+.lux-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 34px;
+
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.lux-btn:hover {
+  transform: translateY(-2px);
+}
+
+.lux-btn-solid {
+  background: linear-gradient(135deg, #e3c88f, #b8955a);
+  color: #1a140b;
+}
+
+.lux-btn-ghost {
+  border: 1px solid var(--lux-gold-soft);
+  color: var(--lux-ivory);
+}
+
+.lux-btn-ghost:hover {
+  border-color: var(--lux-gold);
+  color: var(--lux-gold);
+}
+
+.lux-scroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 44px;
+
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--lux-muted);
+}
+
+.lux-scroll i {
+  width: 1px;
+  height: 44px;
+  background: linear-gradient(to bottom, var(--lux-gold), transparent);
+}
+
+/* =========================================================
+   SELECTED WORK
+========================================================= */
+
+.lux-showcase {
+  padding: 110px 24px;
+  background: var(--lux-bg-2);
+  border-top: 1px solid var(--lux-gold-soft);
+}
+
+.lux-section-head {
+  max-width: 760px;
+  margin: 0 auto 60px;
+  text-align: center;
+}
+
+.lux-showcase h2,
+.lux-closing h2 {
+  margin: 0;
+  font-size: clamp(32px, 4.4vw, 58px);
+  line-height: 1.08;
+}
+
+.lux-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.lux-card {
+  display: block;
+  overflow: hidden;
+
+  border: 1px solid var(--lux-gold-soft);
+  border-radius: 18px;
+  background: var(--lux-bg);
+  color: inherit;
+  text-decoration: none;
+
+  transition:
+    transform 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.lux-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--lux-gold);
+}
+
+.lux-card-media {
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+}
+
+.lux-card-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.lux-card:hover .lux-card-media img {
+  transform: scale(1.05);
+}
+
+.lux-card-body {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 24px;
+}
+
+.lux-card-body > div {
+  flex: 1;
+}
+
+.lux-card-index {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--lux-gold);
+}
+
+.lux-card h3 {
+  margin: 0;
+  font-size: 21px;
+}
+
+.lux-card p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lux-muted);
+}
+
+.lux-card-arrow {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+
+  border: 1px solid var(--lux-gold-soft);
+  border-radius: 50%;
+  color: var(--lux-gold);
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+.lux-card:hover .lux-card-arrow {
+  background: var(--lux-gold);
+  color: #1a140b;
+}
+
+/* =========================================================
+   CLOSING CTA
+========================================================= */
+
+.lux-closing {
+  padding: 120px 24px;
+  text-align: center;
+  background:
+    radial-gradient(
+      ellipse 50% 70% at 50% 100%,
+      rgba(201, 169, 106, 0.14),
+      transparent 70%
+    ),
+    var(--lux-bg);
+  border-top: 1px solid var(--lux-gold-soft);
+}
+
+.lux-closing .lux-cta {
+  margin-top: 40px;
+}
+
+/* =========================================================
+   SHELL — retheme the public navbar when the luxury hero is on the page
+========================================================= */
+
+.public-site:has(.lux-hero) {
+  background: #0a0908;
+}
+
+.public-site:has(.lux-hero) .ambient {
+  display: none;
+}
+
+.public-site:has(.lux-hero) .public-navbar {
+  border-color: rgba(201, 169, 106, 0.22);
+  background: rgba(10, 9, 8, 0.86);
+}
+
+.public-site:has(.lux-hero) .public-nav a:hover {
+  color: #c9a96a;
+}
+
+.public-site:has(.lux-hero) .nav-login {
+  background: linear-gradient(135deg, #e3c88f, #b8955a);
+  color: #1a140b;
+  box-shadow: 0 8px 25px rgba(201, 169, 106, 0.18);
+}
+
+.public-site:has(.lux-hero) .mobile-menu-button:hover {
+  color: #c9a96a;
+  border-color: rgba(201, 169, 106, 0.4);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+  .lux-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    height: auto;
+    perspective: none;
+  }
+
+  .lux-spotlight {
+    display: none;
+  }
+
+  .lux-portrait {
+    position: relative;
+    left: auto;
+    top: auto;
+    bottom: auto;
+    translate: none;
+    width: min(300px, 72vw);
+    height: auto;
+  }
+
+  .lux-panels {
+    position: static;
+    order: 2;
+    display: flex;
+    gap: 14px;
+    width: 100%;
+    padding: 6px 2px 18px;
+
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    transform-style: flat;
+  }
+
+  .lux-panel,
+  .lux-panel-vanta,
+  .lux-panel-maison,
+  .lux-panel-ivp,
+  .lux-panel-crown,
+  .lux-panel-vita {
+    position: static;
+    flex: 0 0 min(300px, 78vw);
+    width: auto;
+    opacity: 1;
+    transform: none;
+    animation: none;
+    scroll-snap-align: center;
+  }
+
+  .lux-showcase-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .lux-hero {
+    padding-top: 48px;
+  }
+
+  .lux-eyebrow {
+    gap: 10px;
+    letter-spacing: 0.2em;
+  }
+
+  .lux-eyebrow span {
+    width: 22px;
+  }
+
+  .lux-showcase {
+    padding: 80px 18px;
+  }
+
+  .lux-showcase-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lux-btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lux-panel {
+    animation: none;
+  }
+
+  .lux-card,
+  .lux-card-media img,
+  .lux-btn {
+    transition: none;
+  }
+}

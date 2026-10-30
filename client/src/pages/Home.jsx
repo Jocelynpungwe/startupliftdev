@@ -1,32 +1,36 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
-import Hero from '../components/public/Hero.jsx'
-import HowItWorks from '../components/public/HowItWorks.jsx'
-import WhoWeHelp from '../components/public/WhoWeHelp.jsx'
-import Testimonial from '../components/public/Testimonial.jsx'
-import Work from './Work.jsx'
+import PortfolioHero from '../components/public/PortfolioHero.jsx'
+import PortfolioShowcase from '../components/public/PortfolioShowcase.jsx'
 
 export default function Home() {
   return (
     <div className="home-page">
-      {/* ================= HERO ================= */}
-      <Hero />
-      {/* ================= INTRO ================= */}
-      <WhoWeHelp />
-      {/* ================= PROCESS ================= */}
+      {/* ================= CENTRE-STAGE HERO ================= */}
+      <PortfolioHero />
 
-      <HowItWorks />
+      {/* ================= SELECTED WORK ================= */}
+      <PortfolioShowcase />
 
-      {/* ================= SERVICES ================= */}
-      {/* <Services /> */}
+      {/* ================= CLOSING CTA ================= */}
+      <section className="lux-closing">
+        <p className="lux-eyebrow">
+          <span /> Let's work together <span />
+        </p>
 
-      <Work />
-      {/* ================= TESTIMONIAL ================= */}
-      <Testimonial />
+        <h2>
+          Have a project that deserves
+          <br />
+          to look <em>exceptional?</em>
+        </h2>
 
-      {/* ================= CTA ================= */}
+        <div className="lux-cta">
+          <Link to="/contact" className="lux-btn lux-btn-solid">
+            Start a project
+          </Link>
+        </div>
+      </section>
     </div>
   )
 }
-
-/* ================= COMPONENTS ================= */
