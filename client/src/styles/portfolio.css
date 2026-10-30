@@ -2,6 +2,7 @@
    LUXURY PORTFOLIO — centre-stage hero + selected work
 ========================================================= */
 
+.lux-theme,
 .lux-hero,
 .lux-showcase,
 .lux-closing {
@@ -627,35 +628,35 @@
    SHELL — retheme the public navbar when the luxury hero is on the page
 ========================================================= */
 
-.public-site:has(.lux-hero) {
+.public-site.lux-theme {
   background: #0a0908;
 }
 
-.public-site:has(.lux-hero) .ambient {
+.public-site.lux-theme .ambient {
   display: none;
 }
 
 /* overflow: hidden would break the sticky scroll hero; clip still clips. */
-.public-site:has(.lux-hero) {
+.public-site.lux-theme {
   overflow: clip;
 }
 
-.public-site:has(.lux-hero) .public-navbar {
+.public-site.lux-theme .public-navbar {
   border-color: rgba(201, 169, 106, 0.22);
   background: rgba(10, 9, 8, 0.86);
 }
 
-.public-site:has(.lux-hero) .public-nav a:hover {
+.public-site.lux-theme .public-nav a:hover {
   color: #c9a96a;
 }
 
-.public-site:has(.lux-hero) .nav-login {
+.public-site.lux-theme .nav-login {
   background: linear-gradient(135deg, #e3c88f, #b8955a);
   color: #1a140b;
   box-shadow: 0 8px 25px rgba(201, 169, 106, 0.18);
 }
 
-.public-site:has(.lux-hero) .mobile-menu-button:hover {
+.public-site.lux-theme .mobile-menu-button:hover {
   color: #c9a96a;
   border-color: rgba(201, 169, 106, 0.4);
 }
