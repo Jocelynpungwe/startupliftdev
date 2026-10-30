@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { projects } from '../../pages/Work.jsx'
+import { imageProps, projects } from '../../pages/Work.jsx'
 
 // The hero video is scrubbed by scroll position (see ScrollVideoHero below).
 // Put the encoded files in client/public (scripts/encode-hero.sh makes them):
@@ -32,9 +32,12 @@ const PANELS = [
 const FLOATERS = [
   { title: 'Vanta Detail Studio', x: -6, y: 4, ry: 18, rz: -4, s: 1, d: -120, a: 0.02, o: 0.2 },
   { title: 'Maison Amara', x: 54, y: 8, ry: -18, rz: 4, s: 0.94, d: -110, a: 0.05, o: 0.23 },
-  { title: 'IVP ASBL', x: -3, y: 13.5, ry: 14, rz: -3, s: 1.02, d: -130, a: 0.08, o: 0.26 },
-  { title: 'Crown Atelier', x: 56, y: 17.5, ry: -20, rz: 4, s: 0.9, d: -100, a: 0.12, o: 0.3 },
-  { title: 'VitaGrace Cleaning Services', x: -5, y: 4.5, ry: 18, rz: -4, s: 0.92, d: -110, a: 0.2, o: 0.34 },
+  { title: 'IVP ASBL', x: -3, y: 12.5, ry: 14, rz: -3, s: 1.02, d: -130, a: 0.08, o: 0.26 },
+  { title: 'Crown Atelier', x: 56, y: 16, ry: -20, rz: 4, s: 0.9, d: -100, a: 0.12, o: 0.3 },
+  { title: 'VitaGrace Cleaning Services', x: -5, y: 4.5, ry: 18, rz: -4, s: 0.92, d: -110, a: 0.2, o: 0.36 },
+  { title: 'YVNG Saints', x: 55, y: 8.5, ry: -16, rz: 3, s: 0.96, d: -100, a: 0.23, o: 0.4 },
+  { title: 'Eclat Cleaning Services', x: -2, y: 12.5, ry: 16, rz: -3, s: 0.98, d: -120, a: 0.26, o: 0.44 },
+  { title: 'Royal Memoria', x: 57, y: 16, ry: -20, rz: 4, s: 0.88, d: -90, a: 0.3, o: 0.48 },
 ]
 const floaters = FLOATERS.map((spec) => ({
   ...spec,
@@ -61,6 +64,11 @@ const PERSON_X = [
   [11, 0.5],
   [13, 0.5],
 ]
+
+// Maps scroll progress to how far into the tall video we are: the first half of
+// the scroll plays only the first third of the video, so the floating sites have
+// more scrolling to be seen in before the camera brings his face up.
+const slowOpening = (p) => (p < 0.5 ? p * 0.62 : 0.31 + (p - 0.5) * 1.38)
 
 const personAt = (time) => {
   for (let i = 1; i < PERSON_X.length; i += 1) {
@@ -200,7 +208,7 @@ function FloatingSites() {
             <i />
             <span>{siteHost(project.link)}</span>
           </div>
-          <img src={project.image} alt="" width="1340" height="632" decoding="async" />
+          <img {...imageProps(project.image)} sizes="50vw" alt="" decoding="async" />
         </figure>
       ))}
     </div>
@@ -304,7 +312,9 @@ function ScrollVideoHero({ src, onFail, floating }) {
       paintChapters()
 
       if (video.duration) {
-        const time = current * (video.duration - 0.05)
+        // the tall video's opening (face still low, room above him) lasts longer
+        const tall = video.videoHeight > video.videoWidth
+        const time = (tall ? slowOpening(current) : current) * (video.duration - 0.05)
         seekTo(time)
         keepPersonInView(time)
       }
