@@ -6,8 +6,10 @@ import { Link } from 'react-router-dom'
 //   hero.mp4         wide 16:9, used on tablets and desktops
 //   hero-mobile.mp4  tall 9:16, used on phones (falls back to hero.mp4)
 // Until a file exists the static centre-stage hero shows.
-const HERO_VIDEO = '/hero.mp4'
-const HERO_VIDEO_MOBILE = '/hero-mobile.mp4'
+// bump VIDEO_VERSION when you replace the files, so phones fetch the new ones
+const VIDEO_VERSION = '3'
+const HERO_VIDEO = `/hero.mp4?v=${VIDEO_VERSION}`
+const HERO_VIDEO_MOBILE = `/hero-mobile.mp4?v=${VIDEO_VERSION}`
 const MOBILE_QUERY = '(max-width: 700px)'
 const HERO_POSTER = '/hero-portrait.webp'
 
@@ -245,17 +247,24 @@ function ScrollVideoHero({ src, onFail }) {
 
     const onError = () => onFail?.()
 
+    // iPhones (and phones in data-saver / low-power mode) can hold back a video
+    // until it is played, and never announce 'loadedmetadata' on their own.
+    // So playback is attempted straight away, and again on the first touch (a
+    // user gesture always allows it). Once data arrives, jump to the scroll spot.
+    const onReady = () => resync()
+
     video.addEventListener('seeked', onSeeked)
     video.addEventListener('play', onPlay)
     video.addEventListener('error', onError)
+    video.addEventListener('loadedmetadata', onReady)
+    video.addEventListener('loadeddata', onReady)
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
     window.addEventListener('pageshow', resync)
+    window.addEventListener('pointerdown', unlock, { once: true, passive: true })
     document.addEventListener('visibilitychange', onVisible)
 
-    // The metadata may already be here (cached file) before this effect runs
-    if (video.readyState >= 1) unlock()
-    else video.addEventListener('loadedmetadata', unlock, { once: true })
+    unlock()
 
     paintChapters()
     onScroll()
@@ -265,10 +274,12 @@ function ScrollVideoHero({ src, onFail }) {
       video.removeEventListener('seeked', onSeeked)
       video.removeEventListener('play', onPlay)
       video.removeEventListener('error', onError)
-      video.removeEventListener('loadedmetadata', unlock)
+      video.removeEventListener('loadedmetadata', onReady)
+      video.removeEventListener('loadeddata', onReady)
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
       window.removeEventListener('pageshow', resync)
+      window.removeEventListener('pointerdown', unlock)
       document.removeEventListener('visibilitychange', onVisible)
     }
   }, [onFail])
@@ -394,56 +405,38 @@ function StaticHero() {
   )
 }
 
-// Resolves to the first source that is a playable video, or null.
-// A missing file is served as HTML by the SPA redirect, which makes the probe
-// fire `error`, so a 404 and a corrupt file both fall through.
-function probeVideo(src) {
-  return new Promise((resolve) => {
-    const probe = document.createElement('video')
-    probe.preload = 'metadata'
-    probe.muted = true
-    probe.onloadedmetadata = () => resolve(src)
-    probe.onerror = () => resolve(null)
-    probe.src = src
-  })
+// Files to try, best first: phones get the tall video, then the wide one.
+// If a file is missing (the SPA serves HTML for it) or cannot be played, the
+// video's own `error` event moves on to the next, and finally to the still hero.
+function pickSources() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return []
+  return window.matchMedia(MOBILE_QUERY).matches
+    ? [HERO_VIDEO_MOBILE, HERO_VIDEO]
+    : [HERO_VIDEO]
 }
 
 export default function PortfolioHero() {
-  const [source, setSource] = useState(null)
+  const [sources, setSources] = useState(pickSources)
+  const [index, setIndex] = useState(0)
 
+  // switching between a phone-sized and a larger window picks the matching file
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
-
     const query = window.matchMedia(MOBILE_QUERY)
-    let cancelled = false
-
-    const resolveSource = async () => {
-      const candidates = query.matches
-        ? [HERO_VIDEO_MOBILE, HERO_VIDEO]
-        : [HERO_VIDEO]
-
-      let found = null
-      for (const candidate of candidates) {
-        found = await probeVideo(candidate)
-        if (found) break
-      }
-      if (!cancelled) setSource(found)
+    const onChange = () => {
+      setSources(pickSources())
+      setIndex(0)
     }
-
-    resolveSource()
-    query.addEventListener('change', resolveSource)
-
-    return () => {
-      cancelled = true
-      query.removeEventListener('change', resolveSource)
-    }
+    query.addEventListener('change', onChange)
+    return () => query.removeEventListener('change', onChange)
   }, [])
 
-  // key restarts the scrub effect when the phone/desktop source changes
-  const handleFail = useCallback(() => setSource(null), [])
+  const handleFail = useCallback(() => setIndex((i) => i + 1), [])
 
-  return source ? (
-    <ScrollVideoHero key={source} src={source} onFail={handleFail} />
+  const src = sources[index]
+
+  // key restarts the scrub effect whenever the file changes
+  return src ? (
+    <ScrollVideoHero key={src} src={src} onFail={handleFail} />
   ) : (
     <StaticHero />
   )
