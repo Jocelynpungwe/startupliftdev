@@ -1,0 +1,25 @@
+# Render Blueprint: the API (server/) runs on Render, the website (client/) on
+# Netlify. See "Deploying" in README.md.
+services:
+  - type: web
+    name: startupliftdev-api
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/v1/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: 20.19.0
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: CONTACT_EMAIL
+        sync: false

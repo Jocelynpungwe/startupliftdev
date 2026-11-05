@@ -155,3 +155,42 @@ Before production, add:
 - centralized logging
 - CSRF protection if cookie authentication is introduced
 - stricter CORS configuration
+
+## Deploying: website on Netlify, API on Render
+
+The two halves deploy separately. Deploy the API first, because the website
+needs its address.
+
+### 1. API on Render
+
+1. In Render choose **New > Blueprint** and pick this repository. Render reads
+   `render.yaml` and creates the `startupliftdev-api` web service (root
+   directory `server`, health check `/api/v1/health`).
+2. Fill in the environment variables it asks for:
+   - `MONGO_URI`: your MongoDB Atlas connection string. In Atlas, under
+     Network Access, allow `0.0.0.0/0`, since Render's addresses change.
+   - `CLIENT_URL`: the address of your Netlify site, for example
+     `https://yoursite.netlify.app`. Add your custom domain too, separated by
+     a comma, once you have one: `https://yoursite.netlify.app,https://www.yourdomain.com`.
+   - `RESEND_API_KEY` and `CONTACT_EMAIL`: for the contact form emails.
+   - `JWT_SECRET` is generated for you.
+3. When it is live, open `https://<your-service>.onrender.com/api/v1/health`.
+   It should answer `CRM API is healthy`.
+4. Create the first admin once, from the service's **Shell** tab:
+   `npm run seed:admin`, then change that password after logging in.
+
+The free Render plan sleeps after about 15 minutes without traffic, so the
+first request after a quiet spell (a contact form submit or a CRM login) can
+take around a minute. A paid plan removes that.
+
+### 2. Website on Netlify
+
+The site builds from `client/` (see `netlify.toml`). In Netlify, under
+**Site configuration > Environment variables**, add:
+
+```text
+VITE_API_URL=https://<your-service>.onrender.com/api/v1
+```
+
+Then trigger a new deploy: the variable is baked in at build time, so changing
+it needs a rebuild. If it is missing, the site tries `localhost:5000`.

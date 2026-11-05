@@ -17,9 +17,18 @@ const app = express()
 
 app.disable('etag')
 
+// CLIENT_URL is the address(es) the site is served from (Netlify, a custom
+// domain, localhost). Separate several with commas; trailing slashes are ignored.
+const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim().replace(/\/+$/, ''))
+  .filter(Boolean)
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    // requests with no Origin (health checks, curl) are not browser cross-site calls
+    origin: (origin, callback) =>
+      callback(null, !origin || allowedOrigins.includes(origin)),
   }),
 )
 
